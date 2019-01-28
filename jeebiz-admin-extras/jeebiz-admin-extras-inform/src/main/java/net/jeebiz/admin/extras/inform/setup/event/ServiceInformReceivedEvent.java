@@ -1,0 +1,24 @@
+package net.jeebiz.admin.extras.inform.setup.event;
+
+import java.util.List;
+
+import org.springframework.biz.context.event.EnhancedEvent;
+
+import com.google.common.collect.Lists;
+
+import net.jeebiz.admin.extras.inform.dao.entities.InformModel;
+
+/**
+ */
+@SuppressWarnings("serial")
+public class ServiceInformReceivedEvent extends EnhancedEvent<List<InformModel>> {
+	
+	public ServiceInformReceivedEvent(Object source, InformModel inform) {
+		super(source, Lists.newArrayList(inform));
+	}
+	
+	public ServiceInformReceivedEvent(Object source, List<InformModel> informs) {
+		super(source, informs);
+	}
+	
+}

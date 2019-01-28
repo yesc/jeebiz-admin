@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.jeebiz.admin.extras.basedata.dao.ISettingsDao" >
+	
+	<!-- 开启二级缓存 -->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache" >
+		<!-- 缓存对象闲置时长：3600s = 1h -->
+		<property name="timeToIdleSeconds" value="3600"/>
+		<!-- 缓存对象有效时长：3600s = 1h -->
+		<property name="timeToLiveSeconds" value="3600"/>
+		<!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+		<property name="maxEntriesLocalDisk" value="10000000"/>
+		<!-- 缓存对象驱逐政策: "LRU", "LFU" or "FIFO" -->
+		<property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+	
+	<resultMap id="SettingsMap" type="SettingsModel">
+		<result property="id" column="D_ID" />
+		<result property="gkey" column="D_GROUP" />
+		<result property="label" column="D_LABEL" />
+		<result property="key" column="D_KEY" />
+		<result property="value" column="D_TEXT" />
+		<result property="unit" column="D_UNIT" />
+		<result property="type" column="D_TYPE" />
+		<result property="rules" column="D_RULES" />
+		<result property="remark" column="D_REMARK" />
+		<result property="placeholder" column="D_PLACEHOLDER" />
+		<result property="source" column="D_SOURCE" />
+		<result property="status" column="D_STATUS" />
+		<result property="order" column="D_ORDER" />
+	</resultMap>
+	
+	<resultMap id="PairMap" type="PairModel">
+		<result property="key" column="D_KEY" />
+		<result property="value" column="D_TEXT" />
+	</resultMap>
+	
+	<select id="getModelList" resultMap="SettingsMap" parameterType="java.lang.String" useCache="true">
+		SELECT
+			t.D_ID,
+			t.D_GROUP,
+			t.D_LABEL,
+			t.D_KEY,
+			t.D_TEXT,
+			t.D_UNIT,
+			t.D_TYPE,
+			t.D_RULES,
+			t.D_REMARK,
+			t.D_PLACEHOLDER,
+			t.D_SOURCE,
+			t.D_STATUS,
+			t.D_ORDER
+		FROM SYS_EXTRAS_SETTINGS t
+		WHERE t.D_GROUP = #{gkey} 
+		ORDER By t.D_ORDER ASC
+	</select>
+	
+	<select id="getPairValues" resultMap="PairMap" parameterType="java.lang.String" useCache="true">
+		SELECT t.D_KEY,t.D_TEXT
+		FROM SYS_EXTRAS_SETTINGS t 
+		WHERE t.D_GROUP = #{gkey} 
+		  and t.D_STATUS = 1
+	</select>
+	
+	<update id="update" parameterType="SettingsModel" flushCache="true">
+		UPDATE SYS_EXTRAS_SETTINGS t 
+		   SET D_TEXT = #{value}
+		 WHERE D_ID = #{id}
+	</update>
+	
+	<update id="batchUpdate" flushCache="true">
+    	<foreach collection="list" index="index" item="item" open="" separator=";" close="">  
+            update SYS_EXTRAS_SETTINGS 
+               set D_TEXT = #{item.value}
+           WHERE D_ID = #{item.id} 
+		     and D_STATUS = 1
+        </foreach>
+    </update>
+		
+</mapper>
