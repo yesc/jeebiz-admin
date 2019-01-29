@@ -20,7 +20,7 @@
 	</properties>
 
 	<dependencies>
-
+		
 		<!-- Jeebiz rbac权限认证：此次选择了比较简单的rbac0的实现（必选） -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -50,24 +50,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jeebiz-admin-extras-basedata</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<!-- Jeebiz 系统我的应用扩展实现（可选） -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jeebiz-admin-extras-myapp</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<!-- Jeebiz 系统数据源扩展实现（可选） -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jeebiz-admin-extras-datasource</artifactId>
-			<version>${jeebiz-admin.version}</version>
-		</dependency>
-		<!-- Jeebiz 自定义界面扩展实现（可选） -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jeebiz-admin-extras-webui</artifactId>
-			<version>${jeebiz-admin.version}</version>
 		</dependency>
 		
 		<!-- For Embedded Web -->
