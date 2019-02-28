@@ -21,7 +21,6 @@
 		<module>jeebiz-admin-doc</module>
 		<module>jeebiz-admin-extras</module>
 		<module>jeebiz-admin-parent</module>
-		<module>jeebiz-admin-plugins</module>
 	</modules>
 
 </project>
