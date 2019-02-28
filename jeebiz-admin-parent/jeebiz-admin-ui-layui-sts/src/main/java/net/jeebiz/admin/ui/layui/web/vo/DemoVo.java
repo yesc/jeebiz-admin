@@ -9,8 +9,6 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.github.vindell.validation.constraints.StrictMimeTypeCheck;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,7 +26,6 @@ public class DemoVo {
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String text;
 	@ApiModelProperty(value = "文件")
-	@StrictMimeTypeCheck
 	private MultipartFile file;
 
 	public String getId() {
