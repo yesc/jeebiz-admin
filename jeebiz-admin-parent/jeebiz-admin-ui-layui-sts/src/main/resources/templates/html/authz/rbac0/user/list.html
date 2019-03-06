@@ -51,12 +51,13 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="layui-card-body">
 				<div style="padding-bottom: 10px;">
-					<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="batchdel">删除</button>
-					<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">添加</button>
-					<button class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="allot">指定角色</button>
+					<button shiro:hasPermission="user:import" class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="impuser">批量导入</button>
+					<button shiro:hasPermission="user:batchdel" class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="batchdel">批量删除</button>
+					<button shiro:hasPermission="user:add" class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="add">添加</button>
+					<button shiro:hasPermission="user:initpwd" class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="initpwd">密码初始化</button>
+					<button shiro:hasPermission="user:allot" class="layui-btn layui-btn-sm layuiadmin-btn-admin" data-type="allot">指定角色</button>
 				</div>
 				<table id="LAY-user-list" lay-filter="LAY-user-list"></table>
 				<script type="text/html" id="genderTpl">
@@ -74,8 +75,9 @@
           			<img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         		</script>
 				<script type="text/html" id="table-opt-list">
-          			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="renew"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-          			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+					<a shiro:hasPermission="user:detail" class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-about"></i>详情</a>
+          			<a shiro:hasPermission="user:renew" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="renew"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+          			<a shiro:hasPermission="user:delete" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i class="layui-icon layui-icon-delete"></i>删除</a>
         		</script>
 			</div>
 		</div>

@@ -15,27 +15,29 @@ layui.define([ 'table', 'form' ], function(exports) {
 	    limit		: 30,
 	    method		: 'POST', //如果无需自定义HTTP类型，可不加该参数
 	    request		: {
-	    	pageName: 'pageNo', //页码的参数名称，默认：page
-	    	limitName: 'limit' //每页数据量的参数名，默认：limit
+	    	pageName	: 'pageNo', //页码的参数名称，默认：page
+	    	limitName	: 'limit' //每页数据量的参数名，默认：limit
 	    },
 	    response	: {
-	    	countName: 'total', //规定数据总数的字段名称，默认：count
-	    	dataName: 'rows', //规定数据列表的字段名称，默认：data
-	        statusName: 'code', //规定数据状态的字段名称，默认：code
-	        statusCode: 200, //规定成功的状态码，默认：0
-	        msgName: 'message' //规定状态信息的字段名称，默认：msg
+	    	countName	: 'total', //规定数据总数的字段名称，默认：count
+	    	dataName	: 'rows', //规定数据列表的字段名称，默认：data
+	        statusName	: 'code', //规定数据状态的字段名称，默认：code
+	        statusCode	: 200, //规定成功的状态码，默认：0
+	        msgName		: 'message' //规定状态信息的字段名称，默认：msg
 	    }, 
-		cols 		: [ [ 
-			{ type: 'checkbox', fixed : 'left' },  
-			{ field: 'username', title : '用户名', minWidth : 100 }, 
-			{ field: 'alias', title : '用户别名' }, 
-			{ field: 'avatar', title : '头像', width: 100, templet: '#imgTpl' }, 
-			{ field: 'phone', title: '手机'},
-			{ field: 'email', title: '邮箱'},
-			{ field: 'roleName', title: '已分配角色', minWidth : 150},
-			{ field: 'gender', width: 80, title: '性别', templet: '#genderTpl'},
-	        { field : 'status', title : '用户状态', unresize: true, minWidth : 80, align : 'center', templet: '#switchTpl'}, 
-			{ title : '操作', minWidth : 150, align : 'center', fixed : 'right', toolbar : '#table-opt-list'}
+		cols 		: [[
+			{ type	: 'checkbox', fixed : 'left' }, 
+			{ field	: 'avatar', width: 100, title : '头像', templet: '#imgTpl' }, 
+			{ field	: 'username', width: 100, title : '用户名' }, 
+			{ field	: 'alias', width: 100, title : '用户别名' }, 
+			{ field	: 'gender', width: 60, title: '性别', templet: '#genderTpl'},
+            { field	: 'age', width: 60, title: '年龄', align: 'center'},
+            { field	: 'idcard', width: 180, title: '身份证号', align: 'center'},
+			{ field	: 'phone', width: 100, title: '手机'},
+			{ field	: 'email', width: 100, title: '邮箱'},
+			{ field	: 'roleName', title: '角色', minWidth : 150},
+			{ field	: 'status', title : '用户状态', unresize: true, width : 90, align : 'center', templet: '#switchTpl'},  
+			{ title	: '操作', width : 200, align : 'center', fixed : 'right', toolbar : '#table-opt-list'}
 		]],
 	    skin: 'line'
 	});
@@ -104,88 +106,99 @@ layui.define([ 'table', 'form' ], function(exports) {
 	
 	//监听行工具事件
 	table.on('tool(LAY-user-list)', function(obj){
-	    var data = obj.data;
-	    var id = data.id;
-	    //console.log(obj)
-	    if(obj.event === 'del'){
-	    	/*layer.prompt({
-		        formType: 1,
-		        title	: '敏感操作，请验证口令'
-		    }, function(value, index){
-		        layer.close(index);
-		        
-		    });*/
-	    	layer.confirm('您正在删除系统重要数据，确定继续操作吗？', function(index){
-		      	admin.req({
-		  	        url			: setter.prefix + 'authz/user/delete',
-		  	        type 		: "post",
-		  	        data		: {"ids" : id},
-		  	        success		: function(res){
-		  	        	if(res.status == 'success'){
-		  	        		layer.msg(res["message"]||"", {
-		  	                   	icon: 2
-		  	            	});
-		  	        		table.reload('LAY-user-list'); //刷新表格
-		  	        	} else {
-		  	        		layer.msg(res["message"]||"", {
-		  	                   	icon: 2
-		  	            	});
-		  	        	}
-		  	        	layer.close(index);
-		  	        }
-		      	});
-	        });
-	    	 
-	    } else if(obj.event === 'renew'){
-	    	layer.open({ 
-    			type	: 2,
-    			title	: '编辑用户',
-    			content	: setter.prefix + 'authz/user/ui/renew/' + id,
-    			area	: ['700px', '600px'],
-    			btn		: ['确定', '取消'],
-    			yes		: function(index, layero){
-		            var iframeWindow = window['layui-layer-iframe'+ index],
-		            	submitID = 'LAY-user-submit',
-		            	submit = layero.find('iframe').contents().find('#'+ submitID);
-		            //监听提交
-		            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-		            	var field = data.field; //获取提交的字段
-		            	// 提交更新
-		          		admin.req({
-		        	        url			: setter.prefix + 'authz/user/renew',
-		        	        type 		: "post",
-		        	        contentType	: "application/json",
-		        	        dataType	: "json",
-		        	        data		: JSON.stringify(field),
-		        	        success		: function(res){
-		        	        	if(res.status == 'success'){
-		        	        		layer.msg(res["message"]||"", {
-		        	                   	icon: 1
-		        	            	});
-		        	        		table.reload('LAY-user-list'); //刷新表格
-		    		              	layer.close(index); //关闭弹层
-		        	        	} else {
-		        	        		layer.msg(res["message"]||"", {
-		        	                   	icon: 2
-		        	            	});
-		        	        	}
-		        	        }
-		        	    });
-		            });  
-		            
-		            submit.trigger('click');
-    			}
-	        }); 
-	    }
+		var data = obj.data;
+	    var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+        switch (layEvent) {
+	        case 'detail': {
+	            layer.open({
+	                type	: 2,
+	                title	: '人员详情',
+	                area	: ['90%', '90%'],
+	                content	: setter.prefix + 'authz/user/ui/detail/' + data.id,
+	                btnAlign: 'r',
+	                btn		: ['确定'],
+	                moveType: 1, //拖拽模式，0或者1
+	                yes		: function (index, layero) {
+	                    layer.close(index);
+	                    return false;
+	                }
+	            });
+	        }; break;
+			case 'renew': {
+				layer.open({ 
+	    			type	: 2,
+	    			title	: '编辑用户',
+	    			content	: setter.prefix + 'authz/user/ui/renew/' + data.id,
+	    			area	: ['90%', '90%'],
+	    			btn		: ['确定', '取消'],
+	    			moveType: 1, //拖拽模式，0或者1
+	    			yes		: function(index, layero){
+			            var iframeWindow = window['layui-layer-iframe'+ index],
+			            	submitID = 'LAY-user-submit',
+			            	submit = layero.find('iframe').contents().find('#'+ submitID);
+			            //监听提交
+			            iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+			            	var field = data.field; //获取提交的字段
+			            	// 提交更新
+			          		admin.req({
+			        	        url			: setter.prefix + 'authz/user/renew',
+			        	        type 		: "post",
+			        	        contentType	: "application/json",
+			        	        dataType	: "json",
+			        	        data		: JSON.stringify(field),
+			        	        success		: function(res){
+			        	        	if(res.status == 'success'){
+			        	        		layer.msg(res["message"]||"", {
+			        	                   	icon: 1
+			        	            	});
+			        	        		table.reload('LAY-user-list'); //刷新表格
+			    		              	layer.close(index); //关闭弹层
+			        	        	} else {
+			        	        		layer.msg(res["message"]||"", {
+			        	                   	icon: 2
+			        	            	});
+			        	        	}
+			        	        }
+			        	    });
+			            });  
+			            
+			            submit.trigger('click');
+	    			}
+		        }); 
+		    };break;
+			case 'delete': {  //表格行删除事件
+				layer.confirm('用户数据是系统重要数据（删除后将无法登录系统），确定继续操作吗？', function(index){
+			      	admin.req({
+			  	        url			: setter.prefix + 'authz/user/delete',
+			  	        type 		: "post",
+			  	        data		: {"ids" : data.id},
+			  	        success		: function(res){
+			  	        	if(res.status == 'success'){
+			  	        		layer.msg(res["message"]||"", {
+			  	                   	icon: 2
+			  	            	});
+			  	        		table.reload('LAY-user-list'); //刷新表格
+			  	        	} else {
+			  	        		layer.msg(res["message"]||"", {
+			  	                   	icon: 2
+			  	            	});
+			  	        	}
+			  	        	layer.close(index);
+			  	        }
+			      	});
+		        });
+			};break;
+        }
 	});
 	
 	//事件
     var active = {
+   		// 批量删除
 		batchdel: function(){
     		var checkStatus = table.checkStatus('LAY-user-list'),
     			checkData = checkStatus.data; //得到选中的数据
 	        if(checkData.length === 0){
-	        	return layer.msg('请选择数据');
+	        	return layer.msg('至少选择一条记录！');
 	        }
 	        layer.confirm('您正在删除系统重要数据，确定继续操作吗？', function(){
 	      	  	var ids = [];
@@ -210,7 +223,53 @@ layui.define([ 'table', 'form' ], function(exports) {
 		  	        }
 		      	});
 	        });
-	        
+    	},
+    	// 批量导入
+    	impuser		: function(){
+    		layer.open({
+                type	: 2,
+                title	: '人员报名',
+                content	: setter.prefix + 'exam/batch/ui/import?id=' + id + "&name=" + data.name,
+                area	: ['600px', '400px'],
+                btn		: ['确定', '取消'],
+                yes		: function (index, layero) {
+                    var submitID = 'LAY-batch-forum-submit',
+                        submit = layero.find('iframe').contents().find('#' + submitID);
+                    submit.trigger('click');
+                }
+            });
+    	},
+    	// 重置密码
+    	initpwd		: function(){
+    		var checkStatus = table.checkStatus('LAY-user-list'),
+				checkData = checkStatus.data; //得到选中的数据
+	        if(checkData.length === 0){
+	        	return layer.msg('至少选择一条记录！');
+	        }
+    		layer.confirm('用户密码重置后需要重新登录，确定继续操作吗？', function(index){
+    			var ids = [];
+	      	  	for( i in checkData){
+	      	  		ids.push(checkData[i].id);
+	      	  	}
+		      	admin.req({
+		  	        url			: setter.prefix + 'authz/user/initpwd',
+		  	        type 		: "post",
+		  	        data		: {"ids" : ids.join(",")},
+		  	        success		: function(res){
+		  	        	if(res.status == 'success'){
+		  	        		layer.msg(res["message"]||"", {
+		  	                   	icon: 2
+		  	            	});
+		  	        		table.reload('LAY-user-list'); //刷新表格
+		  	        	} else {
+		  	        		layer.msg(res["message"]||"", {
+		  	                   	icon: 2
+		  	            	});
+		  	        	}
+		  	        	layer.close(index);
+		  	        }
+		      	});
+	        });
     	},
     	add: function(){
     		layer.open({ 
