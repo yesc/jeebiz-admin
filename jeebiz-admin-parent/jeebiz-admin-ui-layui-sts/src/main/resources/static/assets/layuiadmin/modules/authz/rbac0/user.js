@@ -229,7 +229,7 @@ layui.define([ 'table', 'form' ], function(exports) {
     		layer.open({
                 type	: 2,
                 title	: '人员报名',
-                content	: setter.prefix + 'exam/batch/ui/import?id=' + id + "&name=" + data.name,
+                content	: setter.prefix + 'authz/user/ui/import?id=' + id + "&name=" + data.name,
                 area	: ['600px', '400px'],
                 btn		: ['确定', '取消'],
                 yes		: function (index, layero) {
@@ -239,7 +239,7 @@ layui.define([ 'table', 'form' ], function(exports) {
                 }
             });
     	},
-    	// 重置密码
+    	// 初始化密码
     	initpwd		: function(){
     		var checkStatus = table.checkStatus('LAY-user-list'),
 				checkData = checkStatus.data; //得到选中的数据
@@ -254,11 +254,11 @@ layui.define([ 'table', 'form' ], function(exports) {
 		      	admin.req({
 		  	        url			: setter.prefix + 'authz/user/initpwd',
 		  	        type 		: "post",
-		  	        data		: {"ids" : ids.join(",")},
+		  	        data		: {"ids" : ids.join(","), "password":"123456"},
 		  	        success		: function(res){
 		  	        	if(res.status == 'success'){
 		  	        		layer.msg(res["message"]||"", {
-		  	                   	icon: 2
+		  	                   	icon: 1
 		  	            	});
 		  	        		table.reload('LAY-user-list'); //刷新表格
 		  	        	} else {

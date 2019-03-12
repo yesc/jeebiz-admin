@@ -32,11 +32,11 @@
 		<spring-cloud-zuul-ratelimit.version>2.2.1.RELEASE</spring-cloud-zuul-ratelimit.version>
 		<swagger-butler.version>1.2.0</swagger-butler.version>
 		<weixin-java.version>3.3.4.B</weixin-java.version>
+		<webjar-layui.version>2.4.5</webjar-layui.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			
 			
 			<!-- https://mvnrepository.com/artifact/com.nepxion/discovery -->
 			<dependency>
@@ -396,6 +396,13 @@
 			    <groupId>org.dromara</groupId>
 			    <artifactId>hmily-spring-boot-starter-springcloud</artifactId>
 			    <version>${hmily.version}</version>
+			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/org.webjars/layui -->
+			<dependency>
+			    <groupId>org.webjars</groupId>
+			    <artifactId>layui</artifactId>
+			    <version>${webjar-layui.version}</version>
 			</dependency>
 			
 		</dependencies>
