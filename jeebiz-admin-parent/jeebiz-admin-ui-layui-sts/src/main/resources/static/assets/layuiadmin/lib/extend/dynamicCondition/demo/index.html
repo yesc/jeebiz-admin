@@ -42,6 +42,15 @@
 		</select>
 	</script>
 			
+		<div id="complex-query-json" style="margin-left:50px;margin-top:150px;">
+			<a id="complexBtn-json" class="layui-btn "  >复杂查询</a><br/>
+			<br/>
+			<div id="msg2-json">查询条件：</div>
+			<br/>
+			<div>请求参数json：</div>	
+			<div id="result2-json" style="word-break:break-all;height:60px;width:500px;padding-left:50px;"></div>		
+			
+		</div>
 <script type="text/javascript">
 layui.config({
   base: '../../../layui_exts/' //设定扩展的Layui模块的所在目录，一般用于外部模块扩展
@@ -89,6 +98,25 @@ layui.config({
 	/**复杂查询*/
 	$("#complexBtn").on("click",function(){
 		dynamicCondition.getInstance("complexInstance").open();
+	})
+	
+	//请求参数为json字符串模式
+	var dc = dynamicCondition.create({elem:"#dcDemo" //通过容器选择器传入，也可以$("#dcDemo"),或者document.getElementById("dcDemo")
+	  	//,tableId:"listTable" //静态页面不好演示table数据表格更新
+	  	,type:"complex"  //type:"simple"/"complex"
+	  	,requestDataType:"json"  //"array"/"json" 默认array
+		,conditionTextId:"#msg2-json"
+		//当有多个动态条件查询实例时，定义instanceName属性可以通过dynamicCondition.getInstance(instanceName)获取对应的实例
+		,instanceName:  "complexInstance-json"  
+		,queryCallBack:function(requestData){
+			$("#result2-json").html(JSON.stringify(requestData));
+		}
+	});
+	dc.setCondition([["name","like","张三"],["sex",null,"1"],["birthday","between","2018-01-01","2018-12-31"]]);
+	$("#result2-json").html(JSON.stringify(dc.buildRequestData()) );
+	/**复杂查询*/
+	$("#complexBtn-json").on("click",function(){
+		dynamicCondition.getInstance("complexInstance-json").open();
 	})
 	
 	

@@ -2,9 +2,10 @@
 /**
  @Name： dynamicCondition 动态添加查询条件
  @Author：肖朋林
- @version: 1.0.5
- 	码云地址：https://pelin0963.gitee.io/layuiextend
+ @version:  2.0.2 2019-01-04 新增查询条件无弹窗模式。
+ 	码云地址：https://gitee.com/pelin0963/layuiExtend/releases
  	在线demo：https://pelin0963.gitee.io/layuiextend/layui_exts/dynamicCondition/demo/index.html
+ 	qq:305916516
  */
 layui.define(['jquery','table', 'form','laydate'], function (exports) {
     "use strict";
@@ -14,6 +15,7 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
         laydate = layui.laydate,
         table = layui.table,
         form = layui.form;
+    var tempVal = {value:"",text:""};
     //创建实例
     var createInstance = function(_config){
     	var instance = {
@@ -31,6 +33,22 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     	if(instance.config.type != "complex"){
     		instance.width = instance.width - instance.conditionOptionWidth;
     	}
+    	/**设置显示模式
+    	 * displayModel,取值：'popup'/'unpopup'
+    	 * */
+    	instance.setDisplayModel = function(displayModel){
+    		instance.config.displayModel = displayModel;
+    		if(instance.config.displayModel == "unpopup"){
+    			instance.conditionValueWidth = 100;
+    			instance.buildConditionHtmlForUnpopup();
+    			if(instance.openPageIndex){
+    				layer.close(instance.openPageIndex); 
+    			}
+    		}else{
+    			instance.conditionValueWidth = 150;
+    			instance.buildConditionHtml();
+    		}
+    	}
     	/**根据字段名称获取对应的配置项*/
     	instance.getObjByField=function(conditionFieldVal){
     		for(var i=0;i<instance.data.length;i++){
@@ -38,6 +56,39 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     				return instance.data[i];
     			}
     		}
+    		return null;
+    	}
+    	/**根据字段名称获取行div，返回一个dom类型的数组*/
+    	instance.getRowDivs=function(conditionFieldVal){
+    		var rs = [];
+    		var allRowDivJqs = $("#" + instance.conditionContainerId).find(".conditionRow");
+    		allRowDivJqs.each(function(){
+    			var selVal = $(this).find(".conditionField option:selected").val();
+    			if(conditionFieldVal == selVal){
+    				rs.push($(this)[0]);
+    			}
+    		})
+    		return rs;
+    	}
+    	/**根据字段名称获对应的值，如果该字段条件有多个，则只取第一行对应的值。*/
+    	instance.getVal=function(conditionFieldVal){
+    		var rs = instance.getRowDivs(conditionFieldVal);
+    		if(rs.length == 0){
+    			//没有对应的的值
+    			return null;
+    		}
+    		var rowDiv = rs[0];
+    		var eleJq = rowDiv.eleJq;
+    		var eleLeftJq = rowDiv.eleLeftJq;
+    		var eleRightJq = rowDiv.eleRightJq;
+    		if(eleJq){
+    			return rowDiv.curEditor.getRequestValue(eleJq);
+    		}
+    		//操作符是between时返回2个值
+    		else if(eleLeftJq){
+    			return {left:rowDiv.curEditor.getRequestValue(eleLeftJq),right:rowDiv.curEditor.getRequestValue(eleRightJq)};
+    		}
+    		//当操作符是empty时返回null
     		return null;
     	}
     	/**设置初始条件
@@ -50,32 +101,50 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     			var curCondition = conditionArr[i];
     			var conditionObj = {};
     			conditionObj.conditionFieldVal = curCondition[0];
-    			if(!curCondition[1]){
+    			if(!curCondition[1]  || instance.config.type=="simple"){
     				curCondition[1] = "equal";
     			}
     			conditionObj.conditionOptionVal = curCondition[1];
-    			conditionObj.conditionValueVal = curCondition[2];
-    			conditionObj.conditionValueLeftVal = curCondition[2];
-    			conditionObj.conditionValueRightVal = curCondition[3];
-    			var item = instance.getObjByField(conditionObj.conditionFieldVal);
-    			if(item.edit == "select"){
-    				var selectHtml;
-	  				  if($(item.templet).is("select")){
-	  					  selectHtml = $(item.templet).prop("outerHTML");
-	  				  }else{
-	  					  selectHtml = $(item.templet).html();
-	  				  }
-    				conditionObj.conditionValueHtml = selectHtml;
+
+    			curCondition[2] = curCondition[2] || "";
+    			curCondition[3] = curCondition[3] || "";
+    			conditionObj.conditionValueVal = tempVal
+    			conditionObj.conditionValueLeftVal = tempVal
+    			conditionObj.conditionValueRightVal = tempVal
+    			if(typeof curCondition[2] == "object"){
+    				if(curCondition[1] == "between"){
+    					conditionObj.conditionValueLeftVal = curCondition[2];
+    				}else{
+    					conditionObj.conditionValueVal = curCondition[2];
+    				}
+    			}else{
+    				if(curCondition[1] == "between"){
+    					conditionObj.conditionValueLeftVal = {value:curCondition[2],text:curCondition[2]};
+    				}else{
+    					conditionObj.conditionValueVal = {value:curCondition[2],text:curCondition[2]};
+    				}
+    			}
+    			if(typeof curCondition[3] == "object"){
+    				conditionObj.conditionValueRightVal = curCondition[3];
+    			}else{
+    				conditionObj.conditionValueRightVal = {value:curCondition[3],text:curCondition[3]};
     			}
     			cacheCondition.push(conditionObj);
     		}
     		instance.cacheCondition = cacheCondition;
-    		instance.buildConditionHtml();
+    		instance.setDisplayModel(instance.config.displayModel);
     	}
     	/**新增条件*/
     	instance.addRow = function(){
     		  var conditionContainerJq = $("#"+instance.conditionContainerId);
 			  var conditionRowJq = $('<div class="conditionRow"></div>');
+			  if(instance.config.type == "complex"){
+				  var width = instance.conditionFieldWidth + instance.conditionOptionWidth + 2 * instance.conditionValueWidth + 20 + 60;
+				  conditionRowJq.css("width", width);
+			  }else{
+				  var width = instance.conditionFieldWidth  + 2 * instance.conditionValueWidth + 20 + 60;
+				  conditionRowJq.css("width", width);
+			  }
 			  //字段
 			  var conditionField=$('<div class="layui-inline conditionField"></div>');
 			  conditionField.width(instance.conditionFieldWidth);
@@ -97,20 +166,21 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 			  conditionRowJq.append(conditionValue);
 			  conditionRowJq.append(conditionDel);
 			  conditionContainerJq.find(".conditionDiv").append(conditionRowJq);
-			  instance.updateConditionValue(conditionRowJq);
+			  
 			  //删除事件
 			  delJq.on("click",function(){
 				  conditionRowJq.remove();
 			  });
+			  
 			  if(instance.config.type == "simple"){
 				  conditionOption.hide();
 			  }
-			  form.render('select', 'conditionDiv');
 			  return conditionRowJq;
 //			  form.render();
 		  }
     	  /**更新conditionValue*/
-    	  instance.updateConditionValue = function(conditionRowJq){
+    	  instance.updateConditionValue = function(conditionRowJq, conditionObj){
+    		  conditionObj = conditionObj || {conditionValueVal:{},conditionValueLeftVal:{},conditionValueRightVal:{}}
 			  var conditionValueJq = conditionRowJq.find(".conditionValue");
 			  var conditionFieldVal = conditionRowJq.find("select[name='conditionField']").val();
 			  var conditionOptionVal = conditionRowJq.find("select[name='conditionOption']").val();
@@ -119,127 +189,73 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 			  if(!obj){
 				  return ;
 			  }
-			  //conditionValueJq div中缓存对应的edit和conditionOptionVal，以后优化只有单edit和conditionOptionVal改变时才考虑更新conditionValueJq
+			  //指定操作选项
+			  if(obj.allowDel === "true"){
+				  //允许删除的条件，下拉字段选项排除掉不能删除条件字段。
+				  removeOption(conditionRowJq.find("select[name='conditionField']"), instance.fieldList);
+			  }
+			  //指定操作选项
+			  if(obj.ops){
+				  removeOption(conditionRowJq.find("select[name='conditionOption']"), obj.ops);
+			  }
+			  //conditionValueJq div中缓存对应的edit和conditionOptionVal，以后优化只有当edit和conditionOptionVal改变时才考虑更新conditionValueJq
 			  var old_field = conditionValueJq.attr("field");
 			  var old_edit = conditionValueJq.attr("edit");
 			  var old_conditionOptionVal = conditionValueJq.attr("conditionOptionVal");
 			  conditionValueJq.attr("field", obj.field);
 			  conditionValueJq.attr("edit", obj.edit);
 			  conditionValueJq.attr("conditionOptionVal", conditionOptionVal);
-			  var layVerify = obj.layVerify;
+			  var curEditor = dynamicCondition.editor[obj.edit];
+			  conditionRowJq[0].curEditor = curEditor;
 			  if(conditionOptionVal == "empty"){
 				  conditionValueJq.html("");
 				  return ;
 			  }
-			  if(obj.edit == "text" ){
+			  if(curEditor){
 				  if(conditionOptionVal == "between"){
-					  var conditionValueLeftJq = $('<input type="text" name="conditionValueLeft" class="layui-input" style="display:inline" placeholder="" />');
-					  conditionValueLeftJq.width(instance.conditionValueWidth);
-					  var conditionValueRightJq = $('<input type="text" name="conditionValueRight" class="layui-input" style="display:inline" placeholder="" />');
-					  conditionValueRightJq.width(instance.conditionValueWidth);
-					  if(layVerify){
-						  conditionValueLeftJq.attr("lay-verify",layVerify);
-						  conditionValueRightJq.attr("lay-verify",layVerify);
-					  }
-					  //更新conditionValueJq
-					  conditionValueJq.html("");
-					  conditionValueJq.append(conditionValueLeftJq);
-					  conditionValueJq.append("<span style='margin:auto 3px;'>至</span>");
-					  conditionValueJq.append(conditionValueRightJq);
-				  }else{
-					  var inputJq = $('<input type="text" name="conditionValue" class="layui-input" placeholder="" />');
-					  if(layVerify){
-						  inputJq.attr("lay-verify",layVerify);
-					  }
-					  conditionValueJq.html(inputJq);
-				  }
-			  }
-			  else if(obj.edit == "select"){
-				  var selectHtml;
-				  if($(obj.templet).is("select")){
-					  selectHtml = $(obj.templet).prop("outerHTML");
-				  }else{
-					  selectHtml = $(obj.templet).html();
-				  }
-				  if(conditionOptionVal == "between"){
-					  //范围左
-					  var conditionValueLeftJq = $(selectHtml);
-					  conditionValueLeftJq.attr("name","conditionValueLeft");
+					  var eleLeftJq = $(curEditor.createElement(obj));
+					  var eleRightJq = $(curEditor.createElement(obj));
 					  var divLeft = $("<div style='display:inline-block'></div>");
-					  divLeft.width(instance.conditionValueWidth);
-					  divLeft.append(conditionValueLeftJq);
-					  //范围右
-					  var conditionValueRightJq = $(selectHtml);
-					  conditionValueRightJq.attr("name","conditionValueRight");
 					  var divRight = $("<div style='display:inline-block'></div>");
+					  
+					  divLeft.append(eleLeftJq);
+					  divLeft.attr("name","conditionValueLeft");
+					  divLeft.width(instance.conditionValueWidth);
+					  
+					  divRight.append(eleRightJq);
+					  divRight.attr("name","conditionValueRight");
 					  divRight.width(instance.conditionValueWidth);
-					  divRight.append(conditionValueRightJq);
-					  //添加校验
-					  if(layVerify){
-						  conditionValueLeftJq.attr("lay-verify",layVerify);
-						  conditionValueRightJq.attr("lay-verify",layVerify);
-					  }
+					  
 					  //更新conditionValueJq
 					  conditionValueJq.html("");
 					  conditionValueJq.append(divLeft);
 					  conditionValueJq.append("<span style='margin:auto 3px;'>至</span>");
 					  conditionValueJq.append(divRight);
-					  
+					  //必须将jq对象转换为dom对象才能绑定对象属性。
+					  conditionRowJq[0].eleJq = null;
+					  conditionRowJq[0].eleLeftJq = eleLeftJq;
+					  conditionRowJq[0].eleRightJq = eleRightJq;
+					  curEditor.fillElement(eleLeftJq,conditionObj.conditionValueLeftVal);
+					  curEditor.fillElement(eleRightJq,conditionObj.conditionValueRightVal);
+					  curEditor.render(eleLeftJq);
+					  curEditor.render(eleRightJq);
 				  }else{
-					  var selectJq = null;
-					  selectJq = $(selectHtml);
-					  selectJq.attr("name","conditionValue");
+					  var eleJq = $(curEditor.createElement(obj));
+					  var divJq = $("<div></div>");
+					  divJq.append(eleJq);
+					  divJq.attr("name","conditionValue");
 					  conditionValueJq.html("");
-					  conditionValueJq.append(selectJq);
+					  conditionValueJq.append(divJq);
+//					  divJq.attr("xpl-dc-val",conditionObj.conditionValueVal);
+					  //必须将jq对象转换为dom对象才能绑定对象属性。
+					  conditionRowJq[0].eleJq = eleJq;
+					  conditionRowJq[0].eleLeftJq = null;
+					  conditionRowJq[0].eleRightJq = null;
+					  curEditor.fillElement(eleJq,conditionObj.conditionValueVal);
+					  curEditor.render(eleJq);
 				  }
-				  form.render('select', 'conditionDiv');
-			  }
-			  else if(obj.edit == "date"){
-				  var dateType = obj.dateType || "date";
-				  if(conditionOptionVal == "between"){
-					  //范围左
-					  var conditionValueLeftJq = $('<input type="text" name="conditionValueLeft" class="layui-input" style="display:inline" placeholder="" />');
-					  conditionValueLeftJq.attr("date-type",dateType);
-					  conditionValueLeftJq.width(instance.conditionValueWidth);
-					  
-					  //范围右
-					  var conditionValueRightJq = $('<input type="text" name="conditionValueRight" class="layui-input" style="display:inline" placeholder="" />');
-					  conditionValueRightJq.attr("date-type",dateType);
-					  conditionValueRightJq.width(instance.conditionValueWidth);
-					  //添加校验
-					  if(layVerify){
-						  conditionValueLeftJq.attr("lay-verify",layVerify);
-						  conditionValueRightJq.attr("lay-verify",layVerify);
-					  }
-					  //更新conditionValueJq
-					  conditionValueJq.html("");
-					  conditionValueJq.append(conditionValueLeftJq);
-					  conditionValueJq.append("<span style='margin:auto 3px;'>至</span>");
-					  conditionValueJq.append(conditionValueRightJq);
-					  //渲染日期控件
-					  laydate.render({
-						    elem: conditionValueLeftJq[0]
-						    ,type: dateType
-						  });
-					  laydate.render({
-						    elem: conditionValueRightJq[0]
-						    ,type: dateType
-						  });
-				  }
-				  else{
-					  var dateJq = $('<input type="text" name="conditionValue" class="layui-input" placeholder="" />');
-					  dateJq.attr("date-type",dateType);
-					  if(layVerify){
-						  dateJq.attr("lay-verify",layVerify);
-					  }
-					  conditionValueJq.html("");
-					  conditionValueJq.append(dateJq);
-					  laydate.render({
-						    elem: dateJq[0]
-						    ,type: dateType
-					  });
-				  }
-				  
+				  form.render(null, 'conditionDiv'+instance.conditionContainerId);
+				  return ;
 			  }
 		  }
     	/**校验表单*/
@@ -313,20 +329,27 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     		var cacheCondition = [];
     		for(var i=0;i<rowLength;i++){
     			var conditionRowJq = conditionRowJqs.eq(i);
+    			var valJq = conditionRowJq.find("[name='conditionValue']");
+    			var valLeftJq = conditionRowJq.find("[name='conditionValueLeft']");
+    			var valRightJq = conditionRowJq.find("[name='conditionValueRight']");
+    			
     			var conditionObj = {};
     			conditionObj.conditionFieldVal = conditionRowJq.find("select[name='conditionField']").val();
     			conditionObj.conditionOptionVal = conditionRowJq.find("select[name='conditionOption']").val();
-    			conditionObj.conditionValueVal = conditionRowJq.find("[name='conditionValue']").val();
-    			conditionObj.conditionValueLeftVal = conditionRowJq.find("[name='conditionValueLeft']").val();
-    			conditionObj.conditionValueRightVal = conditionRowJq.find("[name='conditionValueRight']").val();
     			var item = instance.getObjByField(conditionObj.conditionFieldVal);
-    			if(item.edit == "select"){
-    				conditionObj.conditionValueHtml = conditionRowJq.find(".conditionValue").html();
-    			}
+    			var curEditor = dynamicCondition.editor[item.edit];
+	  			if(curEditor){
+	  				var conditionRowDOM = conditionRowJq[0];
+	  				var tempjq = conditionRowDOM.eleJq;
+	  				conditionObj.conditionValueVal = tempjq ? {value:curEditor.getRequestValue(tempjq),text:curEditor.getRequestText(tempjq)} : tempVal;
+	  				tempjq = conditionRowDOM.eleLeftJq;
+	    			conditionObj.conditionValueLeftVal = tempjq ? {value:curEditor.getRequestValue(tempjq),text:curEditor.getRequestText(tempjq)} : tempVal;
+	    			tempjq = conditionRowDOM.eleRightJq;
+	    			conditionObj.conditionValueRightVal = tempjq ? {value:curEditor.getRequestValue(tempjq),text:curEditor.getRequestText(tempjq)} : tempVal;
+	  			}
     			cacheCondition.push(conditionObj);
     		}
     		instance.cacheCondition = cacheCondition;
-    		instance.buildConditionHtml();
     		return cacheCondition;
     	}
     	/**根据动态查询条件构造对应的请求参数.*/
@@ -338,20 +361,24 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     		if(instance.config.type == "simple"){
     			for(var i=0;i<rowLength;i++){
     				var conditionObj = cacheCondition[i];
-    				requestData[conditionObj.conditionFieldVal] = conditionObj.conditionValueVal;
+    				requestData[conditionObj.conditionFieldVal] = conditionObj.conditionValueVal.value;
     			}
     			instance.requestData = requestData;
     			return requestData;
     		}
     		//复杂模式
+    		if(instance.config.requestDataType == "json"){//结果为json字符串模式
+    			instance.requestData = {jsonStr: JSON.stringify(cacheCondition)};
+    			return instance.requestData;
+    		}
     		requestData.rowLength = rowLength;
     		for(var i=0;i<rowLength;i++){
     			var conditionObj = cacheCondition[i];
     			requestData["QueryCondition["+i+"].conditionField"] = conditionObj.conditionFieldVal;
     			requestData["QueryCondition["+i+"].conditionOption"] = conditionObj.conditionOptionVal;
-    			requestData["QueryCondition["+i+"].conditionValue"] = conditionObj.conditionValueVal;
-    			requestData["QueryCondition["+i+"].conditionValueLeft"] = conditionObj.conditionValueLeftVal;
-    			requestData["QueryCondition["+i+"].conditionValueRight"] = conditionObj.conditionValueRightVal;
+    			requestData["QueryCondition["+i+"].conditionValue"] = conditionObj.conditionValueVal.value;
+    			requestData["QueryCondition["+i+"].conditionValueLeft"] = conditionObj.conditionValueLeftVal.value;
+    			requestData["QueryCondition["+i+"].conditionValueRight"] = conditionObj.conditionValueRightVal.value;
     		}
     		//设置请求参数
     		instance.requestData = requestData;
@@ -359,6 +386,7 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     	}
     	/**根据动态查询条件构造对应的显示文本*/
     	instance.buildConditionHtml = function(){
+    		
     		var cacheCondition = instance.cacheCondition;
     		var conditionHtml = "";
     		var fieldSelectJq = $(instance.conditionFieldHtml);
@@ -368,22 +396,10 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     			var conditionObj = cacheCondition[i];
     			var fieldText = fieldSelectJq.find("option[value='"+conditionObj.conditionFieldVal+"']").text();
     			var OptionText = optionSelectJq.find("option[value='"+conditionObj.conditionOptionVal+"']").text();
-    			var ValueText = conditionObj.conditionValueVal;
-    			var ValueLeftText = conditionObj.conditionValueLeftVal;
-    			var ValueRightText = conditionObj.conditionValueRightVal;
-    			var item = instance.getObjByField(conditionObj.conditionFieldVal);
-    			if(item.edit == "select"){
-    				var selectHtml;
-	  				  if($(item.templet).is("select")){
-	  					  selectHtml = $(item.templet).prop("outerHTML");
-	  				  }else{
-	  					  selectHtml = $(item.templet).html();
-	  				  }
-	  				var selJq = $(selectHtml);
-	  				ValueText = selJq.find("option[value='"+ValueText+"']").text();
-	  				ValueLeftText = selJq.find("option[value='"+ValueLeftText+"']").text();
-	    			ValueRightText = selJq.find("option[value='"+ValueRightText+"']").text();
-    			}
+    			var ValueText = conditionObj.conditionValueVal.text;
+    			var ValueLeftText = conditionObj.conditionValueLeftVal.text;
+    			var ValueRightText = conditionObj.conditionValueRightVal.text;
+    			
     			var rsValueText="";
     			if(conditionObj.conditionOptionVal == "between"){
     				rsValueText = ValueLeftText + blankStr+"至"+ blankStr + ValueRightText;
@@ -402,7 +418,10 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     				spanJq.html(fieldText + blankStr + OptionText + blankStr + rsValueText);
 //    				conditionHtml += fieldText + blankStr + OptionText + blankStr + rsValueText;
         		}
-    			spanJq.append('<i class="layui-icon layui-icon-close layui-xpl-dc-delete"></i>');
+    			var iJq = $('<i class="layui-icon layui-icon-close layui-xpl-dc-delete"></i>');
+    			var item = instance.getObjByField(conditionObj.conditionFieldVal);
+    			iJq.attr("allowDel", item.allowDel);
+    			spanJq.append(iJq);
     			conditionHtml += spanJq.prop("outerHTML");
     		}
     		var styleHtml = "<style type='text/css'>";
@@ -416,17 +435,47 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 				  $(".layui-xpl-dc-delete").on("click",function(){
 					  instance.delete(this);
 				  })
+				  $(".layui-xpl-dc-delete[allowDel='false']").hide();
 			  }
+    	}
+    	/**针对无弹窗的显示模式根据动态查询条件构造对应的显示界面*/
+    	instance.buildConditionHtmlForUnpopup = function(){
+    		if(instance.config.conditionTextId){
+    			var msgJq = $(instance.config.conditionTextId);
+    			msgJq.html("");
+    			instance.render(msgJq);
+    			var styleHtml = "<style type='text/css'>";
+        		styleHtml += "\n.layui-xpl-dc-msg {min-height:38px;}";
+        		styleHtml += "\n.clear {clear:both;}";
+        		styleHtml += "\n</style>";
+        		msgJq.append($(styleHtml));
+        		$(".conditionRow").css("float", "left");
+        		msgJq.addClass("layui-xpl-dc-msg");
+        		msgJq.find(".layui-xpl-dc-top-btns").hide();
+        		msgJq.find(".conditionDel").hide();
+        		msgJq.append($("<div style='float:left;'><a class='layui-btn xpl-unpopup-query'))>查询</a></div>"));
+        		msgJq.append($("<div class='clear'></div>"));
+        		$(".xpl-unpopup-query").on("click",function(){
+    			  if(instance.verifyForm()){
+//    				  layer.msg('校验通过');
+    				  instance.buildCacheCondition();
+    				  instance.query();
+    			  }else{
+//    				  layer.msg('校验失败');
+    			  }
+    		  });
+    		}
     	}
     	/**删除条件*/
     	instance.delete = function(ele){
     		var index = $(ele).parent().attr("index");
     		instance.cacheCondition.splice(index, 1);
+    		instance.buildConditionHtml();
     		instance.query();
     	}
     	/**查询*/
     	instance.query = function(){
-    		instance.buildConditionHtml();
+//    		instance.buildConditionHtml();
     		instance.buildRequestData();
 			//ajax请求，重载数据
 			 if(instance.config.queryCallBack){
@@ -435,6 +484,7 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 			  if(instance.config.tableId){
 				  //查看是否有排序
 				  if(instance.config.sortObj){
+					  var sortObj = instance.config.sortObj;
 					  instance.requestData["sortField"] = sortObj.field; //排序字段
 					  instance.requestData["sortOrder"] = sortObj.type; //排序方式
 				  }
@@ -449,7 +499,15 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     	}
     	/**打开窗口，动态添加查询条件*/
     	instance.open = function(){
-    		var conditionContainerHtml = '<div id="'+instance.conditionContainerId+'" class="conditionContainer" lay-filter="conditionContainer"><div ><a href="javascript:void(0);" style="margin-left:10px;" class="addRowBtn"><i class="layui-icon layui-icon-add-circle-fine" style="font-size: 30px; color: &#xe608;"></i> </a> <a href="javascript:void(0);" style="margin-left:10px;" class="queryBtn" ><i class="layui-icon layui-icon-search" style="font-size: 30px; color: &#xe615;"></i> </a> </div><div class="conditionDiv layui-form" lay-filter="conditionDiv"></div></div>';
+    		if(instance.config.displayModel == 'unpopup'){
+    			//如果是非弹窗模式，则直接查询，不弹出窗口。
+    			$(".xpl-unpopup-query").click();
+    			return ;
+    		}
+    		if($("#"+instance.conditionContainerId).length > 0){
+    			//已经打开了，不能重复打开。
+    			return ;
+    		}
     		
     		//页面层-自定义
     		instance.openPageIndex = layer.open({ 
@@ -460,23 +518,58 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     		  //closeBtn: 0,
     		  shade: 0, //不显示遮罩
     		  area: [instance.width + 'px', instance.height +'px'], //宽高
-    		  content: conditionContainerHtml
+    		  maxmin:true,
+//    		  content: conditionContainerHtml
+    		  content: "<div id='query"+instance.conditionContainerId+"'></div>"
     		});
-    		instance.render();
+    		instance.render($("#query"+instance.conditionContainerId));
+    	}
+    	/**渲染弹出界面*/
+    	instance.render = function(divJq){
+    		divJq = divJq || $("#query"+instance.conditionContainerId);
+    		var conditionContainerHtml = '<div id="'+instance.conditionContainerId+'" class="conditionContainer" lay-filter="conditionContainer"><div class="layui-xpl-dc-top-btns"><a href="javascript:void(0);" style="margin-left:10px;" class="addRowBtn"><i class="layui-icon layui-icon-add-circle-fine" style="font-size: 30px; color: &#xe608;"></i> </a> <a href="javascript:void(0);" style="margin-left:10px;" class="queryBtn" ><i class="layui-icon layui-icon-search" style="font-size: 30px; color: &#xe615;"></i> </a> </div><div class="conditionDiv layui-form" lay-filter="conditionDiv'+instance.conditionContainerId+'"></div></div>';
+    		divJq.append($(conditionContainerHtml));
+    		var cacheCondition = instance.cacheCondition;
+    		for(var i=0;i<cacheCondition.length;i++){
+    			var conditionObj = cacheCondition[i]; 
+    			var conditionRowJq = instance.addRow();
+    			conditionRowJq.find("select[name='conditionField']").val(conditionObj.conditionFieldVal);
+    			conditionRowJq.find("select[name='conditionOption']").val(conditionObj.conditionOptionVal);
+    			instance.updateConditionValue(conditionRowJq, conditionObj);
+    			
+    			var conditionFieldVal = conditionRowJq.find("select[name='conditionField']").val();
+	  			var item = instance.getObjByField(conditionObj.conditionFieldVal);
+	  			if(item.allowDel === "false"){
+	  				//移除删除按钮
+	  				conditionRowJq.find(".delRowBtn").hide();
+	  				//移除其他下拉选项
+//		  			conditionRowJq.find("select[name='conditionField']").attr("disabled","disabled");
+		  			removeOption(conditionRowJq.find("select[name='conditionField']"),conditionObj.conditionFieldVal);
+	  			}
+    		}
+    		instance.afterOpen();
     		var conditionContainerJq = $("#"+instance.conditionContainerId);
     		conditionContainerJq.css("margin","10px");
     		  //监听事件
     		  form.on('select(conditionField)', function(data){
-    			  var conditionRowJq = $(data.elem).parents(".conditionRow");
-    			  instance.updateConditionValue(conditionRowJq);
+    			  if($(data.elem).find("option").length > 1){
+    				  var conditionRowJq = $(data.elem).parents(".conditionRow");
+    				  //更新操作选项
+    				  var conditionOption= conditionRowJq.find(".conditionOption");
+    				  conditionOption.html(instance.conditionOptionHtml);
+        			  instance.updateConditionValue(conditionRowJq);
+    			  }
     			});    
     		  form.on('select(conditionOption)', function(data){
-    			  var conditionRowJq = $(data.elem).parents(".conditionRow");
-    			  instance.updateConditionValue(conditionRowJq);
+    			  if($(data.elem).find("option").length > 1){
+    				  var conditionRowJq = $(data.elem).parents(".conditionRow");
+        			  instance.updateConditionValue(conditionRowJq);
+    			  }
     			});
     		  //新增
     		  conditionContainerJq.find(".addRowBtn").on("click",function(){
-    			  instance.addRow();
+    			  var rowJq = instance.addRow();
+    			  instance.updateConditionValue(rowJq);
     		  });
     		  var verify = form.config.verify
     		  //查询
@@ -484,38 +577,29 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     			  if(instance.verifyForm(conditionContainerJq)){
 //    				  layer.msg('校验通过');
     				  instance.buildCacheCondition();
+    				  instance.buildConditionHtml();
     				  instance.query();
     				  layer.close(instance.openPageIndex); 
+    				  instance.openPageIndex  = null;
     			  }else{
 //    				  layer.msg('校验失败');
     			  }
     		  });
+    		  form.render(null, 'conditionDiv');
+    		  
     	}
-    	/**渲染弹出界面*/
-    	instance.render = function(){
-    		var cacheCondition = instance.cacheCondition;
-    		for(var i=0;i<cacheCondition.length;i++){
-    			var conditionObj = cacheCondition[i]; 
-    			var conditionRowJq = instance.addRow();
-    			conditionRowJq.find("select[name='conditionField']").val(conditionObj.conditionFieldVal);
-    			conditionRowJq.find("select[name='conditionOption']").val(conditionObj.conditionOptionVal);
-    			instance.updateConditionValue(conditionRowJq);
-    			if(conditionRowJq.find("[name='conditionValue']").size()>0){
-    				conditionRowJq.find("[name='conditionValue']").val(conditionObj.conditionValueVal);
-    			}
-    			if(conditionRowJq.find("[name='conditionValueLeft']").size()>0){
-    				conditionRowJq.find("[name='conditionValueLeft']").val(conditionObj.conditionValueLeftVal);
-    			}
-    			if(conditionRowJq.find("[name='conditionValueRight']").size()>0){
-    				conditionRowJq.find("[name='conditionValueRight']").val(conditionObj.conditionValueRightVal);
-    			}
+    	/**渲染后执行*/
+    	instance.afterOpen = function(){
+    		if(instance.config.afterOpen){
+    			instance.config.afterOpen(instance);
     		}
-    		form.render(null, 'conditionDiv');
     	}
         return instance;
     }
     var dynamicCondition = {
-    	version:'1.0.5'
+    	version:'2.0.1'
+    	//编辑器：自带3个默认编辑器：文本text，下拉框select，日期date
+    	,editor:{}
     	//缓存创建的实例
     	,cacheInstance:{}
     	/***
@@ -530,13 +614,17 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 		 * elem/fields/fieldsJsonStr：三选一.
 		 * tableId/queryCallBack: 二选一。tableId对应table.render(config)的config.id参数.自动重载表格。queryCallBack(requestData)则自定义回调
 		 * type: 取值：'simple'/'complex'.默认为复杂模式。区别1.显示界面不一样，2.构造的requestData格式不一样。
+		 * requestDataType: 取值：'array'/'json'.请求参数类型。默认array。
 		 * conditionTextId: 显示查询条件的面板选择器或DOM。非必须。例子："#frm"
 		 * sortObj:排序。非必须。例子：{field:'name',type:'desc'}
 		 * instanceName: 创建的实例名称。非必须。默认为'instanceName'。当一个页面只创建一个实例时，可以不用该参数
+		 * displayModel: 显示模型。取值：'popup'/'unpopup'。 默认"popup"点击后提出查询条件设置窗口。unpopup模式则不弹出窗口，直接在界面上设置条件。
 		 */
     	,create:function(config){
     		config.type = config.type || 'complex';
+    		config.requestDataType = config.requestDataType || 'array';
     		config.instanceName = config.instanceName || 'instanceName';
+    		config.displayModel = config.displayModel || 'popup';
     		var instance = createInstance(config);
     		//初始化instance.data
     		if(config.fields){
@@ -552,9 +640,11 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
 							field: $(this).attr("field") 
 							,title:$(this).attr("title")
 							,edit: $(this).attr("edit") 
+							,allowDel: $(this).attr("allowDel") 
 							,templet: $(this).attr("templet")
 							,layVerify: $(this).attr("layVerify")
 							,show: $(this).attr("show")
+							,ops: $(this).attr("ops")
 						};
 					instance.data.push(item);
 				})
@@ -563,15 +653,20 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     		for(var i = 0;i<instance.data.length;i++){
     			var item = instance.data[i];
     			item.edit = item.edit || "text";
+    			item.allowDel = typeof item.allowDel == "undefined" ? "true" : ""+item.allowDel;
     		}
     		//字段 下拉框html
     		var selectConditionField = $('<select name="conditionField" lay-filter="conditionField"></select>');
-			  var items = instance.data;
-			  for(var i=0;i< items.length;i++){
+			var items = instance.data;
+			instance.fieldList = "";
+			for(var i=0;i< items.length;i++){
 				  if(items[i].show != "false"){
 					  selectConditionField.append("<option value='"+items[i].field+"'>"+items[i].title+"</option>");
+					  if(items[i].allowDel != "false"){
+						  instance.fieldList += "," + items[i].field;
+					  }
 				  }
-			  }
+			}
     		instance.conditionFieldHtml = selectConditionField.prop("outerHTML");
     		//操作 下拉框html
     		var selectconditionOption = $('<select name="conditionOption" lay-filter="conditionOption"></select>');
@@ -585,9 +680,107 @@ layui.define(['jquery','table', 'form','laydate'], function (exports) {
     		instance.conditionOptionHtml = selectconditionOption.prop("outerHTML");
     		//缓存实例
     		this.cacheInstance[config.instanceName] = instance;
+    		instance.setCondition([]);
     		return instance;
     	}
     };
-
+    var editor = {
+    		/***
+    		 * 生成DOM对象ele,jquery封装返回$(ele)
+    		 * return ele,或者$(ele)
+    		 */
+    		createElement:function(item){
+				return $("<div></div>");
+    		}
+    		/***
+    		 * 初始值填充DOM
+    		 * ele createElement 生成的对象
+    		 * val 值
+    		 */
+    		,fillElement:function(ele, val){
+    			$(ele).val(val.value);
+    			$(ele).attr("oldVal",val.value);
+    		}
+    		/***
+    		 * 用于ajax请求提交的参数值
+    		 */
+    		,getRequestValue:function(ele){
+    			return $(ele).val();
+    		}
+    		/***
+    		 * 查询条件中显示的值,默认与getRequestValue一致
+    		 */
+    		,getRequestText:function(ele){
+    			return this.getRequestValue(ele);
+    		}
+    		/***
+    		 * ele创建后渲染
+    		 */
+    		,render:function(ele){
+    		}
+    };
+    /***
+     * 创建一个编辑器。
+     * editorName 编辑器名称
+     */
+    dynamicCondition.createEditor = function(editorName){
+    	dynamicCondition.editor[editorName] = {};
+    	$.extend( dynamicCondition.editor[editorName] , editor);
+    	return dynamicCondition.editor[editorName];
+    }
+    //定义文本编辑器
+    var editorText = dynamicCondition.createEditor("text");
+    $.extend( editorText ,{
+		    createElement:function(item){
+		    	var inputJq = $('<input type="text" class="layui-input" placeholder="" />');
+				  if(item.layVerify){
+					  inputJq.attr("lay-verify", item.layVerify);
+				  }
+				return inputJq;
+			}
+    });
+    
+    //定义下拉框编辑器
+    var editorSelect = dynamicCondition.createEditor("select");
+    $.extend( editorSelect ,{
+    		createElement:function(item){
+    			var selectHtml;
+				if($(item.templet).is("select")){
+					selectHtml = $(item.templet).prop("outerHTML");
+				}else{
+					selectHtml = $(item.templet).html();
+				}
+				return $(selectHtml);
+    		}
+		    ,getRequestText:function(ele){
+				return  ele.find("option:selected").text();
+			}
+    });
+    //定义日期编辑器
+    var editorDate = dynamicCondition.createEditor("date");
+    $.extend( editorDate ,{
+    		createElement:function(item){
+    			var dateType = item.dateType || "date";
+    			var dateJq = $('<input type="text" class="layui-input" placeholder="" />');
+    			dateJq.attr("date-type",dateType);
+				  if(item.layVerify){
+					  dateJq.attr("lay-verify",item.layVerify);
+				  }
+				  laydate.render({
+					    elem: dateJq[0]
+					    ,type: dateType
+				  });
+				return dateJq;
+    		}
+    });
+    
+	function removeOption(selDom,valList){
+		valList = ","+valList + ",";
+		var opJqs = $(selDom).find("option").each(function() {
+			if(valList.indexOf(","+ $(this).val() + ",") == -1){
+				$(this).remove();
+			}
+		});
+	}
     exports(MOD_NAME, dynamicCondition);
 })

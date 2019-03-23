@@ -30,7 +30,7 @@
 .city-picker-span > .arrow {
     position: absolute;
     top: 50%;
-    right: 8px;
+    right: 30px;
     width: 10px;
     margin-top: -3px;
     height: 5px;
@@ -170,4 +170,16 @@
     background-color: #f58664;
     color: #fff;
     border-radius: 2px;
+}
+
+.icon_ca {
+    background: url(/content/images/icon_ca.png) no-repeat center;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -7px;
+    z-index: 99;
+    cursor: pointer;
 }

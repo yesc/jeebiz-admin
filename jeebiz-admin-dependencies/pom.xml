@@ -12,6 +12,10 @@
 
 	<properties>
 		<hmily.version>2.0.1-RELEASE</hmily.version>
+		<layui.version>2.4.5</layui.version>
+		<layui-admin.version>1.2.1</layui-admin.version>
+		<layim.version>3.8.0</layim.version>
+		<mui.version>0.9.38</mui.version>
 		<jeebiz-admin.version>1.0.0-SNAPSHOT</jeebiz-admin.version>
 		<reactor-core.version>3.2.6.RELEASE</reactor-core.version>
 		<reactor-extra.version>3.2.2.RELEASE</reactor-extra.version>
@@ -37,6 +41,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+			
+			<!-- https://mvnrepository.com/artifact/org.webjars.bower/mui -->
+			<dependency>
+			    <groupId>org.webjars.bower</groupId>
+			    <artifactId>mui</artifactId>
+			    <version>${mui.version}</version>
+			</dependency>
 			
 			<!-- https://mvnrepository.com/artifact/com.nepxion/discovery -->
 			<dependency>
