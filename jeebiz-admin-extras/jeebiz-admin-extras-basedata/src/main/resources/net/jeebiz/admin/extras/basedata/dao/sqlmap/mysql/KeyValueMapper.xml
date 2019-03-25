@@ -24,7 +24,7 @@
 	
 	<insert id="insert" parameterType="KeyValueModel" flushCache="true">
 		insert into SYS_EXTRAS_PAIRVALUE(D_GROUP,D_LABEL,D_KEY,D_TEXT,D_STATUS,D_ORDER)
-		values(#{gKey},#{label},#{key},#{value},'1',#{order})
+		values(#{gkey},#{label},#{key},#{value},'1',#{order})
 	</insert>
 	
 	<delete id="batchDelete" flushCache="true">
