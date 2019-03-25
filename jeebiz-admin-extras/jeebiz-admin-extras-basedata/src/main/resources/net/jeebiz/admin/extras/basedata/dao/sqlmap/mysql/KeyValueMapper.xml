@@ -114,5 +114,14 @@
 		 ORDER By t.D_ORDER ASC
 	</select>
 	
+	<select id="getCount" parameterType="KeyValueModel" resultType="java.lang.Integer" useCache="false">
+		SELECT count(D_KEY)  
+		  FROM SYS_EXTRAS_PAIRVALUE t 
+		 WHERE t.D_GROUP = #{gkey} 
+		   AND t.D_KEY = #{key}
+		   <if test="id != null and id != ''">
+			AND t.D_ID != #{id}
+		   </if>
+	</select>
 		
 </mapper>

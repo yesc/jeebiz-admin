@@ -98,6 +98,11 @@ public class KeyValueController extends BaseMapperController {
 	@ResponseBody
 	public Object keyvalue(@Valid @RequestBody KeyValueVo keyvalueVo) throws Exception {
 		KeyValueModel model = getBeanMapper().map(keyvalueVo, KeyValueModel.class);
+		
+		int ct = getKeyValueService().getCount(model);
+		if(ct > 0) {
+			return fail("keyvalue.new.conflict");
+		}
 		// 新增一条数据库配置记录
 		int result = getKeyValueService().insert(model);
 		if(result == 1) {
@@ -117,6 +122,10 @@ public class KeyValueController extends BaseMapperController {
 	@ResponseBody
 	public Object update(@Valid @RequestBody KeyValueVo keyvalueVo) throws Exception {
 		KeyValueModel model = getBeanMapper().map(keyvalueVo, KeyValueModel.class);
+		int ct = getKeyValueService().getCount(model);
+		if(ct > 0) {
+			return fail("keyvalue.update.conflict");
+		}
 		int result = getKeyValueService().update(model);
 		if(result == 1) {
 			return success("keyvalue.update.success", result);
