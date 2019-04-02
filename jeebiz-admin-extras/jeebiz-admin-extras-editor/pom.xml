@@ -36,6 +36,32 @@
 			<groupId>com.github.vindell</groupId>
 			<artifactId>spring-boot-starter-flyway-plus</artifactId>
 		</dependency>
+		
+		<!-- For UEditor
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor-smb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor-ftp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor-fastdfs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor-qiliu</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.vindell</groupId>
+			<artifactId>spring-boot-starter-ueditor-aliyun-oss</artifactId>
+		</dependency> -->
 
 	</dependencies>
 
