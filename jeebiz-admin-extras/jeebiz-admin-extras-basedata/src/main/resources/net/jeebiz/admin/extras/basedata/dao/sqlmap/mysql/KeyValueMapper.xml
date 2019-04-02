@@ -58,7 +58,7 @@
         </foreach>
     </update>
     
-	<select id="getPagedList" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="true">
+	<select id="getPagedList" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="false">
 		SELECT
 			t.D_ID,
 			t.D_GROUP as D_GROUP_KEY,

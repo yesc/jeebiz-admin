@@ -60,7 +60,7 @@
         end;
     </update>
 	
-	<select id="getPagedList" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="true">
+	<select id="getPagedList" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="false">
 		SELECT
 			t.D_ID,
 			t.D_GROUP as D_GROUP_KEY,
@@ -79,7 +79,7 @@
 		ORDER By t.D_GROUP,t.D_ORDER ASC
 	</select>
 	
-	<select id="getModelList" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="true">
+	<select id="getModel" resultMap="KeyValueMap" parameterType="java.lang.String" useCache="true">
 		SELECT
 			t.D_ID,
 			t.D_GROUP as D_GROUP_KEY,
