@@ -8,7 +8,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>jeebiz-admin-ui-layui-sts</artifactId>
+	<artifactId>jeebiz-admin-ui-layui</artifactId>
 
 	<properties>
 
