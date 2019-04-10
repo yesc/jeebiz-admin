@@ -27,6 +27,6 @@
 
 	<modules>
 		<!-- 
-		<module>jeebiz-admin-ui-layui-sts</module> -->
+		<module>jeebiz-admin-ui-layui</module> -->
 	</modules>
 </project>
