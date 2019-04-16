@@ -12,6 +12,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>jeebiz-admin-extras-authz-feature</module>
+		<module>jeebiz-admin-extras-authz-rbac0</module>
 		<module>jeebiz-admin-extras-basedata</module>
 		<module>jeebiz-admin-extras-editor</module>
 		<module>jeebiz-admin-extras-i18n</module>

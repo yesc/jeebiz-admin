@@ -21,17 +21,17 @@
 
 	<dependencies>
 		
-		<!-- Jeebiz rbac权限认证：此次选择了比较简单的rbac0的实现（必选） -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jeebiz-boot-authz-rbac0</artifactId>
-			<version>${jeebiz-boot.version}</version>
-		</dependency>
 		<!-- Jeebiz 初始化启动器 （必选）-->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jeebiz-boot-autoconfigure</artifactId>
 			<version>${jeebiz-boot.version}</version>
+		</dependency>
+		<!-- Jeebiz rbac权限认证：此次选择了比较简单的rbac0的实现（必选） -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jeebiz-admin-extras-authz-rbac0</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- Jeebiz 消息通知扩展实现（可选） -->
 		<dependency>

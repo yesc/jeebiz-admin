@@ -3,9 +3,9 @@ package net.jeebiz.admin.ui.layui.setup.handler;
 import java.util.List;
 
 import net.jeebiz.admin.ui.layui.utils.FeatureTreeUtils;
-import net.jeebiz.boot.authz.feature.dao.entities.AuthzFeatureModel;
-import net.jeebiz.boot.authz.feature.dao.entities.AuthzFeatureOptModel;
-import net.jeebiz.boot.authz.feature.setup.handler.FeatureTreeDataHandler;
+import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureModel;
+import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
+import net.jeebiz.admin.extras.authz.feature.setup.handler.FeatureTreeDataHandler;
 
 public class LayuiAuthTreeFeatureHandler extends FeatureTreeDataHandler {
 

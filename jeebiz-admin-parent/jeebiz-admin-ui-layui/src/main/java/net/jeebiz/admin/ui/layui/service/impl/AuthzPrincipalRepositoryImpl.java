@@ -23,10 +23,10 @@ import com.google.common.collect.Sets;
 
 import net.jeebiz.admin.ui.layui.dao.IAuthzLoginDao;
 import net.jeebiz.admin.ui.layui.dao.entities.AuthzLoginModel;
-import net.jeebiz.boot.authz.rbac0.dao.IAuthzRoleDao;
-import net.jeebiz.boot.authz.rbac0.dao.IAuthzRolePermsDao;
-import net.jeebiz.boot.authz.rbac0.dao.IAuthzUserDao;
-import net.jeebiz.boot.authz.rbac0.dao.entities.AuthzRoleModel;
+import net.jeebiz.admin.extras.authz.rbac0.dao.IAuthzRoleDao;
+import net.jeebiz.admin.extras.authz.rbac0.dao.IAuthzRolePermsDao;
+import net.jeebiz.admin.extras.authz.rbac0.dao.IAuthzUserDao;
+import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzRoleModel;
 	
 @Service("defRepository")
 public class AuthzPrincipalRepositoryImpl extends ShiroPrincipalRepositoryImpl {

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.jeebiz.admin.ui.layui.dao.entities.AuthzLoginModel;
 import net.jeebiz.admin.ui.layui.service.IHomepageService;
-import net.jeebiz.boot.authz.feature.dao.entities.AuthzFeatureModel;
-import net.jeebiz.boot.authz.feature.dao.entities.AuthzFeatureOptModel;
-import net.jeebiz.boot.authz.feature.service.IAuthzFeatureOptService;
-import net.jeebiz.boot.authz.feature.service.IAuthzFeatureService;
-import net.jeebiz.boot.authz.feature.setup.handler.FeatureDataHandlerFactory;
-import net.jeebiz.boot.authz.rbac0.service.IAuthzRoleService;
+import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureModel;
+import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
+import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureOptService;
+import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureService;
+import net.jeebiz.admin.extras.authz.feature.setup.handler.FeatureDataHandlerFactory;
+import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzRoleService;
 
 /**
  * 系统默认的重定向地址
