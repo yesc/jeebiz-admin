@@ -114,7 +114,7 @@
 	|--jeebiz-crawler	 		:  网络爬虫服务: 侧重数据的来源、清洗、存储
 	|--jeebiz-docx				:  在线文档转换服务
 	|--jeebiz-initializr 		:  基于Spring initializr 项目二次开发的快速项目构建服务
-	|--jeebiz-flowable	 		:  Jeebiz 工作流平台
+	|--jeebiz-flowable	 		:Jeebiz 工作流平台
 	|--jeebiz-ivcp				:  网络视频电话、会议: 智能语音呼叫平台
 	|--jeebiz-okapi-basic		:  数据开放平台基础版
 	|--jeebiz-okapi-pro			:  数据开放平台专业版

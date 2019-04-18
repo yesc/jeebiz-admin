@@ -115,7 +115,7 @@ spring:
     name: jeebiz_admin
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://121.43.110.87:3306/jeebiz_admin?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://47.98.123.43:3306/jeebiz_admin?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
     username: jeebiz_admin
     password: APx37E5xPWA3Gd86
     # Druid的数据源配置：
@@ -342,7 +342,7 @@ j2cache:
 ###http://www.cnblogs.com/yhtboke/p/Mybatis.html
 ################################################################################################################
 logging: 
-  config: classpath:conf/log4j2.xml
+  config: classpath:conf/log4j2-dev.xml
   log4j: 
     jdbc:
       enabled: true

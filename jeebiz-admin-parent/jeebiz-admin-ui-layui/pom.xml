@@ -17,6 +17,8 @@
 		<!--appassembler -->
 		<appassembler-app-name>jeebiz-admin</appassembler-app-name>
 		
+		<flyway.version>5.2.0</flyway.version>
+		
 	</properties>
 
 	<dependencies>
@@ -155,8 +157,8 @@
 		</dependency>
 		<!-- For Dozer -->
 		<dependency>
-			<groupId>com.github.vindell</groupId>
-			<artifactId>spring-boot-starter-dozer</artifactId>
+			<groupId>com.github.dozermapper</groupId>
+		    <artifactId>dozer-spring-boot-starter</artifactId>
 		</dependency>
 		<!-- For AOP -->
 		<dependency>
