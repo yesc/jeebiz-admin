@@ -1,3 +1,7 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.logbiz.setup.config;
 
 import org.apache.logging.log4j.spring.boot.ext.web.Log4j2MDCInterceptor;
