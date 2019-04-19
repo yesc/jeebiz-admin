@@ -1,3 +1,7 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.inform.web.mvc;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
