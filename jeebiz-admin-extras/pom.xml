@@ -20,6 +20,7 @@
 		<module>jeebiz-admin-extras-inform</module>
 		<module>jeebiz-admin-extras-logbiz</module>
 		<module>jeebiz-admin-extras-sessions</module>
+		<module>jeebiz-admin-extras-authz-org</module>
 	</modules>
 	
 	<build>
