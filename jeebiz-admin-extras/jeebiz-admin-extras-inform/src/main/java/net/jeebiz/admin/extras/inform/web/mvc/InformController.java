@@ -10,12 +10,14 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.StringUtils;
 import org.apache.shiro.biz.utils.SubjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +33,7 @@ import net.jeebiz.admin.extras.inform.dao.entities.InformModel;
 import net.jeebiz.admin.extras.inform.service.IInformService;
 import net.jeebiz.admin.extras.inform.setup.Constants;
 import net.jeebiz.admin.extras.inform.web.vo.InformPaginationVo;
+import net.jeebiz.admin.extras.inform.web.vo.InformSendVo;
 import net.jeebiz.admin.extras.inform.web.vo.InformVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
@@ -45,6 +48,24 @@ public class InformController extends BaseMapperController {
 	@Autowired
 	private IInformService informService;
 
+	@ApiOperation(value = "发送消息或通知", notes = "发送消息或通知")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(paramType = "body", name = "informVo", value = "用户信息", dataType = "InformSendVo")
+	})
+	@BusinessLog(module = Constants.EXTRAS_INFORM, business = "新增用户-名称：${name}", opt = BusinessType.INSERT)
+	@PostMapping("send")
+	@RequiresPermissions("inform:send")
+	@ResponseBody
+	public Object send(@Valid @RequestBody InformSendVo informVo) throws Exception { 
+		
+		InformModel model = getBeanMapper().map(informVo, InformModel.class);
+		int result = getInformService().insert(model);
+		if(result == 1) {
+			return success("inform.send.success", result);
+		}
+		return fail("inform.send.fail", result);
+	}
+	
 	@ApiOperation(value = "待处理通知总数", notes = "查询待处理通知总数")
 	@BusinessLog(module = Constants.EXTRAS_INFORM, business = "查询待处理通知总数", opt = BusinessType.SELECT)
 	@PostMapping(value = "pending")
