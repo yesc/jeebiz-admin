@@ -20,6 +20,11 @@ public class AuthzRoleVo {
 	@ApiModelProperty(value = "id", dataType = "Integer", notes = "角色ID")
 	private String id;
 	/**
+	 * 角色编码
+	 */
+	@ApiModelProperty(value = "key", required = true, dataType = "String", notes = "角色编码")
+	private String key;
+	/**
 	 * 角色名称
 	 */
 	@ApiModelProperty(value = "name", required = true, dataType = "String", notes = "角色名称")
@@ -58,6 +63,14 @@ public class AuthzRoleVo {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getName() {

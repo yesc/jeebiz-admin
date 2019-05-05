@@ -21,6 +21,10 @@ public class AuthzRoleModel extends PaginationModel {
 	 */
 	private String id;
 	/**
+	 * 角色编码
+	 */
+	private String key;
+	/**
 	 * 角色名称
 	 */
 	private String name;
@@ -55,6 +59,14 @@ public class AuthzRoleModel extends PaginationModel {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getName() {

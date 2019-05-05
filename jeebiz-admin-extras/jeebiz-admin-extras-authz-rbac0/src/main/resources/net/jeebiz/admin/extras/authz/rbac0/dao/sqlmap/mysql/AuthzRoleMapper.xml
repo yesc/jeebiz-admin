@@ -43,6 +43,7 @@
 	
 	<resultMap id="RoleMap" type="AuthzRoleModel">
 		<result property="id" column="R_ID" />
+		<result property="key" column="R_KEY" />
 		<result property="name" column="R_NAME" />
 		<result property="type" column="R_TYPE" />
 		<result property="intro" column="R_INTRO" />
@@ -73,8 +74,8 @@
 	</resultMap>
 	  
 	<insert id="insert" parameterType="AuthzRoleModel" useGeneratedKeys="true" keyProperty="id"  flushCache="true">
-		insert into SYS_AUTHZ_ROLE_LIST(R_ID,R_NAME,R_TYPE,R_INTRO,R_STATUS)
-		values(#{id},#{name},#{type},#{intro},'1')
+		insert into SYS_AUTHZ_ROLE_LIST(R_ID,R_KEY,R_NAME,R_TYPE,R_INTRO,R_STATUS)
+		values(#{id},#{key},#{name},#{type},#{intro},'1')
 	</insert>
 	
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
@@ -112,6 +113,7 @@
 	<select id="getRoles" resultMap="RoleMap" useCache="true">
 		SELECT
 			t.R_ID,
+			t.R_KEY,
 			t.R_NAME,
 			t.R_TYPE,
 			t.R_INTRO,
@@ -128,6 +130,7 @@
 	<select id="getModel" resultMap="RoleMap" parameterType="java.lang.String" useCache="true">
 		SELECT
 			t.R_ID,
+			t.R_KEY,
 			t.R_NAME,
 			t.R_TYPE,
 			t.R_INTRO,
@@ -142,6 +145,7 @@
 	<select id="getPagedList" resultMap="RoleMap" parameterType="AuthzRoleModel" useCache="false">
 		SELECT
 			t.R_ID,
+			t.R_KEY,
 			t.R_NAME,
 			t.R_TYPE,
 			t.R_INTRO,
