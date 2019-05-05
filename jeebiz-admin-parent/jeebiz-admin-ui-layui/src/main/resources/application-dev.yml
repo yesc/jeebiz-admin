@@ -29,6 +29,8 @@ server:
 ################################################################################################################
 swagger:
   enabled: true
+  authorization:
+    key-name: X-Authorization
   title: Jeebiz Admin LayUI（iframe）版
   description: 企业级后台快速开发平台 - LayUI（iframe）版
   version: 0.0.1-SNAPSHOT

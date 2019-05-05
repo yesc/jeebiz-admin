@@ -24,18 +24,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import net.jeebiz.boot.api.annotation.BusinessLog;
-import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.utils.Constants;
-import net.jeebiz.boot.api.utils.ResultUtils;
-import net.jeebiz.boot.api.webmvc.BaseMapperController;
-import net.jeebiz.boot.api.webmvc.Result;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureModel;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
 import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureOptService;
 import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureService;
 import net.jeebiz.admin.extras.authz.feature.setup.handler.FeatureDataHandlerFactory;
 import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureVo;
+import net.jeebiz.boot.api.annotation.BusinessLog;
+import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.utils.Constants;
+import net.jeebiz.boot.api.utils.HttpStatus;
+import net.jeebiz.boot.api.utils.ResultUtils;
+import net.jeebiz.boot.api.webmvc.BaseMapperController;
+import net.jeebiz.boot.api.webmvc.Result;
 
 @Api(tags = "功能菜单：数据维护（Ok）")
 @Controller
@@ -50,6 +53,13 @@ public class AuthzFeatureController extends BaseMapperController{
 	@ApiOperation(value = "feature:list", notes = "查询功能菜单树形结构数据")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "featureVo", value = "功能菜单信息筛选条件", dataType = "ExtrasFeatureVo")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功"),
+		@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证"),
+		@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在"),
+		@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常"),
+		@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_FEATURE, business = "查询功能菜单树形结构数据", opt = BusinessType.SELECT)
 	@RequestMapping(value = "list", method = {RequestMethod.GET, RequestMethod.POST})
@@ -70,6 +80,13 @@ public class AuthzFeatureController extends BaseMapperController{
 	@ApiOperation(value = "feature:tree", notes = "查询功能菜单树形结构数据")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam( name = "handler", value = "数据处理实现对象名称", dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功"),
+		@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证"),
+		@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在"),
+		@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常"),
+		@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_FEATURE, business = "查询功能菜单树形结构数据", opt = BusinessType.SELECT)
 	@PostMapping("tree")
