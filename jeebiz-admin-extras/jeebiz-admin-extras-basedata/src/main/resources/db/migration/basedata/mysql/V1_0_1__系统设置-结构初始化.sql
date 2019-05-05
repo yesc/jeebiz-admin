@@ -12,7 +12,7 @@ CREATE TABLE `SYS_EXTRAS_PAIRGROUP` (
   `G_STATUS` int(1) DEFAULT 1 COMMENT '数据分组状态:（0:禁用|1：可用）',
   `G_ORDER` int(2) DEFAULT 1 COMMENT '数据分组排序',
   PRIMARY KEY (`G_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基础数据分组信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='基础数据分组信息表';
 
 -- ----------------------------
 -- Table structure for SYS_EXTRAS_PAIRVALUE
@@ -28,7 +28,7 @@ CREATE TABLE `SYS_EXTRAS_PAIRVALUE` (
   `D_ORDER` int(2) DEFAULT 1 COMMENT '数据排序:组内排序',
   PRIMARY KEY (`D_ID`),
   UNIQUE KEY (`D_GROUP`,`D_KEY`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基础数据信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='基础数据信息表';
 
 -- ----------------------------
 -- Table structure for SYS_EXTRAS_SETTINGS
@@ -50,6 +50,6 @@ CREATE TABLE `SYS_EXTRAS_SETTINGS` (
   `D_ORDER` int(3) DEFAULT 1 COMMENT '参数排序:组内排序',
   PRIMARY KEY (`D_ID`),
   UNIQUE KEY (`D_GROUP`,`D_KEY`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统参数设置表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统参数设置表';
 
 

@@ -18,7 +18,7 @@ CREATE TABLE `SYS_EXTRAS_LOG_AUTHZ` (
   `LOG_EXCP` tinytext COMMENT '认证异常信息',
   `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '认证发生时间',
   PRIMARY KEY (`LOG_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='认证授权日志信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='认证授权日志信息表';
 
 -- ----------------------------
 -- Table structure for SYS_EXTRAS_LOG_BIZ
@@ -36,7 +36,7 @@ CREATE TABLE `SYS_EXTRAS_LOG_BIZ` (
   `LOG_EXCP` tinytext COMMENT '功能操作异常',
   `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '功能操作发生时间',
   PRIMARY KEY (`LOG_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='功能操作日志信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='功能操作日志信息表';
 
 -- ----------------------------
 -- Table structure for SYS_EXTRAS_LOG_EXCP
@@ -55,5 +55,5 @@ CREATE TABLE `SYS_EXTRAS_LOG_EXCP` (
   `LOG_EXCP` tinytext COMMENT '系统异常信息',
   `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '系统异常发生时间',
   PRIMARY KEY (`LOG_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统异常日志信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统异常日志信息表';
 

@@ -6,17 +6,20 @@
 -- Create table
 create table SYS_AUTHZ_ROLE_LIST (
   R_ID   		VARCHAR2(32) default sys_guid() not null,
+  R_KEY   		VARCHAR2(50) not null,
   R_NAME   		VARCHAR2(50) not null,
   R_TYPE   		VARCHAR2(2) default 1,
   R_INTRO  		VARCHAR2(1000),
   R_STATUS		VARCHAR2(2) default 1,
   R_TIME24		VARCHAR2(32) default to_char(sysdate ,'yyyy-mm-dd hh24:mi:ss'),
+  CONSTRAINT UNIQUE_R_KEY UNIQUE(R_KEY),
   CONSTRAINT PK_RID PRIMARY KEY(R_ID)
 );
 -- Add comments to the table 
 comment on table SYS_AUTHZ_ROLE_LIST  is '角色信息表';
 -- Add comments to the columns 
 comment on column SYS_AUTHZ_ROLE_LIST.R_ID  is '角色ID';
+comment on column SYS_AUTHZ_ROLE_LIST.R_KEY  is '角色编码';
 comment on column SYS_AUTHZ_ROLE_LIST.R_NAME  is '角色名称';
 comment on column SYS_AUTHZ_ROLE_LIST.R_TYPE  is '角色类型（1:原生|2:继承|3:复制|4:自定义）';
 comment on column SYS_AUTHZ_ROLE_LIST.R_INTRO  is '角色简介';

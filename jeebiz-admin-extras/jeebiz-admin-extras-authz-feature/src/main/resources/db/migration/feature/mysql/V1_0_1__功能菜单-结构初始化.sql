@@ -19,7 +19,7 @@ CREATE TABLE `SYS_FEATURE_LIST` (
   `F_PARENT` int(11) NOT NULL COMMENT '父级功能菜单ID',
   `F_VISIBLE` int(1) NOT NULL DEFAULT '1' COMMENT '菜单是否可见(1:可见|0:不可见)',
   PRIMARY KEY (`F_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='功能菜单信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='功能菜单信息表';
 
 -- ----------------------------
 -- Table structure for SYS_FEATURE_OPTS
@@ -35,4 +35,4 @@ CREATE TABLE `SYS_FEATURE_OPTS` (
   `OPT_PERMS` varchar(50) NOT NULL COMMENT '权限标记',
   PRIMARY KEY (`OPT_ID`),
   UNIQUE KEY (`F_ID`,`OPT_PERMS`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='功能操作信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='功能操作信息表';
