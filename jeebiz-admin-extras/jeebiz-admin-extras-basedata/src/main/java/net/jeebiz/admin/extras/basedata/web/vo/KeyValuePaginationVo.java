@@ -14,7 +14,7 @@ public class KeyValuePaginationVo extends AbstractPaginationVo {
 	/**
 	 * 基础数据分组
 	 */
-	@ApiModelProperty(value = "gkey", dataType = "String", notes = "基础数据分组")
+	@ApiModelProperty(name = "gkey", dataType = "String", value = "基础数据分组")
 	private String gkey;
 
 	public String getGkey() {

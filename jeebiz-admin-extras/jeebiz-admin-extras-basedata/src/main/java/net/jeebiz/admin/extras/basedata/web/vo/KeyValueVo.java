@@ -17,13 +17,13 @@ public class KeyValueVo {
 	/**
 	 * 基础数据ID编号
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "基础数据ID编号")
+	@ApiModelProperty(name = "id", dataType = "String", value = "基础数据ID编号", hidden = true)
 	private String id;
 	
 	/**
 	 * 基础数据分组Key
 	 */
-	@ApiModelProperty(value = "gkey", dataType = "String", notes = "基础数据分组Key")
+	@ApiModelProperty(name = "gkey", dataType = "String", value = "基础数据分组Key")
 	@NotBlank(message = "基础数据分组必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
@@ -31,38 +31,39 @@ public class KeyValueVo {
 	/**
 	 * 基础数据分组
 	 */
-	@ApiModelProperty(value = "gtext", dataType = "String", notes = "基础数据分组")
+	@ApiModelProperty(name = "gtext", dataType = "String", value = "基础数据分组")
 	private String gtext;
 	
 	/**
 	 * 基础数据标签
 	 */
-	@ApiModelProperty(value = "label", dataType = "String", notes = "基础数据标签")
+	@ApiModelProperty(name = "label", dataType = "String", value = "基础数据标签")
 	@NotBlank(message = "基础数据标签必填")
 	private String label;
 	/**
 	 * 基础数据键
 	 */
-	@ApiModelProperty(value = "key", dataType = "String", notes = "基础数据键")
+	@ApiModelProperty(name = "key", dataType = "String", value = "基础数据键")
 	@NotBlank(message = "基础数据键必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String key;
 	/**
 	 * 基础数据值
 	 */
-	@ApiModelProperty(value = "value", dataType = "String", notes = "基础数据值")
+	@ApiModelProperty(name = "value", dataType = "String", value = "基础数据值")
 	@NotBlank(message = "基础数据值必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String value;
 	/**
 	 * 基础数据状态：0:不可用、1：可用
 	 */
-	@ApiModelProperty(value = "status", dataType = "String", notes = "数据状态：0:不可用|1：可用", allowableValues = "0,1")
+	@ApiModelProperty(name = "status", dataType = "String", value = "数据状态：0:不可用|1：可用", allowableValues = "0,1")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String status;
 	/**
 	 * 数据排序:组内排序
 	 */
+	@ApiModelProperty(name = "order", dataType = "String", value = "数据排序:组内排序", hidden = true)
 	private int order;
 
 	public String getId() {

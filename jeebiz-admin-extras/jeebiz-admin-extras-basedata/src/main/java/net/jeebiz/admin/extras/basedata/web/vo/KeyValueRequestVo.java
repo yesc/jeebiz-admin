@@ -19,11 +19,12 @@ public class KeyValueRequestVo {
 	/**
 	 * 基础数据分组
 	 */
-	@ApiModelProperty(value = "gkey", dataType = "String", notes = "基础数据分组")
+	@ApiModelProperty(name = "gkey", dataType = "String", value = "基础数据分组")
 	@NotBlank(message = "基础数据分组必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
 	
+	@ApiModelProperty(name = "datas", dataType = "java.util.List", value = "批量更新的基础数据列表")
 	private List<KeyValueVo> datas;
 
 	public String getGkey() {

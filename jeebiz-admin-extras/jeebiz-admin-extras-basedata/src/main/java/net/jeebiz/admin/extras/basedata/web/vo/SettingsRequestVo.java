@@ -19,11 +19,12 @@ public class SettingsRequestVo {
 	/**
 	 * 系统参数分组
 	 */
-	@ApiModelProperty(value = "gkey", dataType = "String", notes = "系统参数分组")
+	@ApiModelProperty(name = "gkey", dataType = "String", value = "系统参数分组")
 	@NotBlank(message = "系统参数分组必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
 	
+	@ApiModelProperty(name = "datas", dataType = "java.util.List", value = "批量更新的系统参数列表")
 	private List<SettingsVo> datas;
 
 	public String getGkey() {
