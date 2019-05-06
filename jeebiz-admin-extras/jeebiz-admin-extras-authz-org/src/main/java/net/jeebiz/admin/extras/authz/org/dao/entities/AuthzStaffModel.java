@@ -17,13 +17,25 @@ public class AuthzStaffModel extends PaginationModel {
 	 */
 	private String orgId;
 	/**
+	 * 机构名称
+	 */
+	private String orgName;
+	/**
 	 * 部门ID编号
 	 */
 	private String deptId;
 	/**
+	 * 部门名称
+	 */
+	private String deptName;
+	/**
 	 * 岗位ID编号
 	 */
 	private String postId;
+	/**
+	 * 岗位名称
+	 */
+	private String postName;
 	/**
 	 * 员工ID编号
 	 */
@@ -70,6 +82,14 @@ public class AuthzStaffModel extends PaginationModel {
 		this.orgId = orgId;
 	}
 
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
 	public String getDeptId() {
 		return deptId;
 	}
@@ -78,12 +98,28 @@ public class AuthzStaffModel extends PaginationModel {
 		this.deptId = deptId;
 	}
 
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+
 	public String getPostId() {
 		return postId;
 	}
 
 	public void setPostId(String postId) {
 		this.postId = postId;
+	}
+
+	public String getPostName() {
+		return postName;
+	}
+
+	public void setPostName(String postName) {
+		this.postName = postName;
 	}
 
 	public String getId() {

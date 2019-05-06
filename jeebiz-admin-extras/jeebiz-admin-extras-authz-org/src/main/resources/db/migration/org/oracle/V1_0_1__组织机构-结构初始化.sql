@@ -62,6 +62,7 @@ create table SYS_AUTHZ_ORG_POSITION
   	POST_CODE 		VARCHAR2(30) not null,
   	POST_NAME		VARCHAR2(100) not null,
   	POST_INTRO 		VARCHAR2(500),
+  	POST_USERID		VARCHAR2(32) not null,
   	POST_STATUS 	VARCHAR2(1) default '0' not null,
   	TIME24 			VARCHAR2(32) default to_char(sysdate ,'yyyy-mm-dd hh24:mi:ss'),
   	CONSTRAINT UNIQUE_POST_CODE UNIQUE(POST_CODE),
@@ -75,6 +76,7 @@ comment on column SYS_AUTHZ_ORG_POSITION.POST_ID  is '岗位ID编号';
 comment on column SYS_AUTHZ_ORG_POSITION.POST_CODE  is '岗位编码';
 comment on column SYS_AUTHZ_ORG_POSITION.POST_NAME  is '岗位名称';
 comment on column SYS_AUTHZ_ORG_POSITION.POST_INTRO is '岗位简介';
+comment on column SYS_AUTHZ_ORG_POSITION.POST_USERID is '岗位创建人ID';
 comment on column SYS_AUTHZ_ORG_POSITION.POST_STATUS  is '岗位状态（0:禁用|1:可用）';
 comment on column SYS_AUTHZ_ORG_POSITION.TIME24 is '岗位创建时间';
 
@@ -88,7 +90,7 @@ create table SYS_AUTHZ_ORG_STAFF
   	STAFF_INTRO 	VARCHAR2(500),
   	STAFF_STATUS 	VARCHAR2(1) default '0' not null,
   	TIME24 			VARCHAR2(32) default to_char(sysdate ,'yyyy-mm-dd hh24:mi:ss'),
-  	CONSTRAINT UNIQUE_ORG_STAFF UNIQUE(ORG_ID, STAFF_ID)
+  	CONSTRAINT UNIQUE_ORG_STAFF UNIQUE(ORG_ID, DEPT_ID, POST_ID, STAFF_ID)
 );
 -- Add comments to the table 
 comment on table SYS_AUTHZ_ORG_STAFF  is '用户组织机构关联表';

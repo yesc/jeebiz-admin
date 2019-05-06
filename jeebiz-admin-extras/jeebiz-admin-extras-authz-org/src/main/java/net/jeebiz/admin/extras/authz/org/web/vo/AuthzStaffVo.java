@@ -1,7 +1,3 @@
-/** 
- * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
- * All Rights Reserved. 
- */
 package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import java.io.Serializable;
@@ -19,15 +15,30 @@ public class AuthzStaffVo implements Serializable {
 	@ApiModelProperty(name = "orgId", dataType = "String", value = "机构ID编号")
 	private String orgId;
 	/**
+	 * 机构名称
+	 */
+	@ApiModelProperty(name = "orgName", dataType = "String", value = "机构名称")
+	private String orgName;
+	/**
 	 * 部门ID编号
 	 */
 	@ApiModelProperty(name = "deptId", dataType = "String", value = "部门ID编号")
 	private String deptId;
 	/**
+	 * 部门名称
+	 */
+	@ApiModelProperty(name = "deptName", dataType = "String", value = "部门名称")
+	private String deptName;
+	/**
 	 * 岗位ID编号
 	 */
 	@ApiModelProperty(name = "postId", dataType = "String", value = "岗位ID编号")
 	private String postId;
+	/**
+	 * 岗位名称
+	 */
+	@ApiModelProperty(name = "postName", dataType = "String", value = "岗位名称")
+	private String postName;
 	/**
 	 * 员工ID编号
 	 */
@@ -83,6 +94,14 @@ public class AuthzStaffVo implements Serializable {
 		this.orgId = orgId;
 	}
 
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
 	public String getDeptId() {
 		return deptId;
 	}
@@ -91,12 +110,28 @@ public class AuthzStaffVo implements Serializable {
 		this.deptId = deptId;
 	}
 
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+
 	public String getPostId() {
 		return postId;
 	}
 
 	public void setPostId(String postId) {
 		this.postId = postId;
+	}
+
+	public String getPostName() {
+		return postName;
+	}
+
+	public void setPostName(String postName) {
+		this.postName = postName;
 	}
 
 	public String getId() {

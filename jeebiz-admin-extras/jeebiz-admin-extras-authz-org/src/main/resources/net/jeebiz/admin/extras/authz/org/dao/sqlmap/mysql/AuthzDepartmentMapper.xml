@@ -23,7 +23,7 @@
 		<result property="orgName" column="ORG_NAME" />
 		<result property="code" column="DEPT_CODE" />
 		<result property="name" column="DEPT_NAME" />
-		<result property="remark" column="DEPT_INTRO" />
+		<result property="intro" column="DEPT_INTRO" />
 		<result property="parent" column="DEPT_PARENT" />
 		<result property="userId" column="DEPT_USERID" />
 		<result property="status" column="DEPT_STATUS" />
@@ -37,7 +37,7 @@
 
 	<insert id="insert" parameterType="AuthzDepartmentModel" flushCache="true">
 		insert into SYS_AUTHZ_ORG_DEPT(ORG_ID,DEPT_CODE,DEPT_NAME,DEPT_INTRO,DEPT_PARENT,DEPT_STATUS,DEPT_USERID)
-		values(#{orgId},#{code},#{name},#{remark,jdbcType=VARCHAR},#{parent,jdbcType=VARCHAR},'1',#{userId})
+		values(#{orgId},#{code},#{name},#{intro,jdbcType=VARCHAR},#{parent,jdbcType=VARCHAR},'1',#{userId})
 	</insert>
 
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
@@ -62,7 +62,7 @@
 		<set>
 			<if test="code != null and code != ''">t.DEPT_CODE = #{code},</if>
 			<if test="name != null and name != ''">t.DEPT_NAME = #{name},</if>
-			<if test="remark != null and remark != ''">t.DEPT_INTRO = #{remark},</if>
+			<if test="intro != null and intro != ''">t.DEPT_INTRO = #{intro},</if>
 			<if test="parent != null and parent != ''">t.DEPT_PARENT = #{parent}</if>
 		</set>
 		where t.DEPT_ID = #{id}

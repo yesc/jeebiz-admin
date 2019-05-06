@@ -78,8 +78,8 @@
 			t.TIME24
 		FROM SYS_AUTHZ_ORG_LIST t
 		<where>
-			<if test="name != null and name != ''">
-				and t.ORG_NAME like '%'||#{name}||'%'
+			<if test="model.name != null and model.name != ''">
+				and t.ORG_NAME like '%'||#{model.name}||'%'
 			</if>
 		</where>
 		ORDER By t.TIME24 ASC

@@ -1,7 +1,3 @@
-/** 
- * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
- * All Rights Reserved. 
- */
 package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import java.io.Serializable;
@@ -21,10 +17,20 @@ public class AuthzPositionVo implements Serializable {
 	@ApiModelProperty(name = "orgId", dataType = "String", value = "机构ID编号")
 	private String orgId;
 	/**
+	 * 机构名称
+	 */
+	@ApiModelProperty(name = "orgName", dataType = "String", value = "机构名称")
+	private String orgName;
+	/**
 	 * 部门ID编号
 	 */
 	@ApiModelProperty(name = "deptId", dataType = "String", value = "部门ID编号")
 	private String deptId;
+	/**
+	 * 部门名称
+	 */
+	@ApiModelProperty(name = "deptName", dataType = "String", value = "部门名称")
+	private String deptName;
 	/**
 	 * 岗位ID编号
 	 */
@@ -70,12 +76,28 @@ public class AuthzPositionVo implements Serializable {
 		this.orgId = orgId;
 	}
 
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
 	public String getDeptId() {
 		return deptId;
 	}
 
 	public void setDeptId(String deptId) {
 		this.deptId = deptId;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
 	}
 
 	public String getId() {
