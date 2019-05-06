@@ -1,3 +1,7 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -11,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import net.jeebiz.admin.extras.authz.org.service.IAuthzCompanyService;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzDepartmentService;
+import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -22,24 +26,24 @@ import springfox.documentation.annotations.ApiIgnore;
 public class AuthzDepartmentUIController extends BaseMapperController {
 
 	@Autowired
-	private IAuthzCompanyService authzCompanyService;
+	private IAuthzOrganizationService authzOrganizationService;
 	@Autowired
 	private IAuthzDepartmentService authzDepartmentService;
 	
 	@ApiIgnore
 	@GetMapping("list")
-	@RequiresPermissions("dept:list")
+	@RequiresPermissions("authz-dept:list")
 	public String list(@ApiIgnore Model uiModel) {
-		uiModel.addAttribute("companys", getAuthzCompanyService().getPairValues(""));
-		return "html/mhk/authz/dept/list";
+		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
+		return "html/authz/dept/list";
 	}
 	
 	@ApiIgnore
 	@GetMapping("new")
-	@RequiresPermissions("dept:new")
+	@RequiresPermissions("authz-dept:new")
 	public String newRule(@ApiIgnore Model uiModel) {
-		uiModel.addAttribute("companys", getAuthzCompanyService().getPairValues(""));
-		return "html/mhk/authz/dept/new";
+		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
+		return "html/authz/dept/new";
 	}
     
 	@ApiIgnore
@@ -47,11 +51,11 @@ public class AuthzDepartmentUIController extends BaseMapperController {
 		@ApiImplicitParam(name = "id", required = true, value = "组卷策略ID", dataType = "String")
 	})
 	@GetMapping("renew/{id}")
-	@RequiresPermissions("dept:renew")
+	@RequiresPermissions("authz-dept:renew")
 	public String renewRule(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
-		uiModel.addAttribute("companys", getAuthzCompanyService().getPairValues(""));
+		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("model", getAuthzDepartmentService().getModel(id));
-		return "html/mhk/authz/dept/renew";
+		return "html/authz/dept/renew";
 	}
 	
 	@ApiIgnore
@@ -59,18 +63,26 @@ public class AuthzDepartmentUIController extends BaseMapperController {
 		@ApiImplicitParam(name = "id", required = true, value = "组卷策略ID", dataType = "String")
 	})
 	@GetMapping("detail/{id}")
-	@RequiresPermissions("dept:detail")
+	@RequiresPermissions("authz-dept:detail")
 	public String detail(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
 		uiModel.addAttribute("model", getAuthzDepartmentService().getModel(id));
-		return "html/mhk/authz/dept/detail";
+		return "html/authz/dept/detail";
 	}
 
-	public IAuthzCompanyService getAuthzCompanyService() {
-		return authzCompanyService;
+	public IAuthzOrganizationService getAuthzOrganizationService() {
+		return authzOrganizationService;
+	}
+
+	public void setAuthzOrganizationService(IAuthzOrganizationService authzOrganizationService) {
+		this.authzOrganizationService = authzOrganizationService;
 	}
 
 	public IAuthzDepartmentService getAuthzDepartmentService() {
 		return authzDepartmentService;
+	}
+
+	public void setAuthzDepartmentService(IAuthzDepartmentService authzDepartmentService) {
+		this.authzDepartmentService = authzDepartmentService;
 	}
 
 }

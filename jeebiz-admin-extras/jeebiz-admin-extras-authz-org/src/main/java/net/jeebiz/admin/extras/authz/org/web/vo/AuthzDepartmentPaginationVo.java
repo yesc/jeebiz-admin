@@ -1,3 +1,7 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import org.hibernate.validator.constraints.SafeHtml;
@@ -12,13 +16,13 @@ public class AuthzDepartmentPaginationVo extends AbstractPaginationVo {
 	/**
 	 * 部门名称
 	 */
-	@ApiModelProperty(value = "name", dataType = "String", notes = "部门名称")
+	@ApiModelProperty(name = "name", dataType = "String", value = "部门名称")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String name;
 	/**
 	 * 公司ID编号
 	 */
-	@ApiModelProperty(value = "comId", dataType = "String", notes = "公司ID编号")
+	@ApiModelProperty(name = "comId", dataType = "String", value = "公司ID编号")
 	private String comId;
 
 	public String getName() {

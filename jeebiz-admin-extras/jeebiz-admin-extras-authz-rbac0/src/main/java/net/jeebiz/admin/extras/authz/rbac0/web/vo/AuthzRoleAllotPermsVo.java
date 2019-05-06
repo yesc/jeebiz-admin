@@ -17,12 +17,12 @@ public class AuthzRoleAllotPermsVo {
 	/**
 	 * 角色ID
 	 */
-	@ApiModelProperty(value = "roleId", dataType = "String", notes = "角色ID")
+	@ApiModelProperty(name = "roleId", dataType = "String", value = "角色ID")
 	private String roleId;
 	/**
 	 * 角色授权的标记集合
 	 */
-	@ApiModelProperty(value = "perms", required = true, dataType = "java.util.List<String>", notes = "角色授权的标记集合")
+	@ApiModelProperty(name = "perms", required = true, dataType = "java.util.List<String>", value = "角色授权的标记集合")
 	private List<String> perms = Lists.newArrayList();
 
 	public String getRoleId() {

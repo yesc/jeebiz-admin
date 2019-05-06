@@ -1,54 +1,35 @@
 
-/* 组织机构核心表：组织机构表（包含机构，部门，岗位，以及上下级关联的字段）  、用户组织机构关联表*/
+/* 组织机构核心表：机构信息表、部门信息表、岗位信息表、用户组织机构关联表*/
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for SYS_AUTHZ_COMPANY
+-- Table structure for SYS_AUTHZ_ORG_LIST
 -- ----------------------------
-DROP TABLE IF EXISTS `SYS_AUTHZ_COMPANY`;
-CREATE TABLE `SYS_AUTHZ_COMPANY` (
-  `COM_ID` int(11) NOT NULL AUTO_INCREMENT COMMENT '公司ID编号',
-  `COM_CODE` varchar(30) DEFAULT NULL COMMENT '公司编码',
-  `COM_NAME` varchar(100) DEFAULT NULL COMMENT '公司名称',
-  `COM_REMARK` text COMMENT '公司说明',
-  `COM_PARENT` int(11) DEFAULT NULL COMMENT '父级公司ID编号',
-  `COM_USERID` varchar(32) DEFAULT NULL COMMENT '公司创建人ID',
-  `COM_STATUS` varchar(1) DEFAULT '0' COMMENT '公司状态（0:禁用|1:可用）',
-  `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '公司创建时间',
-  PRIMARY KEY (`COM_ID`),
-  UNIQUE KEY `COM_CODE` (`COM_CODE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司信息表';
-
-
--- ----------------------------
--- Table structure for SYS_AUTHZ_COMPANY
--- ----------------------------
-DROP TABLE IF EXISTS `SYS_AUTHZ_COMPANY`;
-CREATE TABLE `SYS_AUTHZ_COMPANY` (
-  `COM_ID` int(11) NOT NULL AUTO_INCREMENT COMMENT '公司ID编号',
-  `COM_CODE` varchar(30) DEFAULT NULL COMMENT '公司编码',
-  `COM_NAME` varchar(100) DEFAULT NULL COMMENT '公司名称',
-  `COM_REMARK` text COMMENT '公司说明',
-  `COM_PARENT` int(11) DEFAULT NULL COMMENT '父级公司ID编号',
-  `COM_USERID` varchar(32) DEFAULT NULL COMMENT '公司创建人ID',
-  `COM_STATUS` varchar(1) DEFAULT '0' COMMENT '公司状态（0:禁用|1:可用）',
-  `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '公司创建时间',
-  PRIMARY KEY (`COM_ID`),
-  UNIQUE KEY `COM_CODE` (`COM_CODE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司信息表';
-
+DROP TABLE IF EXISTS `SYS_AUTHZ_ORG_LIST`;
+CREATE TABLE `SYS_AUTHZ_ORG_LIST` (
+  `ORG_ID` int(11) NOT NULL AUTO_INCREMENT COMMENT '机构ID编号',
+  `ORG_CODE` varchar(30) DEFAULT NULL COMMENT '机构编码',
+  `ORG_NAME` varchar(100) DEFAULT NULL COMMENT '机构名称',
+  `ORG_INTRO` varchar(2000) COMMENT '机构简介',
+  `ORG_PARENT` int(11) DEFAULT NULL COMMENT '父级机构ID编号',
+  `ORG_USERID` varchar(32) DEFAULT NULL COMMENT '机构创建人ID',
+  `ORG_STATUS` varchar(1) DEFAULT '0' COMMENT '机构状态（0:禁用|1:可用）',
+  `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '机构创建时间',
+  PRIMARY KEY (`ORG_ID`),
+  UNIQUE KEY `ORG_CODE` (`ORG_CODE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='机构信息表';
 
 -- ----------------------------
--- Table structure for SYS_AUTHZ_DEPARTMENT
+-- Table structure for SYS_AUTHZ_ORG_DEPT
 -- ----------------------------
-DROP TABLE IF EXISTS `SYS_AUTHZ_DEPARTMENT`;
-CREATE TABLE `SYS_AUTHZ_DEPARTMENT` (
-  `COM_ID` int(11) NOT NULL COMMENT '公司ID编号',
+DROP TABLE IF EXISTS `SYS_AUTHZ_ORG_DEPT`;
+CREATE TABLE `SYS_AUTHZ_ORG_DEPT` (
+  `ORG_ID` int(11) NOT NULL COMMENT '机构ID编号',
   `DEPT_ID` int(11) NOT NULL AUTO_INCREMENT COMMENT '部门ID编号',
   `DEPT_CODE` varchar(30) DEFAULT NULL COMMENT '部门编码',
   `DEPT_NAME` varchar(100) DEFAULT NULL COMMENT '部门名称',
-  `DEPT_REMARK` text COMMENT '部门说明',
+  `DEPT_INTRO` varchar(500) COMMENT '部门简介',
   `DEPT_PARENT` int(11) DEFAULT NULL COMMENT '父级部门ID编号',
   `DEPT_USERID` varchar(32) DEFAULT NULL COMMENT '部门创建人ID',
   `DEPT_STATUS` varchar(1) DEFAULT '0' COMMENT '部门状态（0:禁用|1:可用）',
@@ -56,3 +37,33 @@ CREATE TABLE `SYS_AUTHZ_DEPARTMENT` (
   PRIMARY KEY (`DEPT_ID`),
   UNIQUE KEY `DEPT_CODE` (`DEPT_CODE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='部门信息表';
+
+-- ----------------------------
+-- Table structure for SYS_AUTHZ_ORG_POSITION
+-- ----------------------------
+DROP TABLE IF EXISTS `SYS_AUTHZ_ORG_POSITION`;
+CREATE TABLE `SYS_AUTHZ_ORG_POSITION` (
+  `DEPT_ID` int(11) NOT NULL COMMENT '部门ID编号',
+  `POST_ID` int(11) NOT NULL AUTO_INCREMENT COMMENT '岗位ID编号',
+  `POST_CODE` varchar(30) DEFAULT NULL COMMENT '岗位编码',
+  `POST_NAME` varchar(100) DEFAULT NULL COMMENT '岗位名称',
+  `POST_INTRO` varchar(500) COMMENT '岗位简介',
+  `POST_STATUS` varchar(1) DEFAULT '0' COMMENT '岗位状态（0:禁用|1:可用）',
+  `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '岗位创建时间',
+  PRIMARY KEY (`POST_ID`),
+  UNIQUE KEY `POST_CODE` (`POST_CODE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='岗位信息表';
+
+-- ----------------------------
+-- Table structure for SYS_AUTHZ_ORG_STAFF
+-- ----------------------------
+DROP TABLE IF EXISTS `SYS_AUTHZ_ORG_STAFF`;
+CREATE TABLE `SYS_AUTHZ_ORG_STAFF` (
+  `ORG_ID` int(11) NOT NULL COMMENT '机构ID编号',
+  `DEPT_ID` int(11) NOT NULL COMMENT '部门ID编号',
+  `POST_ID` int(11) NOT NULL COMMENT '岗位ID编号',
+  `STAFF_ID` int(11) NOT NULL COMMENT  '员工ID编码（用户ID）'
+  `STAFF_INTRO` varchar(500) COMMENT '员工简介',
+  `STAFF_STATUS` varchar(1) DEFAULT '0' COMMENT '员工状态（0:禁用|1:可用）',
+  `TIME24` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '员工入职时间',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户组织机构关联表';

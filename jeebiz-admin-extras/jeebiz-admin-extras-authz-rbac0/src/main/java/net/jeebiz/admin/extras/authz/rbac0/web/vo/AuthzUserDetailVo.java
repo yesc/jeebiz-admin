@@ -15,90 +15,95 @@ public class AuthzUserDetailVo {
 	/**
 	 * 用户ID
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "用户ID")
+	@ApiModelProperty(name = "id", dataType = "String", value = "用户ID")
 	private String id;
 	/**
 	 * 用户别名（昵称）
 	 */
-	@ApiModelProperty(value = "alias", required = true, dataType = "String", notes = "用户昵称")
+	@ApiModelProperty(name = "alias", required = true, dataType = "String", value = "用户昵称")
 	private String alias;
 	/**
 	 * 用户名
 	 */
-	@ApiModelProperty(value = "username", required = true, dataType = "String", notes = "用户名")
+	@ApiModelProperty(name = "username", required = true, dataType = "String", value = "用户名")
 	@NotBlank(message = "用户名必填")
 	private String username;
 	/**
 	 * 用户密码
 	 */
+	@ApiModelProperty(name = "password", dataType = "String", value = "用户密码")
 	private String password;
 	/**
 	 * 用户密码盐：用于密码加解密
 	 */
+	@ApiModelProperty(name = "password", dataType = "String", value = "用户密码盐：用于密码加解密")
 	private String salt;
 	/**
 	 * 用户秘钥：用于用户JWT加解密
 	 */
+	@ApiModelProperty(name = "password", dataType = "String", value = "用户秘钥：用于用户JWT加解密")
 	private String secret;
 	/**
 	 * 用户头像：图片路径或图标样式
 	 */
+	@ApiModelProperty(name = "avatar", dataType = "String", value = "用户头像：图片路径或图标样式")
 	private String avatar;
 	/**
 	 * 手机号码
 	 */
-	@ApiModelProperty(value = "phone", required = true, dataType = "String", notes = "手机号码")
+	@ApiModelProperty(name = "phone", required = true, dataType = "String", value = "手机号码")
 	@NotBlank(message = "手机号码必填")
 	private String phone;
 	/**
 	 * 电子邮箱
 	 */
-	@ApiModelProperty(value = "email", required = true, dataType = "String", notes = "电子邮箱")
+	@ApiModelProperty(name = "email", required = true, dataType = "String", value = "电子邮箱")
 	@NotBlank(message = "电子邮箱必填")
 	private String email;
 	/**
 	 * 用户备注
 	 */
+	@ApiModelProperty(name = "remark", required = true, dataType = "String", value = "用户备注")
 	private String remark;
 	/**
 	 * 用户状态(0:不可用|1:正常|2:锁定)
 	 */
+	@ApiModelProperty(name = "status", required = true, dataType = "String", value = "用户状态(0:不可用|1:正常|2:锁定)")
 	private String status;
 	/**
 	 * 初始化时间
 	 */
+	@ApiModelProperty(name = "time24", required = true, dataType = "String", value = "初始化时间")
 	private String time24;
 	/**
 	 * 用户详情ID
 	 */
+	@ApiModelProperty(name = "dId", required = true, dataType = "String", value = "用户详情ID")
 	private String dId;
-	/**
-	 * 年龄
-	 */
-	private String age;
-	/**
-	 * 出生日期
-	 */
-	private String birthday;
-	/**
-	 * 用户编码
-	 */
-	private String code;
 	/**
 	 * 性别：（male：男，female：女）
 	 */
+	@ApiModelProperty(name = "gender", required = true, dataType = "String", value = "性别：（male：男，female：女）")
 	private String gender;
+	/**
+	 * 出生日期
+	 */
+	@ApiModelProperty(name = "birthday", required = true, dataType = "String", value = "出生日期")
+	private String birthday;
 	/**
 	 * 身份证号码
 	 */
+	@ApiModelProperty(name = "idcard", required = true, dataType = "String", value = "身份证号码")
 	private String idcard;
 	/**
 	 * 角色ID（可能多个组合，如：1,2）
 	 */
+	@ApiModelProperty(name = "roleId", required = true, dataType = "String", value = "角色ID（可能多个组合，如：1,2）")
 	private String roleId;
 	/**
 	 * 角色名称（可能多个组合，如：角色1,角色2）
 	 */
+	@ApiModelProperty(name = "roleName", required = true, dataType = "String", value = "角色名称（可能多个组合，如：角色1,角色2）")
 	private String roleName;
 
 	public String getId() {
@@ -205,12 +210,12 @@ public class AuthzUserDetailVo {
 		this.dId = dId;
 	}
 
-	public String getAge() {
-		return age;
+	public String getGender() {
+		return gender;
 	}
 
-	public void setAge(String age) {
-		this.age = age;
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 	public String getBirthday() {
@@ -219,22 +224,6 @@ public class AuthzUserDetailVo {
 
 	public void setBirthday(String birthday) {
 		this.birthday = birthday;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
 	}
 
 	public String getIdcard() {

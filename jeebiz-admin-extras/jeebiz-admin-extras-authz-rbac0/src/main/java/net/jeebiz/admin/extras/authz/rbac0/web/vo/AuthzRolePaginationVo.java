@@ -14,17 +14,17 @@ public class AuthzRolePaginationVo extends AbstractPaginationVo {
 	/**
 	 * 角色ID
 	 */
-	@ApiModelProperty(value = "id", dataType = "Integer", notes = "角色ID")
+	@ApiModelProperty(name = "id", dataType = "Integer", value = "角色ID")
 	private String id;
 	/**
 	 * 角色类型（1:原生|2:继承|3:复制|4:自定义）
 	 */
-	@ApiModelProperty(value = "type", required = true, dataType = "String", notes = "角色类型(1:原生|2:继承|3:复制)", allowableValues = "1,2,3")
+	@ApiModelProperty(name = "type", required = true, dataType = "String", value = "角色类型(1:原生|2:继承|3:复制|4:自定义)", allowableValues = "1,2,3,4")
 	private String type;
 	/**
 	 * 角色状态(0:不可用|1:正常)
 	 */
-	@ApiModelProperty(value = "status", dataType = "String", notes = "角色状态：0:不可用|1:正常")
+	@ApiModelProperty(name = "status", dataType = "String", value = "角色状态：0:不可用|1:正常", allowableValues = "1,0")
 	private String status;
 	
 	public String getId() {

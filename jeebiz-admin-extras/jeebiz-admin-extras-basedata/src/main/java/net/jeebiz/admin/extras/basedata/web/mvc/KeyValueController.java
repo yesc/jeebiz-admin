@@ -12,6 +12,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,7 +74,7 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询基础数据分组", notes = "查询基础数据分组")
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "查询基础数据分组", opt = BusinessType.SELECT)
-	@PostMapping("groups")
+	@GetMapping("groups")
 	@RequiresPermissions("keyvalue:list")
 	@ResponseBody
 	public Object groups() throws Exception {
@@ -85,7 +86,7 @@ public class KeyValueController extends BaseMapperController {
 		@ApiImplicitParam(name = "gkey", value = "基础数据分组", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询基础数据", opt = BusinessType.SELECT)
-	@PostMapping("pairs")
+	@GetMapping("pairs")
 	@RequiresPermissions("keyvalue:list")
 	@ResponseBody
 	public Object pairs(@RequestParam String gkey) throws Exception {
@@ -206,7 +207,7 @@ public class KeyValueController extends BaseMapperController {
 		@ApiImplicitParam( name = "id", required = true, value = "基础数据ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "查询基础数据信息", opt = BusinessType.SELECT)
-	@PostMapping("detail/{id}")
+	@GetMapping("detail/{id}")
 	@RequiresPermissions(value = {"keyvalue:list" ,"keyvalue:detail" }, logical = Logical.OR)
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 

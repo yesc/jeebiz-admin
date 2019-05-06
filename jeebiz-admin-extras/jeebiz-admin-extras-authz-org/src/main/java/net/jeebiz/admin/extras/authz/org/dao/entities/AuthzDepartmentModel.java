@@ -1,20 +1,25 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.authz.org.dao.entities;
 
 import org.apache.ibatis.type.Alias;
 
 import net.jeebiz.boot.api.dao.entities.PaginationModel;
+
 @Alias(value = "AuthzDepartmentModel")
 @SuppressWarnings("serial")
 public class AuthzDepartmentModel extends PaginationModel {
 
 	/**
-	 * 公司ID编号
+	 * 机构ID编号
 	 */
-	private String comId;
+	private String orgId;
 	/**
-	 * 公司名称
+	 * 机构名称
 	 */
-	private String comName;
+	private String orgName;
 	/**
 	 * 部门ID编号
 	 */
@@ -30,7 +35,7 @@ public class AuthzDepartmentModel extends PaginationModel {
 	/**
 	 * 部门说明
 	 */
-	private String remark;
+	private String intro;
 	/**
 	 * 父级部门ID编号
 	 */
@@ -47,21 +52,21 @@ public class AuthzDepartmentModel extends PaginationModel {
 	 * 部门创建时间
 	 */
 	private String time24;
-	
-	public String getComId() {
-		return comId;
+
+	public String getOrgId() {
+		return orgId;
 	}
 
-	public void setComId(String comId) {
-		this.comId = comId;
-	}
-	
-	public String getComName() {
-		return comName;
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
 	}
 
-	public void setComName(String comName) {
-		this.comName = comName;
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
 
 	public String getId() {
@@ -71,7 +76,7 @@ public class AuthzDepartmentModel extends PaginationModel {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
@@ -88,12 +93,12 @@ public class AuthzDepartmentModel extends PaginationModel {
 		this.name = name;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getIntro() {
+		return intro;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setIntro(String intro) {
+		this.intro = intro;
 	}
 
 	public String getParent() {
@@ -127,5 +132,5 @@ public class AuthzDepartmentModel extends PaginationModel {
 	public void setTime24(String time24) {
 		this.time24 = time24;
 	}
-	
+
 }

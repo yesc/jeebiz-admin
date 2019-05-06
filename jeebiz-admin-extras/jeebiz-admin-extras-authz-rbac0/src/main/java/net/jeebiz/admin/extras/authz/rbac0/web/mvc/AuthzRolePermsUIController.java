@@ -10,8 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.annotations.Api;
-import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzRoleService;
+import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -26,17 +26,17 @@ public class AuthzRolePermsUIController extends BaseMapperController {
 	private IAuthzRoleService authzRoleService;//角色管理SERVICE
 	
 	@ApiIgnore
-	@RequestMapping(value = "new")
-	@RequiresPermissions("role:feature-new")
-	public String newRole() {
-		return "html/authz/rbac0/role/newRole";
+	@RequestMapping("perms")
+	@RequiresPermissions("role:perms")
+	public String perms() {
+		return "html/authz/rbac0/role/perms";
 	}
 	
 	@ApiIgnore
-	@RequestMapping(value = "edit")
-	@RequiresPermissions("role:feature-edit")
-	public String editRole() {
-		return "html/authz/rbac0/role/editRole";
+	@RequestMapping("unperms")
+	@RequiresPermissions("role:unperms")
+	public String unperms() {
+		return "html/authz/rbac0/role/unperms";
 	}
 	
 	public IAuthzRoleService getAuthzRoleService() {

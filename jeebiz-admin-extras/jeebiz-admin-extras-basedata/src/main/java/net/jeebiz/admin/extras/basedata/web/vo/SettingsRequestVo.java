@@ -24,7 +24,7 @@ public class SettingsRequestVo {
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
 	
-	@ApiModelProperty(name = "datas", dataType = "java.util.List", value = "批量更新的系统参数列表")
+	@ApiModelProperty(name = "datas", dataType = "java.util.List<SettingsVo>", value = "批量更新的系统参数列表")
 	private List<SettingsVo> datas;
 
 	public String getGkey() {

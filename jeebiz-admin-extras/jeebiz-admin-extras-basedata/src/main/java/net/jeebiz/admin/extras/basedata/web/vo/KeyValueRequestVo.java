@@ -24,7 +24,7 @@ public class KeyValueRequestVo {
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
 	
-	@ApiModelProperty(name = "datas", dataType = "java.util.List", value = "批量更新的基础数据列表")
+	@ApiModelProperty(name = "datas", dataType = "java.util.List<SettingsVo>", value = "批量更新的基础数据列表")
 	private List<KeyValueVo> datas;
 
 	public String getGkey() {

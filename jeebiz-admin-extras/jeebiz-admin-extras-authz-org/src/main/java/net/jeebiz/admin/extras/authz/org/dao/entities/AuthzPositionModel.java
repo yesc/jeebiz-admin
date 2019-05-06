@@ -8,42 +8,62 @@ import org.apache.ibatis.type.Alias;
 
 import net.jeebiz.boot.api.dao.entities.PaginationModel;
 
-@Alias(value = "AuthzOrganizationModel")
+@Alias(value = "AuthzPositionModel")
 @SuppressWarnings("serial")
-public class AuthzOrganizationModel extends PaginationModel {
+public class AuthzPositionModel extends PaginationModel {
 
 	/**
 	 * 机构ID编号
 	 */
+	private String orgId;
+	/**
+	 * 部门ID编号
+	 */
+	private String deptId;
+	/**
+	 * 岗位ID编号
+	 */
 	private String id;
 	/**
-	 * 机构编码
+	 * 岗位编码
 	 */
 	private String code;
 	/**
-	 * 机构名称
+	 * 岗位名称
 	 */
 	private String name;
 	/**
-	 * 机构说明
+	 * 岗位简介
 	 */
 	private String intro;
 	/**
-	 * 父级机构ID编号
-	 */
-	private String parent;
-	/**
-	 * 机构创建人ID
+	 * 岗位创建人ID
 	 */
 	private String userId;
 	/**
-	 * 机构状态（0:禁用|1:可用）
+	 * 岗位状态（0:禁用|1:可用）
 	 */
 	private String status;
 	/**
-	 * 机构创建时间
+	 * 岗位创建时间
 	 */
 	private String time24;
+
+	public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
 
 	public String getId() {
 		return id;
@@ -75,14 +95,6 @@ public class AuthzOrganizationModel extends PaginationModel {
 
 	public void setIntro(String intro) {
 		this.intro = intro;
-	}
-
-	public String getParent() {
-		return parent;
-	}
-
-	public void setParent(String parent) {
-		this.parent = parent;
 	}
 
 	public String getUserId() {

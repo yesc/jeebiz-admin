@@ -93,7 +93,7 @@ public class AuthzUserController extends BaseMapperController {
 		@ApiImplicitParam( name = "id", required = true, value = "用户ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "查询用户-ID：${userid}", opt = BusinessType.SELECT)
-	@PostMapping("detail/{id}")
+	@GetMapping("detail/{id}")
 	@RequiresPermissions("user:detail")
 	@ResponseBody
 	public Object detail(@PathVariable String id) throws Exception { 
@@ -102,7 +102,7 @@ public class AuthzUserController extends BaseMapperController {
 	
 	@ApiOperation(value = "user:current", notes = "根据认证信息中的用户ID查询用户详情")
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "根据认证信息中的用户ID查询用户详情", opt = BusinessType.SELECT)
-	@PostMapping("detail")
+	@GetMapping("detail")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object detail() throws Exception { 
@@ -206,7 +206,7 @@ public class AuthzUserController extends BaseMapperController {
 		@ApiImplicitParam(name = "password", required = true, value = "新密码", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "初始化密码", opt = BusinessType.UPDATE)
-	@PostMapping("initpwd")
+	@GetMapping("initpwd")
 	@RequiresPermissions("user:initpwd")
 	@ResponseBody
 	public Object initPwd(@RequestParam String ids, @RequestParam String password) throws Exception {
@@ -312,7 +312,7 @@ public class AuthzUserController extends BaseMapperController {
 		@ApiImplicitParam(name = "password", required = true, value = "新密码", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "设置密码", opt = BusinessType.UPDATE)
-	@PostMapping("reset/pwd")
+	@GetMapping("reset/pwd")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object resetPwd(@RequestParam String oldPassword, @RequestParam String password) throws Exception {
@@ -329,7 +329,7 @@ public class AuthzUserController extends BaseMapperController {
 	
 	@ApiOperation(value = "user:perms", notes = "查询已分配给当前用户所属角色的权限")
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "查询已分配给当前用户所属角色的权限", opt = BusinessType.SELECT)
-	@PostMapping("perms")
+	@GetMapping("perms")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object perms() throws Exception { 

@@ -6,12 +6,12 @@ package net.jeebiz.admin.extras.authz.org.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import net.jeebiz.admin.extras.authz.org.dao.IAuthzCompanyDao;
-import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzCompanyModel;
-import net.jeebiz.admin.extras.authz.org.service.IAuthzCompanyService;
+import net.jeebiz.admin.extras.authz.org.dao.IAuthzOrganizationDao;
+import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzOrganizationModel;
+import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
 import net.jeebiz.boot.api.service.BaseServiceImpl;
 
 @Service
-public class AuthzCompanyServiceImpl extends BaseServiceImpl<AuthzCompanyModel, IAuthzCompanyDao> implements IAuthzCompanyService{
+public class AuthzOrganizationServiceImpl extends BaseServiceImpl<AuthzOrganizationModel, IAuthzOrganizationDao> implements IAuthzOrganizationService{
 
 }

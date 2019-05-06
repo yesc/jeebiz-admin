@@ -18,13 +18,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzDepartmentService;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzPositionService;
+import net.jeebiz.admin.extras.authz.org.service.IAuthzStaffService;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import springfox.documentation.annotations.ApiIgnore;
 
-@Api(tags = "岗位管理：UI跳转")
+@Api(tags = "组织机构人员管理：UI跳转")
 @Controller
-@RequestMapping("/authz/post/ui/")
-public class AuthzPositionUIController extends BaseMapperController {
+@RequestMapping("/authz/staff/ui/")
+public class AuthzStaffUIController extends BaseMapperController {
 	
 	@Autowired
 	private IAuthzOrganizationService authzOrganizationService;
@@ -32,49 +33,55 @@ public class AuthzPositionUIController extends BaseMapperController {
 	private IAuthzDepartmentService authzDepartmentService;
 	@Autowired
 	private IAuthzPositionService authzPositionService;
+	@Autowired
+	private IAuthzStaffService authzStaffService;
 	
 	@ApiIgnore
 	@GetMapping("list")
-	@RequiresPermissions("authz-post:list")
+	@RequiresPermissions("authz-staff:list")
 	public String list(@ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		return "html/mhk/authz/position/list";
+		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		return "html/authz/staff/list";
 	}
 	
 	@ApiIgnore
 	@GetMapping("new")
-	@RequiresPermissions("authz-post:new")
-	public String position(@ApiIgnore Model uiModel) {
+	@RequiresPermissions("authz-staff:new")
+	public String newStaff(@ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		return "html/mhk/authz/position/new";
+		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		return "html/authz/staff/new";
 	}
-	
+    
 	@ApiIgnore
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "id", required = true, value = "岗位ID编号", dataType = "String")
+		@ApiImplicitParam(name = "id", required = true, value = "员工ID编码", dataType = "String")
 	})
 	@GetMapping("renew/{id}")
-	@RequiresPermissions("authz-post:renew")
+	@RequiresPermissions("authz-staff:renew")
 	public String renew(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("model", getAuthzPositionService().getModel(id));
-		return "html/mhk/authz/position/renew";
+		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("model", getAuthzStaffService().getModel(id));
+		return "html/authz/staff/renew";
 	}
 	
 	@ApiIgnore
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "id", required = true, value = "岗位ID编号", dataType = "String")
+		@ApiImplicitParam(name = "id", required = true, value = "员工ID编码", dataType = "String")
 	})
 	@GetMapping("detail/{id}")
-	@RequiresPermissions("authz-post:detail")
+	@RequiresPermissions("authz-staff:detail")
 	public String detail(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("model", getAuthzPositionService().getModel(id));
-		return "html/mhk/authz/position/detail";
+		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("model", getAuthzStaffService().getModel(id));
+		return "html/authz/staff/detail";
 	}
 
 	public IAuthzOrganizationService getAuthzOrganizationService() {
@@ -87,6 +94,10 @@ public class AuthzPositionUIController extends BaseMapperController {
 
 	public IAuthzPositionService getAuthzPositionService() {
 		return authzPositionService;
+	}
+
+	public IAuthzStaffService getAuthzStaffService() {
+		return authzStaffService;
 	}
 
 }

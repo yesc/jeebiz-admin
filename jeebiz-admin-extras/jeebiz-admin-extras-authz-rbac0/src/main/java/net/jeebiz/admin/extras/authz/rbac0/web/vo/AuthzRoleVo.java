@@ -17,7 +17,7 @@ public class AuthzRoleVo {
 	/**
 	 * 角色ID
 	 */
-	@ApiModelProperty(value = "id", dataType = "Integer", notes = "角色ID")
+	@ApiModelProperty(name = "id", dataType = "Integer", value = "角色ID")
 	private String id;
 	/**
 	 * 角色编码
@@ -27,34 +27,37 @@ public class AuthzRoleVo {
 	/**
 	 * 角色名称
 	 */
-	@ApiModelProperty(value = "name", required = true, dataType = "String", notes = "角色名称")
+	@ApiModelProperty(name = "name", required = true, dataType = "String", value = "角色名称")
 	private String name;
 	/**
 	 * 角色简介
 	 */
-	@ApiModelProperty(value = "intro", required = true, dataType = "String", notes = "角色简介")
+	@ApiModelProperty(name = "intro", required = true, dataType = "String", value = "角色简介")
 	private String intro;
 	/**
 	 * 角色类型（1:原生|2:继承|3:复制|4:自定义）
 	 */
-	@ApiModelProperty(value = "type", required = true, dataType = "String", notes = "角色类型(1:原生|2:继承|3:复制)", allowableValues = "1,2,3")
+	@ApiModelProperty(name = "type", required = true, dataType = "String", value = "角色类型(1:原生|2:继承|3:复制)", allowableValues = "1,2,3")
 	private String type;
 	/**
 	 * 角色状态（0:禁用|1:可用）
 	 */
+	@ApiModelProperty(name = "status", dataType = "String", value = "角色状态（0:禁用|1:可用）")
 	private String status;
 	/**
 	 * 角色授权的标记集合
 	 */
-	@ApiModelProperty(value = "perms", required = true, dataType = "java.util.List<String>", notes = "角色授权的标记集合")
+	@ApiModelProperty(name = "perms", required = true, dataType = "java.util.List<String>", value = "角色授权的标记集合")
 	private List<String> perms = Lists.newArrayList();
 	/**
 	 * 角色已分配用户量
 	 */
+	@ApiModelProperty(name = "perms", dataType = "int", value = "角色已分配用户量")
 	private int users;
 	/**
 	 * 初始化时间
 	 */
+	@ApiModelProperty(name = "time24",  dataType = "String", value = "初始化时间")
 	private String time24;
 
 	public String getId() {
@@ -64,7 +67,7 @@ public class AuthzRoleVo {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public String getKey() {
 		return key;
 	}

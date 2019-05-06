@@ -17,52 +17,58 @@ public class AuthzUserResetVo {
 	/**
 	 * 角色ID
 	 */
+	@ApiModelProperty(name = "roleId", required = true, dataType = "String", value = "角色ID")
 	private String roleId;
 	/**
 	 * 用户名
 	 */
+	@ApiModelProperty(name = "username", required = true, dataType = "String", value = "用户名")
 	private String username;
 	/**
 	 * 用户别名（昵称）
 	 */
-	@ApiModelProperty(value = "alias", required = true, dataType = "String", notes = "用户昵称")
+	@ApiModelProperty(name = "alias", required = true, dataType = "String", value = "用户昵称")
 	@NotBlank(message = "昵称必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String alias;
 	/**
 	 * 用户头像：图片路径或图标样式
 	 */
+	@ApiModelProperty(name = "avatar", required = true, dataType = "String", value = " 用户头像：图片路径或图标样式")
 	private String avatar;
 	/**
 	 * 手机号码
 	 */
-	@ApiModelProperty(value = "phone", required = true, dataType = "String", notes = "手机号码")
+	@ApiModelProperty(name = "phone", required = true, dataType = "String", value = "手机号码")
 	@NotBlank(message = "手机号码必填")
 	private String phone;
 	/**
 	 * 电子邮箱
 	 */
-	@ApiModelProperty(value = "email", required = true, dataType = "String", notes = "电子邮箱")
+	@ApiModelProperty(name = "email", required = true, dataType = "String", value = "电子邮箱")
 	@NotBlank(message = "电子邮箱必填")
 	private String email;
 	/**
 	 * 用户备注
 	 */
+	@ApiModelProperty(name = "remark", required = true, dataType = "String", value = "用户备注")
 	private String remark;
 
 	/**
 	 * 性别：（male：男，female：女）
 	 */
-	@ApiModelProperty(value = "username", required = true, dataType = "String", notes = "用户名")
+	@ApiModelProperty(name = "gender", required = true, dataType = "String", value = "性别：（male：男，female：女）")
 	@NotBlank(message = "性别必选")
 	private String gender;
 	/**
 	 * 出生日期
 	 */
+	@ApiModelProperty(name = "birthday", required = true, dataType = "String", value = "出生日期")
 	private String birthday;
 	/**
 	 * 身份证号码
 	 */
+	@ApiModelProperty(name = "idcard", required = true, dataType = "String", value = "身份证号码")
 	private String idcard;
 
 	public String getRoleId() {

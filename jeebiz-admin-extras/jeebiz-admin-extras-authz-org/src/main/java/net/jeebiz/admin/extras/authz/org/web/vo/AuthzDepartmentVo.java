@@ -1,3 +1,7 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import java.io.Serializable;
@@ -5,6 +9,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+@SuppressWarnings("serial")
 @ApiModel(value = "AuthzDepartmentVo", description = "部门信息Vo")
 public class AuthzDepartmentVo implements Serializable {
 

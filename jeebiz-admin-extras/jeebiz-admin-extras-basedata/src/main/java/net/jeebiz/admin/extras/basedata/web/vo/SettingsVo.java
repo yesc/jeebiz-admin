@@ -55,7 +55,7 @@ public class SettingsVo {
 	/**
 	 * 参数展示类型：（text,textarea,password,checkbox,radio,file,image,color,date,datetime,email,month,number,range,select,switch,tel,time,week,url）
 	 */
-	@ApiModelProperty(name = "type", dataType = "String", value = "参数展示类型：（text,textarea,password,checkbox,radio,file,image,color,date,datetime,email,month,number,range,select,switch,tel,time,week,url）",
+	@ApiModelProperty(name = "type", dataType = "String", value = "参数展示类型",
 			allowableValues = "text,textarea,password,checkbox,radio,file,image,color,date,datetime,email,month,number,range,select,switch,tel,time,week,url")
 	private String type;
 	/**

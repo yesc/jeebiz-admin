@@ -15,12 +15,12 @@ public class AuthzUserAllotRoleVo {
 	/**
 	 * 角色ID
 	 */
-	@ApiModelProperty(value = "roleId", required = true, dataType = "String", notes = "角色ID")
+	@ApiModelProperty(name = "roleId", required = true, dataType = "String", value = "角色ID")
 	private String roleId;
 	/**
 	 * 用户ID集合
 	 */
-	@ApiModelProperty(value = "userIds", required = true, dataType = "java.util.List<String>", notes = "用户ID集合")
+	@ApiModelProperty(name = "userIds", required = true, dataType = "java.util.List<String>", value = "用户ID集合")
 	private List<String> userIds;
 
 	public String getRoleId() {

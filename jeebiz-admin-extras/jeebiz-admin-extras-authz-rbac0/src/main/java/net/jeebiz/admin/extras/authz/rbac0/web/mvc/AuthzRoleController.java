@@ -13,6 +13,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,12 +28,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import net.jeebiz.boot.api.annotation.BusinessLog;
-import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.utils.Constants;
-import net.jeebiz.boot.api.utils.ResultUtils;
-import net.jeebiz.boot.api.webmvc.BaseMapperController;
-import net.jeebiz.boot.api.webmvc.Result;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureModel;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
 import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureService;
@@ -45,6 +40,12 @@ import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleAllotUserVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRolePaginationVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserDetailVo;
+import net.jeebiz.boot.api.annotation.BusinessLog;
+import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.utils.Constants;
+import net.jeebiz.boot.api.utils.ResultUtils;
+import net.jeebiz.boot.api.webmvc.BaseMapperController;
+import net.jeebiz.boot.api.webmvc.Result;
 
 /**
  * 权限管理：角色管理
@@ -160,7 +161,7 @@ public class AuthzRoleController extends BaseMapperController {
 		@ApiImplicitParam( name = "id", required = true, value = "角色ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询角色", opt = BusinessType.SELECT)
-	@PostMapping("detail/{id}")
+	@GetMapping("detail/{id}")
 	@RequiresPermissions("role:detail")
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 
@@ -254,7 +255,7 @@ public class AuthzRoleController extends BaseMapperController {
 		@ApiImplicitParam(name = "roleId", required = false, value = "角色ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询已分配给指定角色ID的功能", opt = BusinessType.SELECT)
-	@PostMapping("features")
+	@GetMapping("features")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object features(@RequestParam String roleId) throws Exception { 
@@ -267,7 +268,7 @@ public class AuthzRoleController extends BaseMapperController {
 		@ApiImplicitParam( name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单树形结构数据", opt = BusinessType.SELECT)
-	@PostMapping("features/tree")
+	@GetMapping("features/tree")
 	@RequiresPermissions("role:features")
 	@ResponseBody
 	public Object tree(@RequestParam String roleId, @RequestParam(required = false) String handler){
@@ -285,7 +286,7 @@ public class AuthzRoleController extends BaseMapperController {
 		@ApiImplicitParam( name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单扁平结构数据", opt = BusinessType.SELECT)
-	@PostMapping("features/flat")
+	@GetMapping("features/flat")
 	@RequiresPermissions("role:features")
 	@ResponseBody
 	public Object flat(@RequestParam String roleId, @RequestParam(required = false) String handler){

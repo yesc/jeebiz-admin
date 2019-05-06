@@ -13,58 +13,67 @@ public class AuthzUserVo {
 	/**
 	 * 用户ID
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "用户ID")
+	@ApiModelProperty(name = "id", dataType = "String", value = "用户ID")
 	private String id;
 	/**
 	 * 用户别名（昵称）
 	 */
-	@ApiModelProperty(value = "alias", required = true, dataType = "String", notes = "用户昵称")
+	@ApiModelProperty(name = "alias", required = true, dataType = "String", value = "用户昵称")
 	private String alias;
 	/**
 	 * 用户头像：图片路径或图标样式
 	 */
-	@ApiModelProperty(value = "avatar", dataType = "String", notes = "用户头像：图片路径或图标样式")
+	@ApiModelProperty(name = "avatar", dataType = "String", value = "用户头像：图片路径或图标样式")
 	private String avatar;
 	/**
 	 * 用户名
 	 */
-	@ApiModelProperty(value = "username", required = true, dataType = "String", notes = "用户名")
+	@ApiModelProperty(name = "username", required = true, dataType = "String", value = "用户名")
 	private String username;
 	/**
 	 * 用户密码
 	 */
+	@ApiModelProperty(name = "password", required = true, dataType = "String", value = "用户密码")
 	private String password;
 	/**
 	 * 用户密码盐：用于密码加解密
 	 */
+	@ApiModelProperty(name = "salt", required = true, dataType = "String", value = "用户密码盐：用于密码加解密")
 	private String salt;
 	/**
 	 * 用户秘钥：用于用户JWT加解密
 	 */
+	@ApiModelProperty(name = "secret", required = true, dataType = "String", value = "用户秘钥：用于用户JWT加解密")
 	private String secret;
 	/**
 	 * 手机号码
 	 */
+	@ApiModelProperty(name = "phone", required = true, dataType = "String", value = "手机号码")
 	private String phone;
 	/**
 	 * 电子邮箱
 	 */
+	@ApiModelProperty(name = "email", required = true, dataType = "String", value = "电子邮箱")
 	private String email;
 	/**
 	 * 用户备注
 	 */
+	@ApiModelProperty(name = "remark", required = true, dataType = "String", value = "用户备注")
 	private String remark;
 	/**
 	 * 用户状态（0:禁用|1:可用|2:锁定）
 	 */
+	@ApiModelProperty(name = "status", required = true, dataType = "String", value = "用户状态（0:禁用|1:可用|2:锁定）")
 	private String status;
 	/**
 	 * 角色ID
 	 */
+	@ApiModelProperty(name = "roleId", required = true, dataType = "String", value = "角色ID")
 	private String roleId;
 	/**
 	 * 初始化时间
 	 */
+	@ApiModelProperty(name = "time24", required = true, dataType = "String", value = "初始化时间")
 	private String time24;
 
 	public String getId() {
