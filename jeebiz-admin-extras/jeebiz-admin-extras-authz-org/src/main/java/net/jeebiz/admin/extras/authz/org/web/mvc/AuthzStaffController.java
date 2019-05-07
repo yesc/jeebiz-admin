@@ -48,6 +48,9 @@ public class AuthzStaffController extends BaseMapperController {
 	private IAuthzStaffService authzStaffService;
 
 	@ApiOperation(value = "分页查询员工信息", notes = "分页查询员工信息")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzStaffPaginationVo") 
+	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "分页查询员工信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
 	@RequiresPermissions("authz-staff:list")

@@ -44,6 +44,9 @@ public class AuthzOrganizationController extends BaseMapperController {
 	private IAuthzOrganizationService authzOrganizationService;
 
 	@ApiOperation(value = "根据分组分页查询机构信息", notes = "根据分组分页查询机构信息")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzOrganizationPaginationVo") 
+	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "根据分组分页查询机构信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
 	@RequiresPermissions("authz-org:list")

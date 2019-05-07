@@ -50,6 +50,9 @@ public class AuthzPositionController extends BaseMapperController {
 	private IAuthzPositionService authzPositionService;
 
 	@ApiOperation(value = "分页查询岗位信息", notes = "分页查询岗位信息")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzPositionPaginationVo") 
+	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "分页查询岗位信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
 	@RequiresPermissions("authz-post:list")

@@ -51,7 +51,7 @@ public class AuthzDepartmentController extends BaseMapperController {
 
 	@ApiOperation(value = "根据分组分页查询部门信息", notes = "根据分组分页查询部门信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "paginationVo", value = "部门信息分组", dataType = "AuthzDepartmentPaginationVo")
+		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzDepartmentPaginationVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "根据分组分页查询部门信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
