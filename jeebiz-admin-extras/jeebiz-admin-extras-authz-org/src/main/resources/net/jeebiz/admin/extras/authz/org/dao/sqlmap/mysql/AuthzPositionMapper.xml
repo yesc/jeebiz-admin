@@ -69,6 +69,14 @@
 		where t.POST_ID = #{id}
 	</update>
 
+	<select id="getCountByCode" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.POST_ID) FROM SYS_AUTHZ_ORG_POSITION t WHERE t.POST_CODE = #{code}
+	</select>
+	
+	<select id="getCountByName" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.POST_ID) FROM SYS_AUTHZ_ORG_POSITION t WHERE t.POST_NAME = #{name}
+	</select>
+
 	<select id="getPagedList" resultMap="AuthzPositionMap" parameterType="AuthzPositionModel" useCache="false">
 		SELECT
 			t2.ORG_ID,

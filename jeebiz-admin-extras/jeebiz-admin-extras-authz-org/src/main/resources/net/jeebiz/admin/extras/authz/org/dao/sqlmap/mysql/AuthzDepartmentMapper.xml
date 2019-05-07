@@ -67,6 +67,14 @@
 		</set>
 		where t.DEPT_ID = #{id}
 	</update>
+	
+	<select id="getCountByCode" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.DEPT_ID) FROM SYS_AUTHZ_ORG_DEPT t WHERE t.DEPT_CODE = #{code}
+	</select>
+	
+	<select id="getCountByName" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.DEPT_ID) FROM SYS_AUTHZ_ORG_DEPT t WHERE t.DEPT_NAME = #{name}
+	</select>
 
 	<select id="getPagedList" resultMap="AuthzDepartmentMap" parameterType="AuthzDepartmentModel" useCache="false">
 		SELECT

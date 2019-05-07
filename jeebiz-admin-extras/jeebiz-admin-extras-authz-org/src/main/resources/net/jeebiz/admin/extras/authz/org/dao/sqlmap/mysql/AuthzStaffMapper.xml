@@ -66,6 +66,10 @@
 		where t.STAFF_ID = #{id}
 	</update>
 
+	<select id="getCountByUid" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.STAFF_ID) FROM SYS_AUTHZ_ORG_STAFF t WHERE t.STAFF_ID = #{uid}
+	</select>
+
 	<select id="getPagedList" resultMap="AuthzStaffMap" parameterType="AuthzStaffModel" useCache="false">
 		SELECT
 			t.ORG_ID,

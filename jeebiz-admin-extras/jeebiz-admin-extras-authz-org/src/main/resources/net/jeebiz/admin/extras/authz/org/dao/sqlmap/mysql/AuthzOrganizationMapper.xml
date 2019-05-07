@@ -66,6 +66,14 @@
 		where t.ORG_ID = #{id}
 	</update>
 
+	<select id="getCountByCode" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.ORG_ID) FROM SYS_AUTHZ_ORG_LIST t WHERE t.ORG_CODE = #{code}
+	</select>
+	
+	<select id="getCountByName" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.ORG_ID) FROM SYS_AUTHZ_ORG_LIST t WHERE t.ORG_NAME = #{name}
+	</select>
+
 	<select id="getPagedList" resultMap="AuthzOrganizationMap" parameterType="AuthzDepartmentModel" useCache="false">
 		SELECT
 			t.ORG_ID,
