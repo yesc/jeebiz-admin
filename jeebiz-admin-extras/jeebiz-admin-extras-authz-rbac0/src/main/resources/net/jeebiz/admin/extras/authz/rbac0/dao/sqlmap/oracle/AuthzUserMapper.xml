@@ -36,10 +36,8 @@
 		<result property="roleId" column="R_ID" />
 		<result property="roleName" column="R_NAME" />
 		<result property="dId" column="D_ID" />
-		<result property="age" column="D_AGE" />
-		<result property="birthday" column="D_BIRTHDAY" />
-		<result property="code" column="D_CODE" />
 		<result property="gender" column="D_GENDER" />
+		<result property="birthday" column="D_BIRTHDAY" />
 		<result property="idcard" column="D_IDCARD" />
 	</resultMap>
 	
@@ -58,16 +56,23 @@
 	        SELECT sys_guid() FROM dual
 	    </selectKey>
 	    insert into SYS_AUTHZ_USER_LIST(U_ID,U_USERNAME,U_PASSWORD,U_AVATAR,U_PHONE,U_EMAIL,U_REMARK,U_STATUS)
-		values(#{id},#{username},#{password},#{avatar,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},'1')
+		values(#{id},#{username},#{password},#{avatar},#{phone},#{email,jdbcType=CLOB},#{remark,jdbcType=CLOB},'1')
 	</insert>
 	
 	<insert id="insertDetail" parameterType="AuthzUserDetailModel" flushCache="true">
-		insert into SYS_AUTHZ_USER_DETAIL(U_ID, D_AGE, D_BIRTHDAY, D_CODE, D_GENDER, D_IDCARD, D_REMARK)
-		values(#{id}, #{age,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+		insert into SYS_AUTHZ_USER_DETAIL(U_ID,D_GENDER,D_BIRTHDAY,D_IDCARD)
+		values(#{id},#{gender},#{birthday},#{idcard})
 	</insert>
 	
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
 		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_ID = #{id}
+	</delete>
+	
+	<delete id="batchDelete" flushCache="true">
+		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_USERNAME != 'admin' AND U_ID IN 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+           #{item} 
+        </foreach>
 	</delete>
 	
 	<delete id="deleteDetail" parameterType="java.lang.String" flushCache="true">
@@ -77,27 +82,6 @@
 	<delete id="deleteRole" flushCache="true">
     	DELETE FROM SYS_AUTHZ_USER_ROLE_RELATION WHERE U_ID = #{id}
     </delete>
-	
-	<delete id="batchDelete" flushCache="true">
-		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_USERNAME != 'admin' AND U_ID IN 
-		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
-           #{item} 
-        </foreach>
-	</delete>
-	
-	<delete id="batchDeleteDetail" flushCache="true">
-		DELETE FROM SYS_AUTHZ_USER_DETAIL WHERE U_ID IN 
-		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
-           #{item} 
-        </foreach>
-	</delete>
-	
-	<delete id="batchDeleteRole" flushCache="true">
-		DELETE FROM SYS_AUTHZ_USER_ROLE_RELATION WHERE U_ID IN 
-		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
-           #{item} 
-        </foreach>
-	</delete>
 	
 	<update id="update" parameterType="AuthzUserDetailModel" flushCache="true">
 		update SYS_AUTHZ_USER_LIST t
@@ -162,9 +146,7 @@
 			t.U_STATUS,
 			t.U_TIME24,
 			x.D_ID,
-			x.D_AGE,
 			x.D_BIRTHDAY,
-			x.D_CODE,
 			x.D_GENDER,
 			x.D_IDCARD,
 			(SELECT wm_concat(y.R_ID) R_ID
@@ -194,9 +176,7 @@
 			t.U_STATUS,
 			t.U_TIME24,
 			x.D_ID,
-			x.D_AGE,
 			x.D_BIRTHDAY,
-			x.D_CODE,
 			x.D_GENDER,
 			x.D_IDCARD,
 			(SELECT wm_concat(y.R_ID) R_ID
@@ -214,22 +194,11 @@
 		<if test="model.status != null and model.status != ''">
 			and t.U_STATUS = #{model.status}
 		</if>
-		<if test="model.username != null and model.username != ''">
-			and t.U_USERNAME like '%'|| #{model.username} ||'%'
-		</if>
-		<if test="model.roleId != null and model.roleId != ''">
-			and exists (     
-		         SELECT y.U_ID
-		         FROM SYS_AUTHZ_USER_ROLE_RELATION y 
-		        WHERE y.U_ID = t.U_ID
-		          AND y.R_ID = #{model.roleId}
-		    )
-		</if>
 		<if test="model.gender != null and model.gender != ''">
 			and x.D_GENDER = #{model.gender}
 		</if>
-		<if test="model.idcard != null and model.idcard != ''">
-			and x.D_IDCARD like '%'|| #{model.idcard}||'%'
+		<if test="model.username != null and model.username != ''">
+			and t.U_USERNAME like '%'|| #{model.username} ||'%'
 		</if>
 	</select>
 	

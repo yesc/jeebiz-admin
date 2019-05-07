@@ -3,12 +3,10 @@
  * All Rights Reserved. 
  */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
-
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.SubjectUtils;
@@ -29,6 +27,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzPositionModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzPositionService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
@@ -38,12 +38,23 @@ import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.dao.entities.PairModel;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
-@Api(tags = "岗位管理：岗位信息维护")
+@Api(tags = "组织机构：岗位信息维护")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
-@RequestMapping(value = "/authz/post/")
+@RequestMapping(value = "/authz/org/post/")
 public class AuthzPositionController extends BaseMapperController {
 	
 	@Autowired
@@ -52,6 +63,9 @@ public class AuthzPositionController extends BaseMapperController {
 	@ApiOperation(value = "分页查询岗位信息", notes = "分页查询岗位信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzPositionPaginationVo") 
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "分页查询岗位信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -70,21 +84,24 @@ public class AuthzPositionController extends BaseMapperController {
 		
 	}
 	
-	@ApiOperation(value = "查询岗位信息", notes = "查询岗位信息")
+	@ApiOperation(value = "根据部门ID编码查询岗位信息", notes = "根据部门ID编码查询岗位信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "group", value = "岗位信息分组", required = true, dataType = "String")
+		@ApiImplicitParam(name = "deptId", value = "部门ID编码", required = true, dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "查询岗位信息", opt = BusinessType.SELECT)
-	@PostMapping("pairs")
+	@GetMapping("pairs")
 	@RequiresPermissions("authz-post:list")
 	@ResponseBody
-	public Object pairs(@RequestParam String group) throws Exception {
-		return getAuthzPositionService().getPairValues(group);
+	public Object pairs(@RequestParam String deptId) throws Exception {
+		return getAuthzPositionService().getPairValues(deptId);
 	}
 	
 	@ApiOperation(value = "创建岗位信息", notes = "增加一个新的岗位信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "postVo", value = "岗位信息传输对象", required = true, dataType = "AuthzPositionNewVo") 
+		@ApiImplicitParam(paramType = "body", name = "postVo", value = "岗位信息", required = true, dataType = "AuthzPositionNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "创建岗位信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
@@ -92,7 +109,8 @@ public class AuthzPositionController extends BaseMapperController {
 	@ResponseBody
 	public Object position(@Valid @RequestBody AuthzPositionNewVo postVo) throws Exception {
 		AuthzPositionModel model = getBeanMapper().map(postVo, AuthzPositionModel.class);
-		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
+		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
+		model.setUserId(principal.getUserid());
 		// 新增一条数据库配置记录
 		int result = getAuthzPositionService().insert(model);
 		if(result > 0) {
@@ -116,7 +134,7 @@ public class AuthzPositionController extends BaseMapperController {
 			return success("authz.post.renew.success", result);
 		}
 		// 逻辑代码，如果发生异常将不会被执行
-		return fail("authz-post.renew.fail", result);
+		return fail("authz.post.renew.fail", result);
 	}
 	
 	@ApiOperation(value = "更新岗位信息状态", notes = "更新岗位信息状态")
@@ -125,8 +143,8 @@ public class AuthzPositionController extends BaseMapperController {
 		@ApiImplicitParam(name = "status", required = true, value = "岗位信息状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "更新岗位信息状态", opt = BusinessType.UPDATE)
-	@GetMapping(value = "status")
-	@RequiresPermissions(value = {"authz-post:enable", "authz-post:disable"}, logical = Logical.OR)
+	@GetMapping("status")
+	@RequiresPermissions("authz-post:status")
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
 		int result = getAuthzPositionService().setStatus(id, status);
@@ -159,14 +177,17 @@ public class AuthzPositionController extends BaseMapperController {
 	@ApiImplicitParams({ 
 		@ApiImplicitParam( name = "id", required = true, value = "岗位信息ID", dataType = "String")
 	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzPositionVo.class)
+	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "查询岗位信息", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
-	@RequiresPermissions(value = {"authz-post:list" ,"authz-post:detail" }, logical = Logical.OR)
+	@RequiresPermissions("authz-post:detail")
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzPositionModel model = getAuthzPositionService().getModel(id);
 		if( model == null) {
-			
+			return ErrorResponse.empty(getMessage("authz.post.get.empty"));
 		}
 		return getBeanMapper().map(model, AuthzPositionVo.class);
 	}

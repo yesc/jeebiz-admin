@@ -17,7 +17,7 @@ public class KeyValueVo {
 	/**
 	 * 基础数据ID编号
 	 */
-	@ApiModelProperty(name = "id", dataType = "String", value = "基础数据ID编号", hidden = true)
+	@ApiModelProperty(name = "id", dataType = "String", value = "基础数据ID编号")
 	private String id;
 	
 	/**

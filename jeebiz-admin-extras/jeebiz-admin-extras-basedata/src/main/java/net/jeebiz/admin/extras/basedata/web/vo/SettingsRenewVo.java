@@ -14,17 +14,17 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "SettingsRequestVo", description = "系统参数集合传输对象")
-public class SettingsRequestVo {
+public class SettingsRenewVo {
 
 	/**
 	 * 系统参数分组
 	 */
-	@ApiModelProperty(name = "gkey", dataType = "String", value = "系统参数分组")
+	@ApiModelProperty(name = "gkey", required = true, dataType = "String", value = "系统参数分组")
 	@NotBlank(message = "系统参数分组必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String gkey;
 	
-	@ApiModelProperty(name = "datas", dataType = "java.util.List<SettingsVo>", value = "批量更新的系统参数列表")
+	@ApiModelProperty(name = "datas", required = true, dataType = "java.util.List<SettingsVo>", value = "批量更新的系统参数列表")
 	private List<SettingsVo> datas;
 
 	public String getGkey() {

@@ -9,15 +9,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.biz.utils.SubjectUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import net.jeebiz.boot.api.exception.ErrorResponse;
-import net.jeebiz.boot.api.utils.HttpStatus;
 import springfox.documentation.annotations.ApiIgnore;
 
 
@@ -25,16 +23,20 @@ import springfox.documentation.annotations.ApiIgnore;
  * 权限管理：系统首页
  */
 @Api(tags = "权限管理：系统首页（Ok）")
-@ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
-})
-@RestController
-public class AuthzIndexController {
+@Controller
+public class AuthzIndexController1 {
+	
+	@ApiIgnore
+	@RequestMapping(value="callback")
+    public String callback(HttpServletRequest request, Model model) {
+    	/**
+    	 * 如果用户已登录，直接转发到首页
+    	 */
+    	if(SubjectUtils.isAuthenticated()){
+    		return "redirect:/index";
+    	}
+    	return "redirect:/authz/login/stateful";
+    }
 	
 	/**
 	 * JWT是否过期的访问方法：处理逻辑已经在过滤器中实现，这里只负责输出有效情况下的信息

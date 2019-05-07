@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.biz.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +27,35 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import net.jeebiz.admin.extras.basedata.dao.entities.KeyGroupModel;
 import net.jeebiz.admin.extras.basedata.dao.entities.KeyValueModel;
 import net.jeebiz.admin.extras.basedata.service.IKeyGroupService;
 import net.jeebiz.admin.extras.basedata.service.IKeyValueService;
 import net.jeebiz.admin.extras.basedata.setup.Constants;
+import net.jeebiz.admin.extras.basedata.web.vo.KeyGroupVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValuePaginationVo;
-import net.jeebiz.admin.extras.basedata.web.vo.KeyValueRequestVo;
+import net.jeebiz.admin.extras.basedata.web.vo.KeyValueRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.dao.entities.PairModel;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.HttpStatus;
+import net.jeebiz.boot.api.utils.StringUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
 @Api(tags = "基础数据：键值对形式的数据维护")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
 @RequestMapping("/extras/basedata/keyvalue/")
 public class KeyValueController extends BaseMapperController {
@@ -50,10 +65,12 @@ public class KeyValueController extends BaseMapperController {
 	@Autowired
 	private IKeyValueService keyValueService;
 	
-	
-	@ApiOperation(value = "keyvalue:list", notes = "分页查询基础数据")
+	@ApiOperation(value = "分页查询基础数据", notes = "分页查询基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "用户信息筛选条件", dataType = "AuthzUserPaginationVo")
+		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "用户信息筛选条件", dataType = "KeyValuePaginationVo")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组分页查询基础数据", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -73,17 +90,28 @@ public class KeyValueController extends BaseMapperController {
 	}
 	
 	@ApiOperation(value = "查询基础数据分组", notes = "查询基础数据分组")
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = KeyGroupVo.class)
+	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "查询基础数据分组", opt = BusinessType.SELECT)
 	@GetMapping("groups")
 	@RequiresPermissions("keyvalue:list")
 	@ResponseBody
 	public Object groups() throws Exception {
-		return getKeyGroupService().getPairValues();
+		List<KeyGroupModel> records = getKeyGroupService().getPairValues();
+		List<KeyGroupVo> retList = Lists.newArrayList();
+		for (KeyGroupModel groupModel : records) {
+			retList.add(getBeanMapper().map(groupModel, KeyGroupVo.class));
+		}
+		return retList;
 	}
 	
 	@ApiOperation(value = "根据分组查询基础数据", notes = "根据分组查询基础数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "gkey", value = "基础数据分组", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "query", name = "gkey", value = "基础数据分组", required = true, dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询基础数据", opt = BusinessType.SELECT)
 	@GetMapping("pairs")
@@ -101,8 +129,8 @@ public class KeyValueController extends BaseMapperController {
 	@PostMapping("new")
 	@RequiresPermissions("keyvalue:new")
 	@ResponseBody
-	public Object keyvalue(@Valid @RequestBody KeyValueVo keyvalueVo) throws Exception {
-		KeyValueModel model = getBeanMapper().map(keyvalueVo, KeyValueModel.class);
+	public Object keyvalue(@Valid @RequestBody KeyValueVo vo) throws Exception {
+		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
 		
 		int ct = getKeyValueService().getCount(model);
 		if(ct > 0) {
@@ -119,14 +147,14 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新基础数据", notes = "更新基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "keyvalueVo", value = "基础数据", required = true, dataType = "KeyValueVo"),
+		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据", required = true, dataType = "KeyValueVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据", opt = BusinessType.UPDATE)
 	@PostMapping("update")
 	@RequiresPermissions("keyvalue:update")
 	@ResponseBody
-	public Object update(@Valid @RequestBody KeyValueVo keyvalueVo) throws Exception {
-		KeyValueModel model = getBeanMapper().map(keyvalueVo, KeyValueModel.class);
+	public Object update(@Valid @RequestBody KeyValueVo vo) throws Exception {
+		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
 		int ct = getKeyValueService().getCount(model);
 		if(ct > 0) {
 			return fail("keyvalue.update.conflict");
@@ -141,11 +169,11 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新基础数据状态", notes = "更新基础数据状态")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "id", required = true, value = "基础数据ID", dataType = "String"),
-		@ApiImplicitParam(name = "status", required = true, value = "基础数据状态", dataType = "String", allowableValues = "1,0")
+		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "基础数据ID", dataType = "String"),
+		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "基础数据状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据状态", opt = BusinessType.UPDATE)
-	@PostMapping("status")
+	@GetMapping("status")
 	@RequiresPermissions(value = {"keyvalue:enable", "keyvalue:disable"}, logical = Logical.OR)
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
@@ -159,10 +187,10 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "删除基础数据", notes = "删除基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "query", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "删除基础数据", opt = BusinessType.UPDATE)
-	@PostMapping("delete")
+	@GetMapping("delete")
 	@RequiresPermissions("keyvalue:delete")
 	@ResponseBody
 	public Object delete(@RequestParam String ids) throws Exception {
@@ -178,13 +206,13 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "批量更新分组内的基础数据", notes = "批量更新分组内的基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "requestVo", value = "基础数据集合", required = true, dataType = "KeyValueRequestVo"),
+		@ApiImplicitParam(paramType = "body", name = "requestVo", value = "基础数据集合", required = true, dataType = "KeyValueRenewVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "批量更新分组内的基础数据", opt = BusinessType.UPDATE)
 	@PostMapping(value = "batch/update")
 	@RequiresPermissions("keyvalue:update")
 	@ResponseBody
-	public Object batchUpdate(@Valid @RequestBody KeyValueRequestVo requestVo) throws Exception {
+	public Object batchUpdate(@Valid @RequestBody KeyValueRenewVo requestVo) throws Exception {
 		
 		try {
 			
@@ -204,14 +232,21 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询基础数据信息", notes = "根据ID查询基础数据信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( name = "id", required = true, value = "基础数据ID", dataType = "String")
+		@ApiImplicitParam(paramType = "path", name = "id", required = true, value = "基础数据ID", dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = KeyValueVo.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "查询基础数据信息", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
 	@RequiresPermissions(value = {"keyvalue:list" ,"keyvalue:detail" }, logical = Logical.OR)
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 
-		return getKeyValueService().getModel(id);
+		KeyValueModel model = getKeyValueService().getModel(id);
+		if(model == null) {
+			return ErrorResponse.empty(getMessage("keyvalue.get.empty"));
+		}
+		return getBeanMapper().map(model, KeyValueVo.class);
 	}
 
 	public IKeyGroupService getKeyGroupService() {

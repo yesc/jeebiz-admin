@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,17 +25,31 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.basedata.dao.entities.SettingsModel;
 import net.jeebiz.admin.extras.basedata.service.ISettingsService;
 import net.jeebiz.admin.extras.basedata.setup.Constants;
-import net.jeebiz.admin.extras.basedata.web.vo.SettingsRequestVo;
+import net.jeebiz.admin.extras.basedata.web.vo.SettingsRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.SettingsVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.dao.entities.PairModel;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
-@Api(tags = "系统参数设置：各类系统参数维护")
+
+@Api(tags = "系统参数：各类系统参数维护")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
 @RequestMapping("/extras/basedata/settings/")
 public class SettingsController extends BaseMapperController {
@@ -44,10 +59,13 @@ public class SettingsController extends BaseMapperController {
 	
 	@ApiOperation(value = "根据分组查询系统参数", notes = "根据分组查询系统参数")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "query", name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询系统参数", opt = BusinessType.SELECT)
-	@PostMapping(value = "list")
+	@GetMapping(value = "list")
 	@RequiresPermissions(value = {"settings:list","settings:email"}, logical = Logical.OR)
 	@ResponseBody
 	public Object list(@RequestParam String gkey) throws Exception {
@@ -66,10 +84,13 @@ public class SettingsController extends BaseMapperController {
 	
 	@ApiOperation(value = "根据分组查询系统参数", notes = "根据分组查询系统参数")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "query", name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询系统参数", opt = BusinessType.SELECT)
-	@PostMapping("pairs")
+	@GetMapping("pairs")
 	@RequiresPermissions("settings:list")
 	@ResponseBody
 	public Object pairs(@RequestParam String gkey) throws Exception {
@@ -78,7 +99,7 @@ public class SettingsController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新系统参数", notes = "更新系统参数")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "settingsVo", value = "系统参数", required = true, dataType = "SettingsVo"),
+		@ApiImplicitParam(paramType = "body", name = "settingsVo", value = "系统参数", required = true, dataType = "SettingsVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新系统参数", opt = BusinessType.UPDATE)
 	@PostMapping(value = "update")
@@ -96,20 +117,20 @@ public class SettingsController extends BaseMapperController {
 	
 	@ApiOperation(value = "批量更新分组内的系统参数", notes = "批量更新分组内的系统参数")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "requestVo", value = "系统参数集合", required = true, dataType = "SettingsRequestVo"),
+		@ApiImplicitParam( paramType = "body", name = "renewVo", value = "系统参数集合", required = true, dataType = "SettingsRenewVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "批量更新分组内的系统参数", opt = BusinessType.UPDATE)
 	@PostMapping(value = "batch/update")
 	@RequiresPermissions("settings:batch-update")
 	@ResponseBody
-	public Object batchUpdate(@Valid @RequestBody SettingsRequestVo requestVo) throws Exception {
+	public Object batchUpdate(@Valid @RequestBody SettingsRenewVo renewVo) throws Exception {
 		
 		try {
 			
 			List<SettingsModel> list = Lists.newArrayList();
-			for (SettingsVo settingsVo : requestVo.getDatas()) {
+			for (SettingsVo settingsVo : renewVo.getDatas()) {
 				SettingsModel model = getBeanMapper().map(settingsVo, SettingsModel.class);
-				model.setGkey(requestVo.getGkey());
+				model.setGkey(renewVo.getGkey());
 				list.add(model);
 			}
 			// 批量执行系统参数更新操作

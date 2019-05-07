@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +26,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzStaffModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzStaffService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
@@ -36,12 +37,22 @@ import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
-@Api(tags = "组织机构人员管理：人员组织机构、部门、岗位信息维护")
+@Api(tags = "组织机构：人员信息维护")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
-@RequestMapping(value = "/authz/staff/")
+@RequestMapping(value = "/authz/org/staff/")
 public class AuthzStaffController extends BaseMapperController {
 	
 	@Autowired
@@ -50,6 +61,9 @@ public class AuthzStaffController extends BaseMapperController {
 	@ApiOperation(value = "分页查询员工信息", notes = "分页查询员工信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzStaffPaginationVo") 
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "分页查询员工信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -70,7 +84,7 @@ public class AuthzStaffController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建员工信息", notes = "增加一个新的员工信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "staffVo", value = "员工信息传输对象", required = true, dataType = "AuthzStaffNewVo") 
+		@ApiImplicitParam(paramType = "body", name = "staffVo", value = "员工信息", required = true, dataType = "AuthzStaffNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "创建员工信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
@@ -110,7 +124,7 @@ public class AuthzStaffController extends BaseMapperController {
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "更新员工信息状态", opt = BusinessType.UPDATE)
 	@GetMapping("status")
-	@RequiresPermissions(value = {"authz-staff:enable", "authz-staff:disable"}, logical = Logical.OR)
+	@RequiresPermissions("authz-staff:status")
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
 		int result = getAuthzStaffService().setStatus(id, status);
@@ -143,18 +157,19 @@ public class AuthzStaffController extends BaseMapperController {
 	@ApiImplicitParams({ 
 		@ApiImplicitParam( name = "id", required = true, value = "员工ID编码", dataType = "String")
 	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzStaffVo.class)
+	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "查询员工信息", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
-	@RequiresPermissions(value = {"authz-staff:list" ,"authz-staff:detail" }, logical = Logical.OR)
+	@RequiresPermissions("authz-staff:detail")
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception {
-		
+	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzStaffModel model = getAuthzStaffService().getModel(id);
 		if( model == null) {
-			
+			return ErrorResponse.empty(getMessage("authz.staff.get.empty"));
 		}
 		return getBeanMapper().map(model, AuthzStaffVo.class);
-		
 	}
 
 	public IAuthzStaffService getAuthzStaffService() {

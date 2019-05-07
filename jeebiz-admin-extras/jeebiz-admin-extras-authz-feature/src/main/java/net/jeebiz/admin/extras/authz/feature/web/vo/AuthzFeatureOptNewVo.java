@@ -7,19 +7,14 @@ package net.jeebiz.admin.extras.authz.feature.web.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "AuthzFeatureOptVo", description = "功能操作参数Vo")
-public class AuthzFeatureOptVo implements Comparable<AuthzFeatureOptVo> {
+@ApiModel(value = "AuthzFeatureOptNewVo", description = "新增功能操作参数Vo")
+public class AuthzFeatureOptNewVo implements Comparable<AuthzFeatureOptNewVo> {
 	
 	/**
 	 * 功能菜单ID
 	 */
 	@ApiModelProperty(name = "featureId", dataType = "String", value = "功能菜单ID")
 	private String featureId;
-	/**
-	 * 功能操作ID
-	 */
-	@ApiModelProperty(name = "id", dataType = "String", value = "功能操作ID")
-	private String id;
 	/**
 	 * 功能操作名称
 	 */
@@ -57,14 +52,6 @@ public class AuthzFeatureOptVo implements Comparable<AuthzFeatureOptVo> {
 
 	public void setFeatureId(String featureId) {
 		this.featureId = featureId;
-	}
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -116,7 +103,7 @@ public class AuthzFeatureOptVo implements Comparable<AuthzFeatureOptVo> {
 	}
 
 	@Override
-	public int compareTo(AuthzFeatureOptVo o) {
+	public int compareTo(AuthzFeatureOptNewVo o) {
 		return Integer.parseInt(order) - Integer.parseInt(o.getOrder());
 	}
 	

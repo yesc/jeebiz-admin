@@ -8,11 +8,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.SubjectUtils;
+import org.apache.shiro.spring.boot.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzDepartmentModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzDepartmentService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
@@ -39,25 +38,13 @@ import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.dao.entities.PairModel;
-import net.jeebiz.boot.api.exception.ErrorResponse;
-import net.jeebiz.boot.api.utils.HttpStatus;
-import net.jeebiz.boot.api.utils.StringUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
-@Api(tags = "组织机构：部门信息维护")
-@ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
-})
+@Api(tags = "部门管理：部门信息维护")
 @RestController
-@RequestMapping(value = "/authz/org/dept/")
-public class AuthzDepartmentController extends BaseMapperController {
+@RequestMapping(value = "/authz/dept/")
+public class AuthzDepartmentController1 extends BaseMapperController {
 
 	@Autowired
 	private IAuthzDepartmentService authzDepartmentService;
@@ -65,9 +52,6 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@ApiOperation(value = "根据分组分页查询部门信息", notes = "根据分组分页查询部门信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzDepartmentPaginationVo") 
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "根据分组分页查询部门信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -87,43 +71,29 @@ public class AuthzDepartmentController extends BaseMapperController {
 		
 	}
 	
-	@ApiOperation(value = "根据机构ID查询部门信息", notes = "根据机构ID查询部门信息")
+	@ApiOperation(value = "根据分组查询部门信息", notes = "根据分组查询部门信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "orgId", value = "机构ID编码", required = true, dataType = "String")
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
+		@ApiImplicitParam(name = "group", value = "部门信息分组", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "根据分组查询部门信息", opt = BusinessType.SELECT)
-	@GetMapping("pairs")
+	@PostMapping("pairs")
 	@RequiresPermissions("authz-dept:list")
 	@ResponseBody
-	public Object pairs(@RequestParam String orgId) throws Exception {
-		return getAuthzDepartmentService().getPairValues(orgId);
+	public Object pairs(@RequestParam String group) throws Exception {
+		return getAuthzDepartmentService().getPairValues(group);
 	}
 	
 	@ApiOperation(value = "创建部门信息", notes = "增加一个新的部门信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息", required = true, dataType = "AuthzDepartmentNewVo") 
+		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息传输对象", required = true, dataType = "AuthzDepartmentNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "创建部门信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("authz-dept:new")
 	@ResponseBody
 	public Object newDept(@Valid @RequestBody AuthzDepartmentNewVo deptVo) throws Exception {
-		
-		int count1 = getAuthzDepartmentService().getCountByCode(deptVo.getCode());
-		if(count1 > 0) {
-			return fail("authz.dept.new.code-exists");
-		}
-		int count2 = getAuthzDepartmentService().getCountByName(deptVo.getName());
-		if(count2 > 0) {
-			return fail("authz.dept.new.name-exists");
-		}
-		
 		AuthzDepartmentModel model = getBeanMapper().map(deptVo, AuthzDepartmentModel.class);
-		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
-		model.setUserId(principal.getUserid());
+		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
 		// 新增一条数据库配置记录
 		int result = getAuthzDepartmentService().insert(model);
 		if(result > 0) {
@@ -134,7 +104,7 @@ public class AuthzDepartmentController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新部门信息", notes = "更新部门信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息", required = true, dataType = "AuthzDepartmentRenewVo") 
+		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息", required = true, dataType = "AuthzDepartmentRenewVo"),
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "更新部门信息", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
@@ -156,8 +126,8 @@ public class AuthzDepartmentController extends BaseMapperController {
 		@ApiImplicitParam(name = "status", required = true, value = "部门信息状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "更新部门信息状态", opt = BusinessType.UPDATE)
-	@GetMapping("status")
-	@RequiresPermissions("authz-dept:status")
+	@PostMapping(value = "status")
+	@RequiresPermissions(value = {"authz-dept:enable", "authz-dept:disable"}, logical = Logical.OR)
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
 		int result = getAuthzDepartmentService().setStatus(id, status);
@@ -173,7 +143,7 @@ public class AuthzDepartmentController extends BaseMapperController {
 		@ApiImplicitParam(name = "ids", value = "部门信息ID,多个用,拼接", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "删除部门信息", opt = BusinessType.UPDATE)
-	@GetMapping("delete")
+	@PostMapping("delete")
 	@RequiresPermissions("authz-dept:delete")
 	@ResponseBody
 	public Object delete(@RequestParam String ids) throws Exception {
@@ -189,21 +159,20 @@ public class AuthzDepartmentController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询部门信息", notes = "根据ID查询部门信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "path", name = "id", required = true, value = "部门信息ID", dataType = "String")
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzDepartmentVo.class)
+		@ApiImplicitParam( name = "id", required = true, value = "部门信息ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "查询部门信息", opt = BusinessType.SELECT)
-	@GetMapping("detail/{id}")
-	@RequiresPermissions("authz-dept:detail")
+	@PostMapping("detail/{id}")
+	@RequiresPermissions(value = {"authz-dept:list" ,"authz-dept:detail" }, logical = Logical.OR)
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception { 
+	public Object detail(@PathVariable("id") String id) throws Exception {
+		
 		AuthzDepartmentModel model = getAuthzDepartmentService().getModel(id);
 		if( model == null) {
-			return ErrorResponse.empty(getMessage("authz.dept.get.empty"));
+			
 		}
 		return getBeanMapper().map(model, AuthzDepartmentVo.class);
+		
 	}
 
 	public IAuthzDepartmentService getAuthzDepartmentService() {

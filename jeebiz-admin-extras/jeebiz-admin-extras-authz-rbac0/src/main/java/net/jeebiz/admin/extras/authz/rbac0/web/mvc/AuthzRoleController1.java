@@ -3,6 +3,7 @@
  * All Rights Reserved. 
  */
 package net.jeebiz.admin.extras.authz.rbac0.web.mvc;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureModel;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
 import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureService;
@@ -38,16 +37,12 @@ import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzRoleModel;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserDetailModel;
 import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzRoleService;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleAllotUserVo;
-import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleNewVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRolePaginationVo;
-import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleRenewVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserDetailVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.exception.ErrorResponse;
 import net.jeebiz.boot.api.utils.Constants;
-import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.utils.ResultUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
@@ -56,46 +51,27 @@ import net.jeebiz.boot.api.webmvc.Result;
  * 权限管理：角色管理
  */
 @Api(tags = "权限管理：角色管理（Ok）")
-@ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
-})
 @RestController
 @RequestMapping(value = "/authz/role/")
-public class AuthzRoleController extends BaseMapperController {
+public class AuthzRoleController1 extends BaseMapperController {
 
 	@Autowired
 	protected IAuthzFeatureService authzFeatureService;
 	@Autowired
 	private IAuthzRoleService authzRoleService;//角色管理SERVICE
 	
-	@ApiOperation(value = "查询全部可用角色信息", notes = "查询全部可用角色信息")
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzRoleVo.class, responseContainer = "List")
-	})
+	@ApiOperation(value = "role:roles", notes = "查询全部可用角色信息")
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询全部可用角色信息", opt = BusinessType.SELECT)
-	@GetMapping("roles")
+	@PostMapping("roles")
 	@RequiresPermissions("role:list")
 	@ResponseBody
 	public Object roles(){
-		List<AuthzRoleModel> roles = getAuthzRoleService().getRoles();
-		List<AuthzRoleVo> retList = new ArrayList<AuthzRoleVo>();
-		for (AuthzRoleModel roleModel : roles) {
-			retList.add(getBeanMapper().map(roleModel, AuthzRoleVo.class));
-		}
-		return retList;
+		return ResultUtils.dataMap(getAuthzRoleService().getRoles());
 	}
 	
-	@ApiOperation(value = "分页查询角色信息", notes = "分页查询角色信息")
+	@ApiOperation(value = "role:list", notes = "分页查询角色信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "角色信息筛选条件", dataType = "AuthzRolePaginationVo")
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "分页查询角色信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -113,15 +89,15 @@ public class AuthzRoleController extends BaseMapperController {
 		return new Result<AuthzRoleVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "增加角色信息", notes = "增加角色信息")
+	@ApiOperation(value = "role:new", notes = "增加角色信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "roleVo", value = "角色信息", required = true, dataType = "AuthzRoleNewVo")
+		@ApiImplicitParam(paramType = "body", name = "roleVo", value = "角色信息", dataType = "AuthzRoleVo")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "新增角色-名称：${name}", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("role:new")
 	@ResponseBody
-	public Object newRole(@Valid @RequestBody AuthzRoleNewVo roleVo) throws Exception {
+	public Object newRole(@Valid @RequestBody AuthzRoleVo roleVo) throws Exception {
 		
 		if(CollectionUtils.isEmpty(roleVo.getPerms())) {
 			return fail("role.new.need-perms");
@@ -139,15 +115,15 @@ public class AuthzRoleController extends BaseMapperController {
 		return fail("role.new.fail");
 	}
 	
-	@ApiOperation(value = "修改角色信息", notes = "修改角色信息")
+	@ApiOperation(value = "role:renew", notes = "修改角色信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "roleVo", value = "角色信息", required = true, dataType = "AuthzRoleRenewVo")
+		@ApiImplicitParam(paramType = "body", name = "roleVo", value = "角色信息", dataType = "AuthzRoleVo")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "修改角色-名称：${name}", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("role:renew")
 	@ResponseBody
-	public Object renewRole(@Valid @RequestBody AuthzRoleRenewVo roleVo) throws Exception { 
+	public Object renewRole(@Valid @RequestBody AuthzRoleVo roleVo) throws Exception { 
 		if(CollectionUtils.isEmpty(roleVo.getPerms())) {
 			return fail("role.renew.need-perms");
 		}
@@ -163,13 +139,13 @@ public class AuthzRoleController extends BaseMapperController {
 		return fail("role.renew.fail");
 	}
 	
-	@ApiOperation(value = "更新角色状态", notes = "更新角色状态")
+	@ApiOperation(value = "role:status", notes = "更新角色状态")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "角色状态", dataType = "String", allowableValues = "1,0")
+		@ApiImplicitParam(name = "id", required = true, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam(name = "status", required = true, value = "角色状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "更新角色状态", opt = BusinessType.UPDATE)
-	@GetMapping("status")
+	@PostMapping("status")
 	@RequiresPermissions("role:status")
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
@@ -180,44 +156,37 @@ public class AuthzRoleController extends BaseMapperController {
 		return fail("role.status.fail", result);
 	}
 	
-	@ApiOperation(value = "根据角色ID查询角色信息", notes = "根据角色ID查询角色信息")
+	@ApiOperation(value = "role:detail", notes = "根据角色ID查询角色信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( paramType = "path", name = "id", required = true, value = "角色ID", dataType = "String")
+		@ApiImplicitParam( name = "id", required = true, value = "角色ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询角色", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
 	@RequiresPermissions("role:detail")
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception {
-		AuthzRoleModel model = getAuthzRoleService().getModel(id);
-		if(model == null) {
-			return ErrorResponse.empty(getMessage("role.get.empty"));
-		}
-		return getBeanMapper().map(model, AuthzRoleVo.class);
+	public Object detail(@PathVariable("id") String id) throws Exception { 
+		return getAuthzRoleService().getModel(id);
 	}
 	
-	@ApiOperation(value = "删除角色信息", notes = "删除角色信息")
+	@ApiOperation(value = "role:delete", notes = "删除角色信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( paramType = "path", name = "id", required = true, value = "角色ID", dataType = "String")
+		@ApiImplicitParam( name = "id", required = true, value = "角色ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "删除角色-名称：${roleid}", opt = BusinessType.DELETE)
-	@GetMapping("delete/{id}")
+	@PostMapping("delete/{id}")
 	@RequiresPermissions("role:delete")
 	@ResponseBody
 	public Object delRole(@PathVariable("id") String id) throws Exception {
-		int total = getAuthzRoleService().delete(id);
-		if(total == 1) {
-			return success("role.delete.success", total);
+		int result = getAuthzRoleService().delete(id);
+		if(result == 1) {
+			return success("role.del.success", result);
 		}
-		return fail("role.delete.fail", total);
+		return fail("role.del.fail", result);
 	}
 	
-	@ApiOperation(value = "分页查询角色已分配用户信息", notes = "分页查询角色已分配用户信息")
+	@ApiOperation(value = "role:allocated", notes = "分页查询角色已分配用户信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "已分配用户信息筛选条件", dataType = "AuthzRolePaginationVo")
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "分页查询角色已分配用户信息,角色Id：${roleid}", opt = BusinessType.DELETE)
 	@PostMapping("allocated")
@@ -234,12 +203,9 @@ public class AuthzRoleController extends BaseMapperController {
 		return new Result<AuthzUserDetailVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "分页查询角色未分配用户信息", notes = "分页查询角色未分配用户信息")
+	@ApiOperation(value = "role:unallocated", notes = "分页查询角色未分配用户信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "未分配用户信息筛选条件", dataType = "AuthzRolePaginationVo")
-	})
-	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "分页查询角色未分配用户信息,角色Id：${roleid}", opt = BusinessType.DELETE)
 	@PostMapping("unallocated")
@@ -256,7 +222,7 @@ public class AuthzRoleController extends BaseMapperController {
 		return new Result<AuthzUserDetailVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "给指定角色分配用户", notes = "给指定角色分配用户")
+	@ApiOperation(value = "role:allot", notes = "给指定角色分配用户")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "allotVo", value = "角色分配的用户信息", dataType = "AuthzRoleAllotUserVo")
 	})
@@ -270,7 +236,7 @@ public class AuthzRoleController extends BaseMapperController {
 		return success("role.allot.success", total); 
 	}
 	
-	@ApiOperation(value = "取消已分配给指定角色的用户", notes = "取消已分配给指定角色的用户")
+	@ApiOperation(value = "role:unallot", notes = "取消已分配给指定角色的用户")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "allotVo", value = "角色取消分配的用户信息", dataType = "AuthzRoleAllotUserVo")
 	})
@@ -284,26 +250,26 @@ public class AuthzRoleController extends BaseMapperController {
 		return success("role.unallot.success", total); 
 	}
 
-	@ApiOperation(value = "查询已分配给指定角色ID的功能", notes = "查询已分配给指定角色ID的功能")
+	@ApiOperation(value = "role:features", notes = "查询已分配给指定角色ID的功能")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "path", name = "roleId", required = false, value = "角色ID", dataType = "String")
+		@ApiImplicitParam(name = "roleId", required = false, value = "角色ID", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询已分配给指定角色ID的功能", opt = BusinessType.SELECT)
 	@GetMapping("features")
 	@RequiresAuthentication
 	@ResponseBody
-	public Object features(@PathVariable String roleId) throws Exception { 
+	public Object features(@RequestParam String roleId) throws Exception { 
 		return getAuthzRoleService().getFeatures(roleId);
 	}
 	
-	@ApiOperation(value = "查询指定角色ID拥有的功能菜单树形结构数据", notes = "查询指定角色ID拥有的功能菜单树形结构数据")
+	@ApiOperation(value = "role:tree-features", notes = "查询指定角色ID拥有的功能菜单树形结构数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam( paramType = "query", name = "roleId", required = false, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam( paramType = "query", name = "handler", value = "数据处理实现对象名称", dataType = "String")
+		@ApiImplicitParam(name = "roleId", required = false, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam( name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单树形结构数据", opt = BusinessType.SELECT)
 	@GetMapping("features/tree")
-	@RequiresAuthentication
+	@RequiresPermissions("role:features")
 	@ResponseBody
 	public Object tree(@RequestParam String roleId, @RequestParam(required = false) String handler){
 		// 所有的功能菜单
@@ -314,14 +280,14 @@ public class AuthzRoleController extends BaseMapperController {
 		return ResultUtils.dataMap(FeatureDataHandlerFactory.getTreeHandler(handler).handle(featureList, featureOptList));
 	}
 	
-	@ApiOperation(value = "查询指定角色ID拥有的功能菜单树扁平构数据", notes = "查询指定角色ID拥有的功能菜单树扁平构数据")
+	@ApiOperation(value = "role:flat-features", notes = "查询指定角色ID拥有的功能菜单树扁平构数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam( paramType = "query", name = "roleId", required = false, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam( paramType = "query", name = "handler", value = "数据处理实现对象名称", dataType = "String")
+		@ApiImplicitParam(name = "roleId", required = false, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam( name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单扁平结构数据", opt = BusinessType.SELECT)
 	@GetMapping("features/flat")
-	@RequiresAuthentication
+	@RequiresPermissions("role:features")
 	@ResponseBody
 	public Object flat(@RequestParam String roleId, @RequestParam(required = false) String handler){
 		// 所有的功能菜单

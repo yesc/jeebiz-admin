@@ -13,8 +13,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "KeyValueRequestVo", description = "基础数据集合传输对象")
-public class KeyValueRequestVo {
+@ApiModel(value = "KeyValueRenewVo", description = "基础数据集合传输对象")
+public class KeyValueRenewVo {
 
 	/**
 	 * 基础数据分组

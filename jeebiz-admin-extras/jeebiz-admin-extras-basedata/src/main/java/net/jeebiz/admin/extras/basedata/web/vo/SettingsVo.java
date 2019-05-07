@@ -17,7 +17,7 @@ public class SettingsVo {
 	/**
 	 * 参数ID编号
 	 */
-	@ApiModelProperty(name = "id", dataType = "String", value = "参数ID编号")
+	@ApiModelProperty(name = "id", required = true, dataType = "String", value = "参数ID编号")
 	@NotBlank(message = "参数ID必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String id;
@@ -25,25 +25,25 @@ public class SettingsVo {
 	/**
 	 * 参数分组
 	 */
-	@ApiModelProperty(name = "gkey", dataType = "String", value = "参数分组")
+	@ApiModelProperty(name = "gkey", required = true, dataType = "String", value = "参数分组")
 	private String gkey;
 	
 	/**
 	 * 参数标签
 	 */
-	@ApiModelProperty(name = "label", dataType = "String", value = "参数标签")
+	@ApiModelProperty(name = "label", required = true, dataType = "String", value = "参数标签")
 	private String label;
 	/**
 	 * 参数键
 	 */
-	@ApiModelProperty(name = "key", dataType = "String", value = "参数键")
+	@ApiModelProperty(name = "key", required = true, dataType = "String", value = "参数键")
 	@NotBlank(message = "参数键必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String key;
 	/**
 	 * 参数值
 	 */
-	@ApiModelProperty(name = "text", dataType = "String", value = "参数值")
+	@ApiModelProperty(name = "text", required = true, dataType = "String", value = "参数值")
 	@NotBlank(message = "参数值必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String value;
@@ -88,7 +88,7 @@ public class SettingsVo {
 	/**
 	 * 参数排序:组内排序
 	 */
-	@ApiModelProperty(name = "order", dataType = "String", value = "参数排序:组内排序", hidden = true)
+	@ApiModelProperty(name = "order", required = true, dataType = "String", value = "参数排序:组内排序")
 	private int order;
 
 	public String getId() {

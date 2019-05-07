@@ -3,27 +3,16 @@
  * All Rights Reserved. 
  */
 package net.jeebiz.admin.extras.authz.rbac0.web.mvc;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.SubjectUtils;
-import org.apache.shiro.codec.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,12 +29,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import net.jeebiz.boot.api.annotation.BusinessLog;
-import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.utils.Constants;
-import net.jeebiz.boot.api.utils.StringUtils;
-import net.jeebiz.boot.api.webmvc.BaseMapperController;
-import net.jeebiz.boot.api.webmvc.Result;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzRoleModel;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserAllotRoleModel;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserDetailModel;
@@ -53,14 +38,32 @@ import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserModel;
 import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzUserService;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserAllotRoleVo;
+import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserDetailNewVo;
+import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserDetailRenewVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserDetailVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserPaginationVo;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzUserResetVo;
+import net.jeebiz.boot.api.annotation.BusinessLog;
+import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.Constants;
+import net.jeebiz.boot.api.utils.HttpStatus;
+import net.jeebiz.boot.api.utils.StringUtils;
+import net.jeebiz.boot.api.webmvc.BaseMapperController;
+import net.jeebiz.boot.api.webmvc.Result;
 
 /**
  * 权限管理：用户管理
  */
 @Api(tags = "权限管理：用户管理（Ok）")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
 @RequestMapping(value = "/authz/user")
 public class AuthzUserController extends BaseMapperController {
@@ -68,9 +71,12 @@ public class AuthzUserController extends BaseMapperController {
 	@Autowired
 	private IAuthzUserService authzUserService;//用户管理SERVICE
 	
-	@ApiOperation(value = "user:list", notes = "分页查询用户信息")
+	@ApiOperation(value = "分页查询用户信息", notes = "分页查询用户信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "用户信息筛选条件", dataType = "AuthzUserPaginationVo")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "分页查询用户信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -88,37 +94,51 @@ public class AuthzUserController extends BaseMapperController {
 		return new Result<AuthzUserDetailVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "user:detail", notes = "根据用户ID查询用户信息")
+	@ApiOperation(value = "根据用户ID查询用户信息", notes = "根据用户ID查询用户信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam( name = "id", required = true, value = "用户ID", dataType = "String")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzUserDetailVo.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "查询用户-ID：${userid}", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
 	@RequiresPermissions("user:detail")
 	@ResponseBody
-	public Object detail(@PathVariable String id) throws Exception { 
-		return getAuthzUserService().getModel(id);
+	public Object detail(@PathVariable String id) throws Exception {
+		AuthzUserDetailModel model = getAuthzUserService().getModel(id);
+		if(model == null) {
+			return ErrorResponse.empty(getMessage("user.get.empty"));
+		}
+		return getBeanMapper().map(model, AuthzUserDetailVo.class);
 	}
 	
-	@ApiOperation(value = "user:current", notes = "根据认证信息中的用户ID查询用户详情")
+	@ApiOperation(value = "根据认证信息中的用户ID查询用户详情", notes = "根据认证信息中的用户ID查询用户详情")
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzUserDetailVo.class)
+	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "根据认证信息中的用户ID查询用户详情", opt = BusinessType.SELECT)
 	@GetMapping("detail")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object detail() throws Exception { 
 		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
-		return getAuthzUserService().getModel(principal.getUserid());
+		AuthzUserDetailModel model = getAuthzUserService().getModel(principal.getUserid());
+		if(model == null) {
+			return ErrorResponse.empty(getMessage("user.get.empty"));
+		}
+		return getBeanMapper().map(model, AuthzUserDetailVo.class);
 	}
 	
-	@ApiOperation(value = "user:new", notes = "增加用户信息")
+	@ApiOperation(value = "增加用户信息", notes = "增加用户信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "userVo", value = "用户信息", dataType = "AuthzUserDetailVo")
+		@ApiImplicitParam(paramType = "body", name = "userVo", value = "用户信息", required = true, dataType = "AuthzUserDetailNewVo")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "新增用户-名称：${name}", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("user:new")
 	@ResponseBody
-	public Object newUser(@Valid @RequestBody AuthzUserDetailVo userVo) throws Exception { 
+	public Object newUser(@Valid @RequestBody AuthzUserDetailNewVo userVo) throws Exception { 
 		int total = getAuthzUserService().getCountByName(userVo.getUsername());
 		if(total > 0) {
 			return fail("user.new.exists");
@@ -131,35 +151,15 @@ public class AuthzUserController extends BaseMapperController {
 		return fail("user.new.fail", result);
 	}
 	
-	/**
-     * 用户导入模板
-     */
-    @GetMapping(value = "download", produces = "application/vnd.ms-excel;charset=UTF-8")
-    @BusinessLog(module = Constants.AUTHZ_USER, business = "下载考试管理下人员报名考生信息导入模板", opt = BusinessType.DOWNLOAD)
-    @RequiresPermissions("user:template")
-    public ResponseEntity<byte[]> downloadTemplate() throws IOException {
-        //获取跟目录
-        File path = new File(ResourceUtils.getURL("classpath:").getPath());
-        if (path.exists()) {
-            File file = new File(path + Constants.AUTHZ_USER_DOWNLOAD_TEMPLATE_URL + File.separator + "usertemp.xlsx");
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", new String(Constants.AUTHZ_USER_DOWNLOAD_TEMPLATE.getBytes(StandardCharsets.UTF_8), "ISO8859-1"));
-            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
-                    headers, HttpStatus.CREATED);
-        }
-        return null;
-    }
-	
-	@ApiOperation(value = "user:renew", notes = "修改用户信息")
+	@ApiOperation(value = "修改用户信息", notes = "修改用户信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "userVo", value = "用户信息", dataType = "AuthzUserDetailVo")
+		@ApiImplicitParam(paramType = "body", name = "userVo", value = "用户信息", required = true, dataType = "AuthzUserDetailRenewVo")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "修改用户-名称：${name}", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("user:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody AuthzUserDetailVo userVo) throws Exception { 
+	public Object renew(@Valid @RequestBody AuthzUserDetailRenewVo userVo) throws Exception { 
 		AuthzUserDetailModel model = getBeanMapper().map(userVo, AuthzUserDetailModel.class);
 		int result = getAuthzUserService().update(model);
 		if(result == 1) {
@@ -168,13 +168,13 @@ public class AuthzUserController extends BaseMapperController {
 		return fail("user.renew.fail", result);
 	}
 	
-	@ApiOperation(value = "user:status", notes = "更新用户状态")
+	@ApiOperation(value = "更新用户状态", notes = "更新用户状态")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "id", required = true, value = "用户ID", dataType = "String"),
-		@ApiImplicitParam(name = "status", required = true, value = "用户状态", dataType = "String", allowableValues = "1,0")
+		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "用户ID", dataType = "String"),
+		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "用户状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "更新用户状态", opt = BusinessType.UPDATE)
-	@PostMapping("status")
+	@GetMapping("status")
 	@RequiresPermissions("user:status")
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
@@ -185,42 +185,30 @@ public class AuthzUserController extends BaseMapperController {
 		return fail("user.status.fail", result);
 	}
 	
-	@ApiOperation(value = "user:delete", notes = "删除用户信息")
+	@ApiOperation(value = "删除用户信息", notes = "删除用户信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "query", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "删除用户-名称：${userid}", opt = BusinessType.DELETE)
-	@PostMapping("delete")
+	@GetMapping("delete")
 	@RequiresPermissions("user:delete")
 	@ResponseBody
-	public Object delUser(@RequestParam String ids) throws Exception {
+	public Object delRole(@RequestParam String ids) throws Exception {
 		// 执行基础数据删除操作
 		List<String> idList = Lists.newArrayList(StringUtils.tokenizeToStringArray(ids));
-		int result = getAuthzUserService().batchDelete(idList);
-		return success("user.del.success", result);
-	}
-	
-	@ApiOperation(value = "user:init-pwd", notes = "初始化密码")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String"),
-		@ApiImplicitParam(name = "password", required = true, value = "新密码", dataType = "String")
-	})
-	@BusinessLog(module = Constants.AUTHZ_USER, business = "初始化密码", opt = BusinessType.UPDATE)
-	@GetMapping("initpwd")
-	@RequiresPermissions("user:initpwd")
-	@ResponseBody
-	public Object initPwd(@RequestParam String ids, @RequestParam String password) throws Exception {
-		List<String> idList = Lists.newArrayList(StringUtils.tokenizeToStringArray(ids));
-		int total = getAuthzUserService().updatePwd(idList, password);
+		int total = getAuthzUserService().batchDelete(idList);
 		if(total > 0) {
-			return success("user.init.pwd.success", total); 
+			return success("user.delete.success", total); 
 		}
-		return fail("user.init.pwd.fail", total);
+		return fail("user.delete.fail", total);
 	}
 	
-	@ApiOperation(value = "user:allocated", notes = "分页查询用户已分配角色信息")
+	@ApiOperation(value = "分页查询用户已分配角色信息", notes = "分页查询用户已分配角色信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "已分配角色信息筛选条件", dataType = "AuthzUserPaginationVo")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "分页查询用户已分配角色信息,用户Id：${userid}", opt = BusinessType.DELETE)
 	@PostMapping("allocated")
@@ -237,9 +225,12 @@ public class AuthzUserController extends BaseMapperController {
 		return new Result<AuthzRoleVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "user:unallocated", notes = "分页查询用户未分配角色信息")
+	@ApiOperation(value = "分页查询用户未分配角色信息", notes = "分页查询用户未分配角色信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "未分配角色信息筛选条件", dataType = "AuthzUserPaginationVo")
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "分页查询用户未分配角色信息,用户Id：${userid}", opt = BusinessType.DELETE)
 	@PostMapping("unallocated")
@@ -256,7 +247,7 @@ public class AuthzUserController extends BaseMapperController {
 		return new Result<AuthzRoleVo>(pageResult, retList);
 	}
 	
-	@ApiOperation(value = "user:allot", notes = "给指定用户分配角色")
+	@ApiOperation(value = "给指定用户分配角色", notes = "给指定用户分配角色")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "allotVo", value = "用户分配的角色信息", dataType = "AuthzUserAllotRoleVo")
 	})
@@ -270,7 +261,7 @@ public class AuthzUserController extends BaseMapperController {
 		return success("user.allot.success", total); 
 	}
 	
-	@ApiOperation(value = "user:unallot", notes = "取消已分配给指定用户的角色")
+	@ApiOperation(value = "取消已分配给指定用户的角色", notes = "取消已分配给指定用户的角色")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam(paramType = "body", name = "allotVo", value = "用户取消分配的角色信息", dataType = "AuthzUserAllotRoleVo")
 	})
@@ -295,7 +286,6 @@ public class AuthzUserController extends BaseMapperController {
 	@RequiresAuthentication
 	@ResponseBody
 	public Object resetInfo(@Valid @RequestBody AuthzUserResetVo resetVo) throws Exception { 
-		
 		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
 		AuthzUserDetailModel model = getBeanMapper().map(resetVo, AuthzUserDetailModel.class);
 		model.setId(principal.getUserid());
@@ -306,7 +296,7 @@ public class AuthzUserController extends BaseMapperController {
 		return fail("user.reset.info.fail", total);
 	}
 	
-	@ApiOperation(value = "user:reset-pwd", notes = "设置密码")
+	@ApiOperation(value = "重置当前登录用户密码", notes = "重置当前登录用户密码")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "oldPassword", required = true, value = "当前密码", dataType = "String"),
 		@ApiImplicitParam(name = "password", required = true, value = "新密码", dataType = "String")
@@ -317,8 +307,8 @@ public class AuthzUserController extends BaseMapperController {
 	@ResponseBody
 	public Object resetPwd(@RequestParam String oldPassword, @RequestParam String password) throws Exception {
 		// 密码加密
-		oldPassword = Base64.encodeToString(new String(oldPassword).getBytes());
-		password = Base64.encodeToString(new String(password).getBytes());
+		//oldPassword = Base64.encodeToString(new String(oldPassword).getBytes());
+		//password = Base64.encodeToString(new String(password).getBytes());
 		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
 		int total = getAuthzUserService().resetPwd(principal.getUserid(), oldPassword, password);
 		if(total > 0) {
@@ -327,14 +317,17 @@ public class AuthzUserController extends BaseMapperController {
 		return fail("user.reset.pwd.fail", total);
 	}
 	
-	@ApiOperation(value = "user:perms", notes = "查询已分配给当前用户所属角色的权限")
+	@ApiOperation(value = "查询已分配给当前用户所属角色的权限", notes = "查询已分配给当前用户所属角色的权限")
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = String.class, responseContainer = "List")
+	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "查询已分配给当前用户所属角色的权限", opt = BusinessType.SELECT)
 	@GetMapping("perms")
 	@RequiresAuthentication
 	@ResponseBody
 	public Object perms() throws Exception { 
-		String userId = SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid();
-		return getAuthzUserService().getPermissions(userId);
+		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
+		return getAuthzUserService().getPermissions(principal.getUserid());
 	}
 	
 	public IAuthzUserService getAuthzUserService() {

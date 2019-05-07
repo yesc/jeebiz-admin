@@ -1,14 +1,18 @@
+/** 
+ * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
+ * All Rights Reserved. 
+ */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.SubjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +27,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzOrganizationModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
@@ -32,10 +38,21 @@ import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
+import net.jeebiz.boot.api.dao.entities.PairModel;
+import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
-@Api(tags = "组织机构管理：机构信息维护")
+@Api(tags = "组织机构：机构信息维护")
+@ApiResponses({ 
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+})
 @RestController
 @RequestMapping(value = "/authz/org/")
 public class AuthzOrganizationController extends BaseMapperController {
@@ -46,6 +63,9 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@ApiOperation(value = "根据分组分页查询机构信息", notes = "根据分组分页查询机构信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzOrganizationPaginationVo") 
+	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "根据分组分页查询机构信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
@@ -64,16 +84,16 @@ public class AuthzOrganizationController extends BaseMapperController {
 		
 	}
 	
-	@ApiOperation(value = "根据分组查询机构信息", notes = "根据分组查询机构信息")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "group", value = "机构信息分组", required = true, dataType = "String")
+	@ApiOperation(value = "查询机构信息列表", notes = "查询机构信息列表")
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "根据分组查询机构信息", opt = BusinessType.SELECT)
-	@PostMapping("pairs")
+	@GetMapping("pairs")
 	@RequiresPermissions("authz-org:list")
 	@ResponseBody
-	public Object pairs(@RequestParam String group) throws Exception {
-		return getAuthzOrganizationService().getPairValues(group);
+	public Object pairs() throws Exception {
+		return getAuthzOrganizationService().getPairValues("");
 	}
 	
 	@ApiOperation(value = "创建机构信息", notes = "增加一个新的机构信息")
@@ -86,7 +106,8 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@ResponseBody
 	public Object newOrg(@Valid @RequestBody AuthzOrganizationNewVo orgVo) throws Exception {
 		AuthzOrganizationModel model = getBeanMapper().map(orgVo, AuthzOrganizationModel.class);
-		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
+		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
+		model.setUserId(principal.getUserid());
 		// 新增一条数据库配置记录
 		int result = getAuthzOrganizationService().insert(model);
 		if(result > 0) {
@@ -119,8 +140,8 @@ public class AuthzOrganizationController extends BaseMapperController {
 		@ApiImplicitParam(name = "status", required = true, value = "机构信息状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "更新机构信息状态", opt = BusinessType.UPDATE)
-	@PostMapping(value = "status")
-	@RequiresPermissions(value = {"authz-org:enable", "authz-org:disable"}, logical = Logical.OR)
+	@GetMapping(value = "status")
+	@RequiresPermissions("authz-org:status")
 	@ResponseBody
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
 		int result = getAuthzOrganizationService().setStatus(id, status);
@@ -136,7 +157,7 @@ public class AuthzOrganizationController extends BaseMapperController {
 		@ApiImplicitParam(name = "id", value = "机构信息ID", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "删除机构信息", opt = BusinessType.UPDATE)
-	@PostMapping("delete/{id}")
+	@GetMapping("delete/{id}")
 	@RequiresPermissions("authz-org:delete")
 	@ResponseBody
 	public Object delete(@PathVariable("id") String id) throws Exception {
@@ -149,22 +170,23 @@ public class AuthzOrganizationController extends BaseMapperController {
 		return fail("authz.org.delete.fail", result);
 	}
 	
-	@ApiOperation(value = "查询机构信息", notes = "根据ID查询机构信息")
+	@ApiOperation(value = "根据ID查询机构信息", notes = "根据ID查询机构信息")
 	@ApiImplicitParams({ 
 		@ApiImplicitParam( name = "id", required = true, value = "机构信息ID", dataType = "String")
 	})
+	@ApiResponses({ 
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzOrganizationVo.class)
+	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "查询机构信息", opt = BusinessType.SELECT)
-	@PostMapping("detail/{id}")
-	@RequiresPermissions(value = {"authz-org:list" ,"authz-org:detail" }, logical = Logical.OR)
+	@GetMapping("detail/{id}")
+	@RequiresPermissions("authz-org:detail")
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception {
-		
+	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzOrganizationModel model = getAuthzOrganizationService().getModel(id);
 		if( model == null) {
-			
+			return ErrorResponse.empty(getMessage("authz.org.get.empty"));
 		}
 		return getBeanMapper().map(model, AuthzOrganizationVo.class);
-		
 	}
 
 	public IAuthzOrganizationService getAuthzOrganizationService() {

@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "AuthzFeatureVo", description = "功能信息Vo")
 public class AuthzFeatureVo implements Comparable<AuthzFeatureVo>{
@@ -16,62 +17,77 @@ public class AuthzFeatureVo implements Comparable<AuthzFeatureVo>{
 	/**
 	 * 功能菜单ID
 	 */
+	@ApiModelProperty(name = "id", dataType = "String", value = "功能菜单ID")
 	private String id;
 	/**
 	 * 功能菜单名称
 	 */
+	@ApiModelProperty(name = "name", dataType = "String", value = "功能菜单名称")
 	private String name;
 	/**
 	 * 功能菜单界面显示标签
 	 */
+	@ApiModelProperty(name = "label", dataType = "String", value = " 功能菜单界面显示标签")
 	private String label;
 	/**
 	 * 功能菜单简称
 	 */
+	@ApiModelProperty(name = "abb", dataType = "String", value = "功能菜单简称")
 	private String abb;
 	/**
 	 * 功能菜单编码：用于与功能操作代码组合出权限标记以及作为前段判断的依据
 	 */
+	@ApiModelProperty(name = "code", dataType = "String", value = " 功能菜单编码：用于与功能操作代码组合出权限标记以及作为前段判断的依据")
 	private String code;
 	/**
 	 * 功能菜单URL
 	 */
+	@ApiModelProperty(name = "url", dataType = "String", value = "功能菜单URL")
 	private String url;
 	/**
 	 * 菜单类型(1:原生|2:自定义)
 	 */
+	@ApiModelProperty(name = "type", dataType = "String", value = "菜单类型(1:原生|2:自定义)")
 	private String type;
 	/**
 	 * 菜单样式或菜单图标路径
 	 */
+	@ApiModelProperty(name = "icon", dataType = "String", value = "菜单样式或菜单图标路径")
 	private String icon;
 	/**
 	 * 菜单显示顺序
 	 */
+	@ApiModelProperty(name = "order", dataType = "String", value = "菜单显示顺序")
 	private String order;
 	/**
 	 * 父级功能菜单ID
 	 */
+	@ApiModelProperty(name = "parent", dataType = "String", value = "父级功能菜单ID")
 	private String parent;
 	/**
 	 * 菜单是否可见(1:可见|0:不可见)
 	 */
+	@ApiModelProperty(name = "visible", dataType = "String", value = "菜单是否可见(1:可见|0:不可见)")
 	private String visible;
 	/**
 	 * 菜单所拥有的权限标记
 	 */
+	@ApiModelProperty(name = "icon", dataType = "String", value = "菜单样式或菜单图标路径")
 	private String perms;
 	/**
 	 * 菜单是否授权(true:已授权|false:未授权)
 	 */
+	@ApiModelProperty(name = "checked", dataType = "Boolean", value = "菜单是否授权(true:已授权|false:未授权)")
 	private boolean checked;
 	/**
 	 * 子菜单
 	 */
+	@ApiModelProperty(name = "children", dataType = "java.util.List<AuthzFeatureVo>", value = "子菜单")
 	private List<AuthzFeatureVo> children = Lists.newArrayList();
 	/**
 	 * 功能按钮
 	 */
+	@ApiModelProperty(name = "opts", dataType = "java.util.List<AuthzFeatureOptVo>", value = "功能按钮：没有子菜单时该数据才有值")
 	private List<AuthzFeatureOptVo> opts = Lists.newArrayList();
 	
 	public String getId() {
