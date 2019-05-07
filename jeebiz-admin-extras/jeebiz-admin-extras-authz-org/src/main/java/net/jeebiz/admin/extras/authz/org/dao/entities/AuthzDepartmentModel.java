@@ -33,7 +33,7 @@ public class AuthzDepartmentModel extends PaginationModel {
 	 */
 	private String name;
 	/**
-	 * 部门说明
+	 * 部门简介
 	 */
 	private String intro;
 	/**

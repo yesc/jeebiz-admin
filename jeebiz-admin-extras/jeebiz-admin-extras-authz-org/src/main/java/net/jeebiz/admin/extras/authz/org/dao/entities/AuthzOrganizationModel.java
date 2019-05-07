@@ -25,7 +25,7 @@ public class AuthzOrganizationModel extends PaginationModel {
 	 */
 	private String name;
 	/**
-	 * 机构说明
+	 * 机构简介
 	 */
 	private String intro;
 	/**

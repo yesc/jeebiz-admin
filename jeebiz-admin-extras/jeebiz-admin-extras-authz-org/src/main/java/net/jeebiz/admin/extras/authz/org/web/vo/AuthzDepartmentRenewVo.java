@@ -6,42 +6,41 @@ package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @SuppressWarnings("serial")
-@ApiModel(value = "AuthzDepartmentVo", description = "部门信息Vo")
-public class AuthzDepartmentVo implements Serializable {
+@ApiModel(value = "AuthzDepartmentRenewVo", description = "部门信息更新参数Vo")
+public class AuthzDepartmentRenewVo implements Serializable {
 
 	/**
 	 * 公司ID编号
 	 */
-	@ApiModelProperty(value = "comId", dataType = "String", notes = "公司ID编号")
+	@ApiModelProperty(value = "comId", required = true, dataType = "String", notes = "公司ID编号")
 	private String comId;
-	/**
-	 * 公司名称
-	 */
-	@ApiModelProperty(value = "comName", dataType = "String", notes = "公司名称")
-	private String comName;
 	/**
 	 * 部门ID编号
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "部门ID编号")
+	@ApiModelProperty(value = "id", required = true, dataType = "String", notes = "部门ID编号")
 	private String id;
 	/**
 	 * 部门编码
 	 */
-	@ApiModelProperty(value = "code", dataType = "String", notes = "部门编码")
+	@ApiModelProperty(value = "code", required = true, dataType = "String", notes = "部门编码")
 	private String code;
 	/**
 	 * 部门名称
 	 */
-	@ApiModelProperty(value = "name", dataType = "String", notes = "部门名称")
+	@ApiModelProperty(value = "name", required = true, dataType = "String", notes = "部门名称")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String name;
 	/**
 	 * 部门简介
 	 */
 	@ApiModelProperty(value = "intro", dataType = "String", notes = "部门简介")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String intro;
 	/**
 	 * 父级部门ID编号
@@ -49,20 +48,10 @@ public class AuthzDepartmentVo implements Serializable {
 	@ApiModelProperty(value = "parent", dataType = "String", notes = "父级部门ID编号")
 	private String parent;
 	/**
-	 * 部门创建人ID
-	 */
-	@ApiModelProperty(value = "userId", dataType = "String", notes = "部门创建人ID")
-	private String userId;
-	/**
 	 * 部门状态（0:禁用|1:可用）
 	 */
-	@ApiModelProperty(value = "status", dataType = "String", notes = "部门状态（0:禁用|1:可用）")
+	@ApiModelProperty(value = "status", required = true, dataType = "String", notes = "部门状态（0:禁用|1:可用）", allowableValues = "1,0")
 	private String status;
-	/**
-	 * 部门创建时间
-	 */
-	@ApiModelProperty(value = "time24", dataType = "String", notes = "部门创建时间")
-	private String time24;
 
 	public void setComId(String comId) {
 		this.comId = comId;
@@ -70,14 +59,6 @@ public class AuthzDepartmentVo implements Serializable {
 
 	public String getComId() {
 		return comId;
-	}
-
-	public String getComName() {
-		return comName;
-	}
-
-	public void setComName(String comName) {
-		this.comName = comName;
 	}
 
 	public String getId() {
@@ -120,13 +101,6 @@ public class AuthzDepartmentVo implements Serializable {
 		this.parent = parent;
 	}
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	public String getStatus() {
 		return status;
@@ -134,14 +108,6 @@ public class AuthzDepartmentVo implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public String getTime24() {
-		return time24;
-	}
-
-	public void setTime24(String time24) {
-		this.time24 = time24;
 	}
 
 }

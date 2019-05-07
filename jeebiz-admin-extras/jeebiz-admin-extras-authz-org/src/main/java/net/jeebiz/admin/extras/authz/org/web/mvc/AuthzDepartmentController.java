@@ -32,7 +32,9 @@ import io.swagger.annotations.ApiOperation;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzDepartmentModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzDepartmentService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentNewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentPaginationVo;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzDepartmentVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
@@ -83,13 +85,13 @@ public class AuthzDepartmentController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建部门信息", notes = "增加一个新的部门信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "vo", value = "部门信息传输对象", dataType = "AuthzDepartmentVo") 
+		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息传输对象", required = true, dataType = "AuthzDepartmentNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "创建部门信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("authz-dept:new")
 	@ResponseBody
-	public Object newDept(@Valid @RequestBody AuthzDepartmentVo deptVo) throws Exception {
+	public Object newDept(@Valid @RequestBody AuthzDepartmentNewVo deptVo) throws Exception {
 		AuthzDepartmentModel model = getBeanMapper().map(deptVo, AuthzDepartmentModel.class);
 		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
 		// 新增一条数据库配置记录
@@ -102,13 +104,13 @@ public class AuthzDepartmentController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新部门信息", notes = "更新部门信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "authz.deptVo", value = "部门信息", required = true, dataType = "AuthzDepartmentVo"),
+		@ApiImplicitParam(paramType = "body", name = "deptVo", value = "部门信息", required = true, dataType = "AuthzDepartmentRenewVo"),
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "更新部门信息", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("authz-dept:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody AuthzDepartmentVo deptVo) throws Exception {
+	public Object renew(@Valid @RequestBody AuthzDepartmentRenewVo deptVo) throws Exception {
 		AuthzDepartmentModel model = getBeanMapper().map(deptVo, AuthzDepartmentModel.class);
 		int result = getAuthzDepartmentService().update(model);
 		if(result == 1) {
@@ -163,8 +165,14 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@PostMapping("detail/{id}")
 	@RequiresPermissions(value = {"authz-dept:list" ,"authz-dept:detail" }, logical = Logical.OR)
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception { 
-		return getAuthzDepartmentService().getModel(id);
+	public Object detail(@PathVariable("id") String id) throws Exception {
+		
+		AuthzDepartmentModel model = getAuthzDepartmentService().getModel(id);
+		if( model == null) {
+			
+		}
+		return getBeanMapper().map(model, AuthzDepartmentVo.class);
+		
 	}
 
 	public IAuthzDepartmentService getAuthzDepartmentService() {

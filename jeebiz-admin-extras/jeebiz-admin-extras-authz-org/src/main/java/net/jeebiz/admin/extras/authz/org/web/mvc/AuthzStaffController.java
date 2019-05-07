@@ -30,7 +30,9 @@ import io.swagger.annotations.ApiOperation;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzStaffModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzStaffService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffNewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffPaginationVo;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzStaffVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
@@ -65,13 +67,13 @@ public class AuthzStaffController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建员工信息", notes = "增加一个新的员工信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "staffVo", value = "员工信息传输对象", dataType = "AuthzStaffVo") 
+		@ApiImplicitParam(paramType = "body", name = "staffVo", value = "员工信息传输对象", required = true, dataType = "AuthzStaffNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "创建员工信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("authz-staff:new")
 	@ResponseBody
-	public Object staff(@Valid @RequestBody AuthzStaffVo staffVo) throws Exception {
+	public Object staff(@Valid @RequestBody AuthzStaffNewVo staffVo) throws Exception {
 		AuthzStaffModel model = getBeanMapper().map(staffVo, AuthzStaffModel.class);
 		int result = getAuthzStaffService().insert(model);
 		if(result > 0) {
@@ -82,13 +84,13 @@ public class AuthzStaffController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新员工信息", notes = "更新员工信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "staffVo", value = "员工信息", required = true, dataType = "AuthzStaffVo"),
+		@ApiImplicitParam(paramType = "body", name = "staffVo", value = "员工信息", required = true, dataType = "AuthzStaffRenewVo"),
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "更新员工信息", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("authz-staff:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody AuthzStaffVo staffVo) throws Exception {
+	public Object renew(@Valid @RequestBody AuthzStaffRenewVo staffVo) throws Exception {
 		AuthzStaffModel model = getBeanMapper().map(staffVo, AuthzStaffModel.class);
 		int result = getAuthzStaffService().update(model);
 		if(result == 1) {
@@ -142,8 +144,14 @@ public class AuthzStaffController extends BaseMapperController {
 	@GetMapping("detail/{id}")
 	@RequiresPermissions(value = {"authz-staff:list" ,"authz-staff:detail" }, logical = Logical.OR)
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception { 
-		return getAuthzStaffService().getModel(id);
+	public Object detail(@PathVariable("id") String id) throws Exception {
+		
+		AuthzStaffModel model = getAuthzStaffService().getModel(id);
+		if( model == null) {
+			
+		}
+		return getBeanMapper().map(model, AuthzStaffVo.class);
+		
 	}
 
 	public IAuthzStaffService getAuthzStaffService() {

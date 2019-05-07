@@ -26,7 +26,9 @@ import io.swagger.annotations.ApiOperation;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzOrganizationModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationNewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationPaginationVo;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
@@ -73,13 +75,13 @@ public class AuthzOrganizationController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建机构信息", notes = "增加一个新的机构信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "orgVo", value = "机构信息传输对象", dataType = "AuthzCompanyVo") 
+		@ApiImplicitParam(paramType = "body", name = "orgVo", value = "机构信息传输对象", required = true, dataType = "AuthzOrganizationNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "创建机构信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("authz-org:new")
 	@ResponseBody
-	public Object newOrg(@Valid @RequestBody AuthzOrganizationVo orgVo) throws Exception {
+	public Object newOrg(@Valid @RequestBody AuthzOrganizationNewVo orgVo) throws Exception {
 		AuthzOrganizationModel model = getBeanMapper().map(orgVo, AuthzOrganizationModel.class);
 		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
 		// 新增一条数据库配置记录
@@ -92,13 +94,13 @@ public class AuthzOrganizationController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新机构信息", notes = "更新机构信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "orgVo", value = "机构信息", required = true, dataType = "AuthzCompanyVo"),
+		@ApiImplicitParam(paramType = "body", name = "orgVo", value = "机构信息", required = true, dataType = "AuthzOrganizationRenewVo"),
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "更新机构信息", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("authz-org:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody AuthzOrganizationVo orgVo) throws Exception {
+	public Object renew(@Valid @RequestBody AuthzOrganizationRenewVo orgVo) throws Exception {
 		AuthzOrganizationModel model = getBeanMapper().map(orgVo, AuthzOrganizationModel.class);
 		int result = getAuthzOrganizationService().update(model);
 		if(result == 1) {
@@ -152,8 +154,14 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@PostMapping("detail/{id}")
 	@RequiresPermissions(value = {"authz-org:list" ,"authz-org:detail" }, logical = Logical.OR)
 	@ResponseBody
-	public Object detail(@PathVariable("id") String id) throws Exception { 
-		return getAuthzOrganizationService().getModel(id);
+	public Object detail(@PathVariable("id") String id) throws Exception {
+		
+		AuthzOrganizationModel model = getAuthzOrganizationService().getModel(id);
+		if( model == null) {
+			
+		}
+		return getBeanMapper().map(model, AuthzOrganizationVo.class);
+		
 	}
 
 	public IAuthzOrganizationService getAuthzOrganizationService() {

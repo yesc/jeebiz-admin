@@ -32,7 +32,9 @@ import io.swagger.annotations.ApiOperation;
 import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzPositionModel;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzPositionService;
 import net.jeebiz.admin.extras.authz.org.setup.Constants;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionNewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionPaginationVo;
+import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionRenewVo;
 import net.jeebiz.admin.extras.authz.org.web.vo.AuthzPositionVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
@@ -79,36 +81,36 @@ public class AuthzPositionController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建岗位信息", notes = "增加一个新的岗位信息")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "岗位信息传输对象", dataType = "AuthzCompanyVo") 
+		@ApiImplicitParam(paramType = "body", name = "postVo", value = "岗位信息传输对象", required = true, dataType = "AuthzPositionNewVo") 
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "创建岗位信息", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("authz-post:new")
 	@ResponseBody
-	public Object position(@Valid @RequestBody AuthzPositionVo paginationVo) throws Exception {
-		AuthzPositionModel model = getBeanMapper().map(paginationVo, AuthzPositionModel.class);
+	public Object position(@Valid @RequestBody AuthzPositionNewVo postVo) throws Exception {
+		AuthzPositionModel model = getBeanMapper().map(postVo, AuthzPositionModel.class);
 		model.setUserId(SubjectUtils.getPrincipal(ShiroPrincipal.class).getUserid());
 		// 新增一条数据库配置记录
 		int result = getAuthzPositionService().insert(model);
 		if(result > 0) {
-			return success("authz-post.new.success", result);
+			return success("authz.post.new.success", result);
 		}
-		return fail("authz-post.new.fail", result);
+		return fail("authz.post.new.fail", result);
 	}
 	
 	@ApiOperation(value = "更新岗位信息", notes = "更新岗位信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "paginationVo", value = "岗位信息", required = true, dataType = "AuthzCompanyVo"),
+		@ApiImplicitParam(paramType = "body", name = "postVo", value = "岗位信息", required = true, dataType = "AuthzPositionRenewVo"),
 	})
 	@BusinessLog(module = Constants.AUTHZ_POST, business = "更新岗位信息", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("authz-post:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody AuthzPositionVo paginationVo) throws Exception {
-		AuthzPositionModel model = getBeanMapper().map(paginationVo, AuthzPositionModel.class);
+	public Object renew(@Valid @RequestBody AuthzPositionRenewVo postVo) throws Exception {
+		AuthzPositionModel model = getBeanMapper().map(postVo, AuthzPositionModel.class);
 		int result = getAuthzPositionService().update(model);
 		if(result == 1) {
-			return success("authz-post.renew.success", result);
+			return success("authz.post.renew.success", result);
 		}
 		// 逻辑代码，如果发生异常将不会被执行
 		return fail("authz-post.renew.fail", result);
@@ -126,10 +128,10 @@ public class AuthzPositionController extends BaseMapperController {
 	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
 		int result = getAuthzPositionService().setStatus(id, status);
 		if(result == 1) {
-			return success("authz-post.status.success", result);
+			return success("authz.post.status.success", result);
 		}
 		// 逻辑代码，如果发生异常将不会被执行
-		return fail("authz-post.status.fail", result);
+		return fail("authz.post.status.fail", result);
 	}
 	
 	@ApiOperation(value = "删除岗位信息", notes = "删除岗位信息")
@@ -144,10 +146,10 @@ public class AuthzPositionController extends BaseMapperController {
 		// 执行岗位信息删除操作
 		int result = getAuthzPositionService().delete(id);
 		if(result > 0) {
-			return success("authz-post.delete.success", result);
+			return success("authz.post.delete.success", result);
 		}
 		// 逻辑代码，如果发生异常将不会被执行
-		return fail("authz-post.delete.fail", result);
+		return fail("authz.post.delete.fail", result);
 	}
 	
 	@ApiOperation(value = "查询岗位信息", notes = "根据ID查询岗位信息")
@@ -159,7 +161,11 @@ public class AuthzPositionController extends BaseMapperController {
 	@RequiresPermissions(value = {"authz-post:list" ,"authz-post:detail" }, logical = Logical.OR)
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 
-		return getAuthzPositionService().getModel(id);
+		AuthzPositionModel model = getAuthzPositionService().getModel(id);
+		if( model == null) {
+			
+		}
+		return getBeanMapper().map(model, AuthzPositionVo.class);
 	}
 
 	public IAuthzPositionService getAuthzPositionService() {
