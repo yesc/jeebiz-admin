@@ -165,8 +165,8 @@ public class AuthzRoleController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新角色状态", notes = "更新角色状态")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "角色状态", dataType = "String", allowableValues = "1,0")
+		@ApiImplicitParam(paramType = "form", name = "id", required = true, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam(paramType = "form", name = "status", required = true, value = "角色状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "更新角色状态", opt = BusinessType.UPDATE)
 	@GetMapping("status")
@@ -298,8 +298,8 @@ public class AuthzRoleController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询指定角色ID拥有的功能菜单树形结构数据", notes = "查询指定角色ID拥有的功能菜单树形结构数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam( paramType = "query", name = "roleId", required = false, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam( paramType = "query", name = "handler", value = "数据处理实现对象名称", dataType = "String")
+		@ApiImplicitParam( paramType = "form", name = "roleId", required = false, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam( paramType = "form", name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单树形结构数据", opt = BusinessType.SELECT)
 	@GetMapping("features/tree")
@@ -316,8 +316,8 @@ public class AuthzRoleController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询指定角色ID拥有的功能菜单树扁平构数据", notes = "查询指定角色ID拥有的功能菜单树扁平构数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam( paramType = "query", name = "roleId", required = false, value = "角色ID", dataType = "String"),
-		@ApiImplicitParam( paramType = "query", name = "handler", value = "数据处理实现对象名称", dataType = "String")
+		@ApiImplicitParam( paramType = "form", name = "roleId", required = false, value = "角色ID", dataType = "String"),
+		@ApiImplicitParam( paramType = "form", name = "handler", value = "数据处理实现对象名称", dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ROLE, business = "查询指定角色ID拥有的功能菜单扁平结构数据", opt = BusinessType.SELECT)
 	@GetMapping("features/flat")

@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +34,7 @@ import net.jeebiz.admin.extras.basedata.service.IKeyGroupService;
 import net.jeebiz.admin.extras.basedata.service.IKeyValueService;
 import net.jeebiz.admin.extras.basedata.setup.Constants;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyGroupVo;
+import net.jeebiz.admin.extras.basedata.web.vo.KeyValueGroupRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValuePaginationVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueVo;
@@ -108,7 +108,7 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "根据分组查询基础数据", notes = "根据分组查询基础数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "gkey", value = "基础数据分组", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "form", name = "gkey", value = "基础数据分组", required = true, dataType = "String")
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class)
@@ -145,49 +145,9 @@ public class KeyValueController extends BaseMapperController {
 		return fail("keyvalue.new.fail", result);
 	}
 	
-	@ApiOperation(value = "更新基础数据", notes = "更新基础数据")
-	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据", required = true, dataType = "KeyValueVo"),
-	})
-	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据", opt = BusinessType.UPDATE)
-	@PostMapping("update")
-	@RequiresPermissions("keyvalue:update")
-	@ResponseBody
-	public Object update(@Valid @RequestBody KeyValueVo vo) throws Exception {
-		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
-		int ct = getKeyValueService().getCount(model);
-		if(ct > 0) {
-			return fail("keyvalue.update.conflict");
-		}
-		int result = getKeyValueService().update(model);
-		if(result == 1) {
-			return success("keyvalue.update.success", result);
-		}
-		// 逻辑代码，如果发生异常将不会被执行
-		return fail("keyvalue.update.fail", result);
-	}
-	
-	@ApiOperation(value = "更新基础数据状态", notes = "更新基础数据状态")
-	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "基础数据ID", dataType = "String"),
-		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "基础数据状态", dataType = "String", allowableValues = "1,0")
-	})
-	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据状态", opt = BusinessType.UPDATE)
-	@GetMapping("status")
-	@RequiresPermissions(value = {"keyvalue:enable", "keyvalue:disable"}, logical = Logical.OR)
-	@ResponseBody
-	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
-		int result = getKeyValueService().setStatus(id, status);
-		if(result == 1) {
-			return success("keyvalue.status.success", result);
-		}
-		// 逻辑代码，如果发生异常将不会被执行
-		return fail("keyvalue.status.fail", result);
-	}
-	
 	@ApiOperation(value = "删除基础数据", notes = "删除基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "query", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "form", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "删除基础数据", opt = BusinessType.UPDATE)
 	@GetMapping("delete")
@@ -204,29 +164,70 @@ public class KeyValueController extends BaseMapperController {
 		return fail("keyvalue.delete.fail", result);
 	}
 	
+	
+	@ApiOperation(value = "更新基础数据", notes = "更新基础数据")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据", required = true, dataType = "KeyValueVo"),
+	})
+	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据", opt = BusinessType.UPDATE)
+	@PostMapping("renew")
+	@RequiresPermissions("keyvalue:renew")
+	@ResponseBody
+	public Object renew(@Valid @RequestBody KeyValueVo vo) throws Exception {
+		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
+		int ct = getKeyValueService().getCount(model);
+		if(ct > 0) {
+			return fail("keyvalue.renew.conflict");
+		}
+		int result = getKeyValueService().update(model);
+		if(result == 1) {
+			return success("keyvalue.renew.success", result);
+		}
+		// 逻辑代码，如果发生异常将不会被执行
+		return fail("keyvalue.renew.fail", result);
+	}
+	
+	@ApiOperation(value = "更新基础数据状态", notes = "更新基础数据状态")
+	@ApiImplicitParams({
+		@ApiImplicitParam(paramType = "form", name = "id", required = true, value = "基础数据ID", dataType = "String"),
+		@ApiImplicitParam(paramType = "form", name = "status", required = true, value = "基础数据状态", dataType = "String", allowableValues = "1,0")
+	})
+	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据状态", opt = BusinessType.UPDATE)
+	@PostMapping("status")
+	@RequiresPermissions("keyvalue:status")
+	@ResponseBody
+	public Object status(@RequestParam String id, @RequestParam String status) throws Exception {
+		int result = getKeyValueService().setStatus(id, status);
+		if(result == 1) {
+			return success("keyvalue.status.success", result);
+		}
+		// 逻辑代码，如果发生异常将不会被执行
+		return fail("keyvalue.status.fail", result);
+	}
+	
 	@ApiOperation(value = "批量更新分组内的基础数据", notes = "批量更新分组内的基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "requestVo", value = "基础数据集合", required = true, dataType = "KeyValueRenewVo"),
+		@ApiImplicitParam(paramType = "body", name = "renewVo", value = "基础数据集合", required = true, dataType = "KeyValueGroupRenewVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "批量更新分组内的基础数据", opt = BusinessType.UPDATE)
-	@PostMapping(value = "batch/update")
-	@RequiresPermissions("keyvalue:update")
+	@PostMapping(value = "batch/renew")
+	@RequiresPermissions("keyvalue:renew")
 	@ResponseBody
-	public Object batchUpdate(@Valid @RequestBody KeyValueRenewVo requestVo) throws Exception {
+	public Object batchRenew(@Valid @RequestBody KeyValueGroupRenewVo renewVo) throws Exception {
 		
 		try {
 			
 			List<KeyValueModel> list = Lists.newArrayList();
-			for (KeyValueVo keyvalueVo : requestVo.getDatas()) {
+			for (KeyValueRenewVo keyvalueVo : renewVo.getDatas()) {
 				KeyValueModel model = getBeanMapper().map(keyvalueVo, KeyValueModel.class);
-				model.setGkey(requestVo.getGkey());
+				model.setGkey(renewVo.getGkey());
 				list.add(model);
 			}
 			// 批量执行基础数据更新操作
 			getKeyValueService().batchUpdate(list);
-			return success("keyvalue.update.success");
+			return success("keyvalue.renew.success");
 		} catch (Exception e) {
-			return fail("keyvalue.update.fail");
+			return fail("keyvalue.renew.fail");
 		}
 	}
 	
@@ -239,7 +240,7 @@ public class KeyValueController extends BaseMapperController {
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "查询基础数据信息", opt = BusinessType.SELECT)
 	@GetMapping("detail/{id}")
-	@RequiresPermissions(value = {"keyvalue:list" ,"keyvalue:detail" }, logical = Logical.OR)
+	@RequiresPermissions("keyvalue:detail")
 	@ResponseBody
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		KeyValueModel model = getKeyValueService().getModel(id);

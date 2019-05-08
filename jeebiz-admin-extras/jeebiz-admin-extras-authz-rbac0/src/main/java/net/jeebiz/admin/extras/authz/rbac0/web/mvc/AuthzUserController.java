@@ -170,8 +170,8 @@ public class AuthzUserController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新用户状态", notes = "更新用户状态")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "id", required = true, value = "用户ID", dataType = "String"),
-		@ApiImplicitParam(paramType = "query", name = "status", required = true, value = "用户状态", dataType = "String", allowableValues = "1,0")
+		@ApiImplicitParam(paramType = "form", name = "id", required = true, value = "用户ID", dataType = "String"),
+		@ApiImplicitParam(paramType = "form", name = "status", required = true, value = "用户状态", dataType = "String", allowableValues = "1,0")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "更新用户状态", opt = BusinessType.UPDATE)
 	@GetMapping("status")
@@ -187,7 +187,7 @@ public class AuthzUserController extends BaseMapperController {
 	
 	@ApiOperation(value = "删除用户信息", notes = "删除用户信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "query", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "form", name = "ids", value = "基础数据ID,多个用,拼接", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_USER, business = "删除用户-名称：${userid}", opt = BusinessType.DELETE)
 	@GetMapping("delete")

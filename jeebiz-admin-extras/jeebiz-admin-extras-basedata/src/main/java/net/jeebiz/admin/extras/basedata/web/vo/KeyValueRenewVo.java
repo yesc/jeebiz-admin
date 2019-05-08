@@ -4,8 +4,6 @@
  */
 package net.jeebiz.admin.extras.basedata.web.vo;
 
-import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.SafeHtml;
@@ -13,34 +11,79 @@ import org.hibernate.validator.constraints.SafeHtml;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "KeyValueRenewVo", description = "基础数据集合传输对象")
+@ApiModel(value = "KeyValueRenewVo", description = "基础数据更新传输对象")
 public class KeyValueRenewVo {
 
 	/**
-	 * 基础数据分组
+	 * 基础数据ID编号
 	 */
-	@ApiModelProperty(name = "gkey", dataType = "String", value = "基础数据分组")
-	@NotBlank(message = "基础数据分组必填")
+	@ApiModelProperty(name = "id", required = true, dataType = "String", value = "基础数据ID编号")
+	@NotBlank(message = "基础数据ID必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
-	private String gkey;
-	
-	@ApiModelProperty(name = "datas", dataType = "java.util.List<SettingsVo>", value = "批量更新的基础数据列表")
-	private List<KeyValueVo> datas;
+	private String id;
 
-	public String getGkey() {
-		return gkey;
+	/**
+	 * 基础数据标签
+	 */
+	@ApiModelProperty(name = "label", required = true, dataType = "String", value = "基础数据标签")
+	@NotBlank(message = "基础数据标签必填")
+	private String label;
+	/**
+	 * 基础数据值
+	 */
+	@ApiModelProperty(name = "value", required = true, dataType = "String", value = "基础数据值")
+	@NotBlank(message = "基础数据值必填")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+	private String value;
+	/**
+	 * 基础数据状态：0:不可用、1：可用
+	 */
+	@ApiModelProperty(name = "status", dataType = "String", value = "数据状态：0:不可用|1：可用", allowableValues = "0,1")
+	private String status;
+	/**
+	 * 数据排序:组内排序
+	 */
+	@ApiModelProperty(name = "order", dataType = "String", value = "数据排序:组内排序", hidden = true)
+	private int order;
+
+	public String getId() {
+		return id;
 	}
 
-	public void setGkey(String gkey) {
-		this.gkey = gkey;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public List<KeyValueVo> getDatas() {
-		return datas;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setDatas(List<KeyValueVo> datas) {
-		this.datas = datas;
+	public void setLabel(String label) {
+		this.label = label;
 	}
-	
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 }

@@ -59,6 +59,7 @@
                	   D_STATUS = #{item.status},
 		       	   D_ORDER = #{item.order}
              WHERE D_ID = #{item.id} 
+               AND D_GROUP = #{item.gkey} 
         </foreach>
         end;
     </update>

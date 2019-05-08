@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +29,7 @@ import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.basedata.dao.entities.SettingsModel;
 import net.jeebiz.admin.extras.basedata.service.ISettingsService;
 import net.jeebiz.admin.extras.basedata.setup.Constants;
+import net.jeebiz.admin.extras.basedata.web.vo.SettingsGroupRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.SettingsRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.SettingsVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
@@ -57,16 +57,16 @@ public class SettingsController extends BaseMapperController {
 	@Autowired
 	private ISettingsService settingsService;
 	
-	@ApiOperation(value = "根据分组查询系统参数", notes = "根据分组查询系统参数")
+	@ApiOperation(value = "系统参数详细信息查询", notes = "根据分组查询系统参数")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+		@ApiImplicitParam(name = "gkey", value = "系统参数分组", required = true, dataType = "String")
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询系统参数", opt = BusinessType.SELECT)
-	@GetMapping(value = "list")
-	@RequiresPermissions(value = {"settings:list","settings:email"}, logical = Logical.OR)
+	@GetMapping("list")
+	@RequiresPermissions("settings:list")
 	@ResponseBody
 	public Object list(@RequestParam String gkey) throws Exception {
 		
@@ -82,12 +82,12 @@ public class SettingsController extends BaseMapperController {
 		
 	}
 	
-	@ApiOperation(value = "根据分组查询系统参数", notes = "根据分组查询系统参数")
+	@ApiOperation(value = "系统参数键值对查询", notes = "根据分组查询系统参数")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "query", name = "gkey", value = "系统参数分组", required = true, dataType = "String")
+		@ApiImplicitParam(name = "gkey", value = "系统参数分组", required = true, dataType = "String")
 	})
 	@ApiResponses({ 
-		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class)
+		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "根据分组查询系统参数", opt = BusinessType.SELECT)
 	@GetMapping("pairs")
@@ -99,46 +99,46 @@ public class SettingsController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新系统参数", notes = "更新系统参数")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "settingsVo", value = "系统参数", required = true, dataType = "SettingsVo"),
+		@ApiImplicitParam(paramType = "body", name = "renewVo", value = "系统参数", required = true, dataType = "SettingsRenewVo")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新系统参数", opt = BusinessType.UPDATE)
-	@PostMapping(value = "update")
-	@RequiresPermissions("settings:update")
+	@PostMapping("renew")
+	@RequiresPermissions("settings:renew")
 	@ResponseBody
-	public Object update(@Valid @RequestBody SettingsVo settingsVo) throws Exception {
-		SettingsModel model = getBeanMapper().map(settingsVo, SettingsModel.class);
+	public Object renew(@Valid @RequestBody SettingsRenewVo renewVo) throws Exception {
+		SettingsModel model = getBeanMapper().map(renewVo, SettingsModel.class);
 		int result = getSettingsService().update(model);
 		if(result == 1) {
-			return success("settings.update.success", result);
+			return success("settings.renew.success", result);
 		}
 		// 逻辑代码，如果发生异常将不会被执行
-		return fail("settings.update.fail", result);
+		return fail("settings.renew.fail", result);
 	}
 	
 	@ApiOperation(value = "批量更新分组内的系统参数", notes = "批量更新分组内的系统参数")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( paramType = "body", name = "renewVo", value = "系统参数集合", required = true, dataType = "SettingsRenewVo"),
+		@ApiImplicitParam( paramType = "body", name = "renewVo", value = "系统参数集合", required = true, dataType = "SettingsGroupRenewVo")
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "批量更新分组内的系统参数", opt = BusinessType.UPDATE)
-	@PostMapping(value = "batch/update")
-	@RequiresPermissions("settings:batch-update")
+	@PostMapping("batch/renew")
+	@RequiresPermissions("settings:renew")
 	@ResponseBody
-	public Object batchUpdate(@Valid @RequestBody SettingsRenewVo renewVo) throws Exception {
+	public Object batchRenew(@Valid @RequestBody SettingsGroupRenewVo renewVo) throws Exception {
 		
 		try {
 			
 			List<SettingsModel> list = Lists.newArrayList();
-			for (SettingsVo settingsVo : renewVo.getDatas()) {
+			for (SettingsRenewVo settingsVo : renewVo.getDatas()) {
 				SettingsModel model = getBeanMapper().map(settingsVo, SettingsModel.class);
 				model.setGkey(renewVo.getGkey());
 				list.add(model);
 			}
 			// 批量执行系统参数更新操作
 			getSettingsService().batchUpdate(list);
-			return success("settings.update.success");
+			return success("settings.renew.success");
 		} catch (Exception e) {
 			// 逻辑代码，如果发生异常将不会被执行
-			return fail("settings.update.fail");
+			return fail("settings.renew.fail");
 		}
 	}
 
