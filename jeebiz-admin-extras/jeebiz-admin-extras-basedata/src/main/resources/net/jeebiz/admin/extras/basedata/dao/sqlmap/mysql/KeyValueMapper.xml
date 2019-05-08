@@ -44,17 +44,19 @@
 		UPDATE SYS_EXTRAS_PAIRVALUE t 
 		   SET D_LABEL = #{label},
 		   	   D_TEXT = #{value},
-		       D_STATUS = #{status}
+		       D_STATUS = #{status},
+		       D_ORDER = #{order}
 		 WHERE D_ID = #{id}
 	</update>
 	
 	<update id="batchUpdate" flushCache="true">
     	<foreach collection="list" index="index" item="item" open="" separator=";" close="">  
             update SYS_EXTRAS_PAIRVALUE 
-               set D_TEXT = #{item.value},
-               	   D_STATUS = #{item.status}
-           WHERE D_ID = #{item.id} 
-		     and D_STATUS = 1
+               set D_LABEL = #{item.label},
+               	   D_TEXT = #{item.value},
+               	   D_STATUS = #{item.status},
+		       	   D_ORDER = #{item.order}
+             WHERE D_ID = #{item.id} 
         </foreach>
     </update>
     
