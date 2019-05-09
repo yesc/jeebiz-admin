@@ -19,6 +19,7 @@
 	
 	<resultMap id="AuthzFeatureMap" type="AuthzFeatureModel">
 		<result property="id" column="F_ID" />
+		<result property="code" column="F_CODE" />
 		<result property="name" column="F_NAME" />
 		<result property="abb" column="F_ABB" />
 		<result property="url" column="F_URL" />
@@ -31,11 +32,8 @@
 	</resultMap>
 	
 	<insert id="insert" parameterType="AuthzFeatureModel" flushCache="true">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">  
-	        SELECT IFNULL(MAX(F_ID), 0) + 1 FROM SYS_FEATURE_LIST
-	    </selectKey>
-		insert into SYS_FEATURE_LIST(F_ID,F_NAME,F_ABB,F_URL,F_TYPE,F_ICON,F_ORDER,F_PARENT,F_VISIBLE)
-		values(#{id},#{name},#{abb},#{url},#{type},#{icon},#{order},#{parent,jdbcType=VARCHAR},'1')
+		insert into SYS_FEATURE_LIST(F_CODE,F_NAME,F_ABB,F_URL,F_TYPE,F_ICON,F_ORDER,F_PARENT,F_VISIBLE)
+		values(#{code},#{name},#{abb},#{url},#{type},#{icon},#{order},#{parent,jdbcType=VARCHAR},'1')
 	</insert>
 	
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
@@ -45,6 +43,7 @@
 	<update id="update" parameterType="AuthzFeatureModel" flushCache="true">
 		update SYS_FEATURE_LIST t
 		<set>
+			<if test="code != null and code != ''">t.F_CODE = #{code},</if>
 			<if test="name != null and name != ''">t.F_NAME = #{name},</if>
 			<if test="abb != null and abb != ''">t.F_ABB = #{abb},</if>
 			<if test="url != null and url != ''">t.F_URL = #{url},</if>
@@ -60,6 +59,7 @@
 	<select id="getModel" resultMap="AuthzFeatureMap" parameterType="java.lang.String" useCache="true">
 		SELECT
 			t.F_ID,
+			t.F_CODE,
 			t.F_NAME,
 			t.F_ABB,
 			t.F_URL,
@@ -76,6 +76,7 @@
 	<select id="getFeatureList" resultMap="AuthzFeatureMap" parameterType="java.lang.String" useCache="true">
 		SELECT
 			t.F_ID,
+			t.F_CODE,
 			t.F_NAME,
 			t.F_ABB,
 			t.F_URL,
@@ -88,9 +89,10 @@
 		FROM SYS_FEATURE_LIST t
 	</select>
 
-	<select id="getPagedList" resultMap="AuthzFeatureMap" parameterType="AuthzFeatureModel" useCache="false">
+	<select id="getPagedList" resultMap="AuthzFeatureMap" parameterType="AuthzFeatureModel" useCache="true">
 		SELECT
 			t.F_ID,
+			t.F_CODE,
 			t.F_NAME,
 			t.F_ABB,
 			t.F_URL,
