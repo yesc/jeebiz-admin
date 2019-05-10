@@ -28,5 +28,6 @@
 	<modules>
 		<!-- 
 		<module>jeebiz-admin-ui-layui</module> -->
+		<module>jeebiz-admin-shadow</module>
 	</modules>
 </project>
