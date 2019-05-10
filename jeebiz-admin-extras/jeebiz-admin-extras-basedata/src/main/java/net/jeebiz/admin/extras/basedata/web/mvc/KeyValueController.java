@@ -41,7 +41,7 @@ import net.jeebiz.admin.extras.basedata.web.vo.KeyValueVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.dao.entities.PairModel;
-import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.exception.ApiRestResponse;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.utils.StringUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
@@ -49,12 +49,12 @@ import net.jeebiz.boot.api.webmvc.Result;
 
 @Api(tags = "基础数据：键值对形式的数据维护")
 @ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ApiRestResponse.class)
 })
 @RestController
 @RequestMapping("/extras/basedata/keyvalue/")
@@ -245,7 +245,7 @@ public class KeyValueController extends BaseMapperController {
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		KeyValueModel model = getKeyValueService().getModel(id);
 		if(model == null) {
-			return ErrorResponse.empty(getMessage("keyvalue.get.empty"));
+			return ApiRestResponse.empty(getMessage("keyvalue.get.empty"));
 		}
 		return getBeanMapper().map(model, KeyValueVo.class);
 	}

@@ -24,7 +24,7 @@ import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzRolePermsService;
 import net.jeebiz.admin.extras.authz.rbac0.web.vo.AuthzRoleAllotPermsVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.exception.ApiRestResponse;
 import net.jeebiz.boot.api.utils.Constants;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
@@ -34,12 +34,12 @@ import net.jeebiz.boot.api.webmvc.BaseMapperController;
  */
 @Api(tags = "权限管理：角色功能权限（Ok）")
 @ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ApiRestResponse.class)
 })
 @RestController
 @RequestMapping(value = "/authz/role/perms/")

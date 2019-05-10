@@ -39,19 +39,19 @@ import net.jeebiz.admin.extras.authz.org.web.vo.AuthzOrganizationVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.dao.entities.PairModel;
-import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.exception.ApiRestResponse;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
 @Api(tags = "组织机构：机构信息维护")
 @ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ApiRestResponse.class)
 })
 @RestController
 @RequestMapping(value = "/authz/org/")
@@ -184,7 +184,7 @@ public class AuthzOrganizationController extends BaseMapperController {
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzOrganizationModel model = getAuthzOrganizationService().getModel(id);
 		if( model == null) {
-			return ErrorResponse.empty(getMessage("authz.org.get.empty"));
+			return ApiRestResponse.empty(getMessage("authz.org.get.empty"));
 		}
 		return getBeanMapper().map(model, AuthzOrganizationVo.class);
 	}

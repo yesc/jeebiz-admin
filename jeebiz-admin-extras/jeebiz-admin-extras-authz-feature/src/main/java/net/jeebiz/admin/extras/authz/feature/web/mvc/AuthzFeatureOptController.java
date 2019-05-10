@@ -28,19 +28,19 @@ import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureOptNewVo;
 import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureOptVo;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.exception.ErrorResponse;
+import net.jeebiz.boot.api.exception.ApiRestResponse;
 import net.jeebiz.boot.api.utils.Constants;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 
 @Api(tags = "功能操作：数据维护（Ok）")
 @ApiResponses({ 
-	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ErrorResponse.class),
-	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ErrorResponse.class)
+	@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_CREATED, message = "已创建", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_UNAUTHORIZED, message = "请求要求身份验证", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_FORBIDDEN, message = "权限不足", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_NOT_FOUND, message = "请求资源不存在", response = ApiRestResponse.class),
+	@ApiResponse(code = HttpStatus.SC_INTERNAL_SERVER_ERROR, message = "服务器内部异常", response = ApiRestResponse.class)
 })
 @RestController
 @RequestMapping(value = "/extras/feature/opt/")
@@ -97,7 +97,7 @@ public class AuthzFeatureOptController extends BaseMapperController{
 	public Object detail(@PathVariable("id") String id) throws Exception {
 		AuthzFeatureOptModel model = getAuthzFeatureOptService().getModel(id);
 		if( model == null) {
-			return ErrorResponse.empty(getMessage("opt.get.empty"));
+			return ApiRestResponse.empty(getMessage("opt.get.empty"));
 		}
 		return getBeanMapper().map(model, AuthzFeatureOptVo.class);
 	}
