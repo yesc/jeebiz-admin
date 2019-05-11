@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzDepartmentService;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzOrganizationService;
-import net.jeebiz.admin.extras.authz.org.service.IAuthzPositionService;
+import net.jeebiz.admin.extras.authz.org.service.IAuthzPostService;
 import net.jeebiz.admin.extras.authz.org.service.IAuthzStaffService;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -32,7 +32,7 @@ public class AuthzStaffUIController extends BaseMapperController {
 	@Autowired
 	private IAuthzDepartmentService authzDepartmentService;
 	@Autowired
-	private IAuthzPositionService authzPositionService;
+	private IAuthzPostService authzPostService;
 	@Autowired
 	private IAuthzStaffService authzStaffService;
 	
@@ -42,7 +42,7 @@ public class AuthzStaffUIController extends BaseMapperController {
 	public String list(@ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("posts", getAuthzPostService().getPairValues(""));
 		return "html/authz/staff/list";
 	}
 	
@@ -52,7 +52,7 @@ public class AuthzStaffUIController extends BaseMapperController {
 	public String newStaff(@ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("posts", getAuthzPostService().getPairValues(""));
 		return "html/authz/staff/new";
 	}
     
@@ -65,7 +65,7 @@ public class AuthzStaffUIController extends BaseMapperController {
 	public String renew(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("posts", getAuthzPostService().getPairValues(""));
 		uiModel.addAttribute("model", getAuthzStaffService().getModel(id));
 		return "html/authz/staff/renew";
 	}
@@ -79,7 +79,7 @@ public class AuthzStaffUIController extends BaseMapperController {
 	public String detail(@PathVariable("id") String id, @ApiIgnore Model uiModel) {
 		uiModel.addAttribute("orgs", getAuthzOrganizationService().getPairValues(""));
 		uiModel.addAttribute("depts", getAuthzDepartmentService().getPairValues(""));
-		uiModel.addAttribute("posts", getAuthzPositionService().getPairValues(""));
+		uiModel.addAttribute("posts", getAuthzPostService().getPairValues(""));
 		uiModel.addAttribute("model", getAuthzStaffService().getModel(id));
 		return "html/authz/staff/detail";
 	}
@@ -92,8 +92,8 @@ public class AuthzStaffUIController extends BaseMapperController {
 		return authzDepartmentService;
 	}
 
-	public IAuthzPositionService getAuthzPositionService() {
-		return authzPositionService;
+	public IAuthzPostService getAuthzPostService() {
+		return authzPostService;
 	}
 
 	public IAuthzStaffService getAuthzStaffService() {

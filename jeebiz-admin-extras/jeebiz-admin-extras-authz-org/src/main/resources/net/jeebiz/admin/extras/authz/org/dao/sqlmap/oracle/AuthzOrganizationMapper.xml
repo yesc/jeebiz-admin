@@ -61,17 +61,45 @@
 			<if test="code != null and code != ''">t.ORG_CODE = #{code},</if>
 			<if test="name != null and name != ''">t.ORG_NAME = #{name},</if>
 			<if test="intro != null and intro != ''">t.ORG_INTRO = #{intro},</if>
-			<if test="parent != null and parent != ''">t.ORG_PARENT = #{parent}</if>
+			<if test="status != null and status != ''">t.ORG_STATUS = #{status}</if>
 		</set>
 		where t.ORG_ID = #{id}
 	</update>
 	
+	<select id="getRootCount" resultType="int" useCache="false">
+		SELECT count(t.ORG_ID) 
+		  FROM SYS_AUTHZ_ORG_LIST t 
+		 WHERE t.ORG_PARENT = 0
+	</select>
+	
+	<select id="getCountByParent" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.ORG_ID) 
+		  FROM SYS_AUTHZ_ORG_LIST t 
+		 WHERE t.ORG_PARENT = #{parent}
+	</select>
+	
+	<select id="getDeptCount" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.DEPT_ID) 
+		  FROM SYS_AUTHZ_ORG_DEPT t 
+		 WHERE t.ORG_ID = #{id}
+	</select>
+	
 	<select id="getCountByCode" resultType="int" parameterType="java.lang.String" useCache="false">
-		SELECT count(t.ORG_ID) FROM SYS_AUTHZ_ORG_LIST t WHERE t.ORG_CODE = #{code}
+		SELECT count(t.ORG_ID) 
+		  FROM SYS_AUTHZ_ORG_LIST t 
+		 WHERE t.ORG_CODE = #{code}
+		<if test="origin != null and origin != ''">
+			AND t.ORG_ID != #{origin}
+		 </if>
 	</select>
 	
 	<select id="getCountByName" resultType="int" parameterType="java.lang.String" useCache="false">
-		SELECT count(t.ORG_ID) FROM SYS_AUTHZ_ORG_LIST t WHERE t.ORG_NAME = #{name}
+		SELECT count(t.ORG_ID) 
+		  FROM SYS_AUTHZ_ORG_LIST t 
+		 WHERE t.ORG_NAME = #{name}
+		 <if test="origin != null and origin != ''">
+			AND t.ORG_ID != #{origin}
+		 </if>
 	</select>
 	
 	<select id="getPagedList" resultMap="AuthzOrganizationMap" parameterType="AuthzDepartmentModel" useCache="false">

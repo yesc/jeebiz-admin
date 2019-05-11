@@ -8,8 +8,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @SuppressWarnings("serial")
-@ApiModel(value = "AuthzPositionVo", description = "岗位信息Vo")
-public class AuthzPositionVo implements Serializable {
+@ApiModel(value = "AuthzPostVo", description = "岗位信息Vo")
+public class AuthzPostVo implements Serializable {
 
 	/**
 	 * 机构ID编号

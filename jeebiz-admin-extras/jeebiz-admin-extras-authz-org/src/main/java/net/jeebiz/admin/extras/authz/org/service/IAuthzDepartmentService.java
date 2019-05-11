@@ -9,5 +9,18 @@ import net.jeebiz.boot.api.service.BaseService;
 
 public interface IAuthzDepartmentService extends BaseService<AuthzDepartmentModel> {
 	
+	/**
+	 * 根据编码获取记录数
+	 * @return
+	 */
+	public int getCountByCode(String code, String orgId, String deptId);
+	
+	/**
+	 * 根据名称获取记录数
+	 * @return
+	 */
+	public int getCountByName(String name, String orgId, String deptId);
+	
+	public int getStaffCount(String id);
 	
 }

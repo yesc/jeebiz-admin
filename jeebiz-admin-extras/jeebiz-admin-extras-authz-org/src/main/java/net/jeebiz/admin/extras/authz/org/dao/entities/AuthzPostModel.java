@@ -10,7 +10,7 @@ import net.jeebiz.boot.api.dao.entities.PaginationModel;
 
 @Alias(value = "AuthzPositionModel")
 @SuppressWarnings("serial")
-public class AuthzPositionModel extends PaginationModel {
+public class AuthzPostModel extends PaginationModel {
 
 	/**
 	 * 机构ID编号

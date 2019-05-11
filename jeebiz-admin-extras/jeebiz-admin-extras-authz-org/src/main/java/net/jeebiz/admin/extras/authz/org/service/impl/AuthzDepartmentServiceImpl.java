@@ -14,4 +14,19 @@ import net.jeebiz.boot.api.service.BaseServiceImpl;
 @Service
 public class AuthzDepartmentServiceImpl extends BaseServiceImpl<AuthzDepartmentModel, IAuthzDepartmentDao> implements IAuthzDepartmentService{
 
+	@Override
+	public int getCountByCode(String code, String orgId, String deptId) {
+		return getDao().getDeptCountByCode(code, orgId, deptId);
+	}
+
+	@Override
+	public int getCountByName(String name, String orgId, String deptId) {
+		return getDao().getDeptCountByName(name, orgId, deptId);
+	}
+
+	@Override
+	public int getStaffCount(String id) {
+		return getDao().getStaffCount(id);
+	}
+	
 }

@@ -4,9 +4,9 @@
  */
 package net.jeebiz.admin.extras.authz.org.service;
 
-import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzPositionModel;
+import net.jeebiz.admin.extras.authz.org.dao.entities.AuthzPostModel;
 import net.jeebiz.boot.api.service.BaseService;
 
-public interface IAuthzPositionService extends BaseService<AuthzPositionModel> {
+public interface IAuthzPostService extends BaseService<AuthzPostModel> {
 	
 }

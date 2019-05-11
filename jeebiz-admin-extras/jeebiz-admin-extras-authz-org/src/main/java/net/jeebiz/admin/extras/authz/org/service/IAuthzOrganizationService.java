@@ -9,4 +9,8 @@ import net.jeebiz.boot.api.service.BaseService;
 
 public interface IAuthzOrganizationService extends BaseService<AuthzOrganizationModel> {
 	
+	public int getRootCount();
+
+	public int getDeptCount(String id);
+	
 }

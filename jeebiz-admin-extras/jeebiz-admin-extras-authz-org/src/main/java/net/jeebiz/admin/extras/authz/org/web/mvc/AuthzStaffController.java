@@ -1,7 +1,3 @@
-/** 
- * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
- * All Rights Reserved. 
- */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
 
 import java.util.List;
@@ -69,7 +65,7 @@ public class AuthzStaffController extends BaseMapperController {
 	@PostMapping("list")
 	@RequiresPermissions("authz-staff:list")
 	@ResponseBody
-	public Object list(@Valid AuthzStaffPaginationVo paginationVo) throws Exception {
+	public Object list(@Valid @RequestBody AuthzStaffPaginationVo paginationVo) throws Exception {
 		
 		AuthzStaffModel model = getBeanMapper().map(paginationVo, AuthzStaffModel.class);
 		Page<AuthzStaffModel> pageResult = getAuthzStaffService().getPagedList(model);
@@ -137,7 +133,7 @@ public class AuthzStaffController extends BaseMapperController {
 	
 	@ApiOperation(value = "删除员工信息", notes = "删除员工信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "id", value = "员工ID编码", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "path", name = "id", value = "员工ID编码", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_STAFF, business = "删除员工信息", opt = BusinessType.UPDATE)
 	@GetMapping("delete/{id}")
@@ -155,7 +151,7 @@ public class AuthzStaffController extends BaseMapperController {
 	
 	@ApiOperation(value = "查询员工信息", notes = "根据员工ID编码查询员工信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( name = "id", required = true, value = "员工ID编码", dataType = "String")
+		@ApiImplicitParam(paramType = "path", name = "id", required = true, value = "员工ID编码", dataType = "String")
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzStaffVo.class)

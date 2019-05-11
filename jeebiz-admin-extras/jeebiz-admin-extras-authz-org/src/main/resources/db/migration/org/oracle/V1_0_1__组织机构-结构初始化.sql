@@ -55,7 +55,7 @@ comment on column SYS_AUTHZ_ORG_DEPT.DEPT_STATUS  is '部门状态（0:禁用|1:
 comment on column SYS_AUTHZ_ORG_DEPT.TIME24 is '部门创建时间';
 
 -- Create table
-create table SYS_AUTHZ_ORG_POSITION
+create table SYS_AUTHZ_ORG_POST
 (
 	DEPT_ID    		VARCHAR2(32) not null,
 	POST_ID   		VARCHAR2(32) default sys_guid() not null,
@@ -69,16 +69,16 @@ create table SYS_AUTHZ_ORG_POSITION
   	CONSTRAINT PK_POST_ID PRIMARY KEY(POST_ID)
 );
 -- Add comments to the table 
-comment on table SYS_AUTHZ_ORG_POSITION  is '岗位信息表';
+comment on table SYS_AUTHZ_ORG_POST  is '岗位信息表';
 -- Add comments to the columns 
-comment on column SYS_AUTHZ_ORG_POSITION.DEPT_ID  is '部门ID编号';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_ID  is '岗位ID编号';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_CODE  is '岗位编码';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_NAME  is '岗位名称';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_INTRO is '岗位简介';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_USERID is '岗位创建人ID';
-comment on column SYS_AUTHZ_ORG_POSITION.POST_STATUS  is '岗位状态（0:禁用|1:可用）';
-comment on column SYS_AUTHZ_ORG_POSITION.TIME24 is '岗位创建时间';
+comment on column SYS_AUTHZ_ORG_POST.DEPT_ID  is '部门ID编号';
+comment on column SYS_AUTHZ_ORG_POST.POST_ID  is '岗位ID编号';
+comment on column SYS_AUTHZ_ORG_POST.POST_CODE  is '岗位编码';
+comment on column SYS_AUTHZ_ORG_POST.POST_NAME  is '岗位名称';
+comment on column SYS_AUTHZ_ORG_POST.POST_INTRO is '岗位简介';
+comment on column SYS_AUTHZ_ORG_POST.POST_USERID is '岗位创建人ID';
+comment on column SYS_AUTHZ_ORG_POST.POST_STATUS  is '岗位状态（0:禁用|1:可用）';
+comment on column SYS_AUTHZ_ORG_POST.TIME24 is '岗位创建时间';
 
 -- Create table
 create table SYS_AUTHZ_ORG_STAFF

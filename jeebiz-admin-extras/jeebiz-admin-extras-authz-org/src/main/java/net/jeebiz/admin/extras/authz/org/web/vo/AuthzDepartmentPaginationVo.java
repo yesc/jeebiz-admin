@@ -20,10 +20,10 @@ public class AuthzDepartmentPaginationVo extends AbstractPaginationVo {
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String name;
 	/**
-	 * 公司ID编号
+	 * 机构ID编号
 	 */
-	@ApiModelProperty(name = "comId", dataType = "String", value = "公司ID编号")
-	private String comId;
+	@ApiModelProperty(name = "orgId", dataType = "String", value = "机构ID编号")
+	private String orgId;
 
 	public String getName() {
 		return name;
@@ -33,12 +33,12 @@ public class AuthzDepartmentPaginationVo extends AbstractPaginationVo {
 		this.name = name;
 	}
 
-	public String getComId() {
-		return comId;
+	public String getOrgId() {
+		return orgId;
 	}
 
-	public void setComId(String comId) {
-		this.comId = comId;
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
 	}
 	
 }

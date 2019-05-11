@@ -1,7 +1,3 @@
-/** 
- * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
- * All Rights Reserved. 
- */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
 
 import java.util.List;
@@ -42,7 +38,6 @@ import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.dao.entities.PairModel;
 import net.jeebiz.boot.api.utils.HttpStatus;
-import net.jeebiz.boot.api.utils.StringUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
@@ -62,14 +57,14 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@Autowired
 	private IAuthzDepartmentService authzDepartmentService;
 
-	@ApiOperation(value = "根据分组分页查询部门信息", notes = "根据分组分页查询部门信息")
+	@ApiOperation(value = "分页查询部门信息", notes = "分页查询部门信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzDepartmentPaginationVo") 
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
-	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "根据分组分页查询部门信息", opt = BusinessType.SELECT)
+	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "分页查询部门信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
 	@RequiresPermissions("authz-dept:list")
 	@ResponseBody
@@ -94,7 +89,7 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
 	})
-	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "根据分组查询部门信息", opt = BusinessType.SELECT)
+	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "查询部门信息", opt = BusinessType.SELECT)
 	@GetMapping("pairs")
 	@RequiresPermissions("authz-dept:list")
 	@ResponseBody
@@ -112,11 +107,11 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@ResponseBody
 	public Object newDept(@Valid @RequestBody AuthzDepartmentNewVo deptVo) throws Exception {
 		
-		int count1 = getAuthzDepartmentService().getCountByCode(deptVo.getCode());
+		int count1 = getAuthzDepartmentService().getCountByCode(deptVo.getCode(), deptVo.getOrgId(), null);
 		if(count1 > 0) {
 			return fail("authz.dept.new.code-exists");
 		}
-		int count2 = getAuthzDepartmentService().getCountByName(deptVo.getName());
+		int count2 = getAuthzDepartmentService().getCountByName(deptVo.getName(), deptVo.getOrgId(), null);
 		if(count2 > 0) {
 			return fail("authz.dept.new.name-exists");
 		}
@@ -141,6 +136,16 @@ public class AuthzDepartmentController extends BaseMapperController {
 	@RequiresPermissions("authz-dept:renew")
 	@ResponseBody
 	public Object renew(@Valid @RequestBody AuthzDepartmentRenewVo deptVo) throws Exception {
+		
+		int count1 = getAuthzDepartmentService().getCountByCode(deptVo.getCode(), deptVo.getOrgId(), deptVo.getId());
+		if(count1 > 0) {
+			return fail("authz.dept.renew.code-exists");
+		}
+		int count2 = getAuthzDepartmentService().getCountByName(deptVo.getName(), deptVo.getOrgId(), deptVo.getId());
+		if(count2 > 0) {
+			return fail("authz.dept.renew.name-exists");
+		}
+		
 		AuthzDepartmentModel model = getBeanMapper().map(deptVo, AuthzDepartmentModel.class);
 		int result = getAuthzDepartmentService().update(model);
 		if(result == 1) {
@@ -170,16 +175,24 @@ public class AuthzDepartmentController extends BaseMapperController {
 	
 	@ApiOperation(value = "删除部门信息", notes = "删除部门信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "ids", value = "部门信息ID,多个用,拼接", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "path", name = "id", value = "部门信息ID", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_DEPT, business = "删除部门信息", opt = BusinessType.UPDATE)
-	@GetMapping("delete")
+	@GetMapping("delete/{id}")
 	@RequiresPermissions("authz-dept:delete")
 	@ResponseBody
-	public Object delete(@RequestParam String ids) throws Exception {
-		// 执行部门信息删除操作
-		List<String> idList = Lists.newArrayList(StringUtils.tokenizeToStringArray(ids));
-		int result = getAuthzDepartmentService().batchDelete(idList);
+	public Object delete(@PathVariable("id") String id) throws Exception {
+		
+		int count1 = getAuthzDepartmentService().getCountByParent(id);
+		if(count1 > 0 ) {
+			return fail("authz.dept.delete.child-exists");
+		}
+		int count2 = getAuthzDepartmentService().getStaffCount(id);
+		if(count2 > 0 ) {
+			return fail("authz.dept.delete.staff-exists");
+		}
+		
+		int result = getAuthzDepartmentService().delete(id);
 		if(result > 0) {
 			return success("authz.dept.delete.success", result);
 		}
@@ -201,7 +214,7 @@ public class AuthzDepartmentController extends BaseMapperController {
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzDepartmentModel model = getAuthzDepartmentService().getModel(id);
 		if( model == null) {
-			return ApiRestResponse.empty(getMessage("authz.dept.get.empty"));
+			return ApiRestResponse.empty(getMessage("authz.dept.not-found"));
 		}
 		return getBeanMapper().map(model, AuthzDepartmentVo.class);
 	}

@@ -4,6 +4,7 @@
  */
 package net.jeebiz.admin.extras.authz.org.dao.entities;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.Alias;
 
 import net.jeebiz.boot.api.dao.entities.PaginationModel;
@@ -33,7 +34,7 @@ public class AuthzDepartmentModel extends PaginationModel {
 	 */
 	private String name;
 	/**
-	 * 部门简介
+	 * 部门说明
 	 */
 	private String intro;
 	/**
@@ -102,7 +103,7 @@ public class AuthzDepartmentModel extends PaginationModel {
 	}
 
 	public String getParent() {
-		return parent;
+		return StringUtils.defaultString(parent, "0");
 	}
 
 	public void setParent(String parent) {

@@ -1,13 +1,10 @@
-/** 
- * Copyright (C) 2018 Jeebiz (http://jeebiz.net).
- * All Rights Reserved. 
- */
 package net.jeebiz.admin.extras.authz.org.web.mvc;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.biz.authz.principal.ShiroPrincipal;
 import org.apache.shiro.biz.utils.SubjectUtils;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -60,27 +58,27 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@Autowired
 	private IAuthzOrganizationService authzOrganizationService;
 
-	@ApiOperation(value = "根据分组分页查询机构信息", notes = "根据分组分页查询机构信息")
+	@ApiOperation(value = "分页查询机构信息", notes = "分页查询机构信息")
 	@ApiImplicitParams({
 		@ApiImplicitParam(paramType = "body", name = "paginationVo", value = "分页查询参数", dataType = "AuthzOrganizationPaginationVo") 
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = Result.class)
 	})
-	@BusinessLog(module = Constants.AUTHZ_ORG, business = "根据分组分页查询机构信息", opt = BusinessType.SELECT)
+	@BusinessLog(module = Constants.AUTHZ_ORG, business = "分页查询机构信息", opt = BusinessType.SELECT)
 	@PostMapping("list")
 	@RequiresPermissions("authz-org:list")
 	@ResponseBody
-	public Object list(@Valid AuthzOrganizationPaginationVo paginationVo) throws Exception {
+	public Object list(@Valid @RequestBody AuthzOrganizationPaginationVo paginationVo) throws Exception {
 		
 		AuthzOrganizationModel model = getBeanMapper().map(paginationVo, AuthzOrganizationModel.class);
-		List<AuthzOrganizationModel> pageResult = getAuthzOrganizationService().getModelList(model);
+		Page<AuthzOrganizationModel> pageResult = getAuthzOrganizationService().getPagedList(model);
 		List<AuthzOrganizationVo> retList = Lists.newArrayList();
-		for (AuthzOrganizationModel orgModel : pageResult) {
+		for (AuthzOrganizationModel orgModel : pageResult.getRecords()) {
 			retList.add(getBeanMapper().map(orgModel, AuthzOrganizationVo.class));
 		}
 		
-		return new Result<AuthzOrganizationVo>(retList);
+		return new Result<AuthzOrganizationVo>(pageResult, retList);
 		
 	}
 	
@@ -88,7 +86,7 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = PairModel.class, responseContainer = "List")
 	})
-	@BusinessLog(module = Constants.AUTHZ_ORG, business = "根据分组查询机构信息", opt = BusinessType.SELECT)
+	@BusinessLog(module = Constants.AUTHZ_ORG, business = "查询机构信息", opt = BusinessType.SELECT)
 	@GetMapping("pairs")
 	@RequiresPermissions("authz-org:list")
 	@ResponseBody
@@ -105,6 +103,19 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@RequiresPermissions("authz-org:new")
 	@ResponseBody
 	public Object newOrg(@Valid @RequestBody AuthzOrganizationNewVo orgVo) throws Exception {
+		
+		int count1 = getAuthzOrganizationService().getCountByCode(orgVo.getCode(), null);
+		if(count1 > 0) {
+			return fail("authz.org.new.code-exists");
+		}
+		int count2 = getAuthzOrganizationService().getCountByName(orgVo.getName(), null);
+		if(count2 > 0) {
+			return fail("authz.org.new.name-exists");
+		}
+		int count3 = getAuthzOrganizationService().getRootCount();
+		if(count3 == 1 && StringUtils.equalsIgnoreCase("0", orgVo.getParent())) {
+			return fail("authz.org.new.root-exists");
+		}
 		AuthzOrganizationModel model = getBeanMapper().map(orgVo, AuthzOrganizationModel.class);
 		ShiroPrincipal principal = SubjectUtils.getPrincipal(ShiroPrincipal.class);
 		model.setUserId(principal.getUserid());
@@ -125,6 +136,17 @@ public class AuthzOrganizationController extends BaseMapperController {
 	@RequiresPermissions("authz-org:renew")
 	@ResponseBody
 	public Object renew(@Valid @RequestBody AuthzOrganizationRenewVo orgVo) throws Exception {
+		
+		// 查询历史记录
+		int count1 = getAuthzOrganizationService().getCountByCode(orgVo.getCode(), orgVo.getId());
+		if(count1 > 0) {
+			return fail("authz.org.renew.code-exists");
+		}
+		int count2 = getAuthzOrganizationService().getCountByName(orgVo.getName(), orgVo.getId());
+		if(count2 > 0) {
+			return fail("authz.org.renew.name-exists");
+		}
+		
 		AuthzOrganizationModel model = getBeanMapper().map(orgVo, AuthzOrganizationModel.class);
 		int result = getAuthzOrganizationService().update(model);
 		if(result == 1) {
@@ -154,13 +176,23 @@ public class AuthzOrganizationController extends BaseMapperController {
 	
 	@ApiOperation(value = "删除机构信息", notes = "删除机构信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(name = "id", value = "机构信息ID", required = true, dataType = "String")
+		@ApiImplicitParam(paramType = "path", name = "id", value = "机构信息ID", required = true, dataType = "String")
 	})
 	@BusinessLog(module = Constants.AUTHZ_ORG, business = "删除机构信息", opt = BusinessType.UPDATE)
 	@GetMapping("delete/{id}")
 	@RequiresPermissions("authz-org:delete")
 	@ResponseBody
 	public Object delete(@PathVariable("id") String id) throws Exception {
+		
+		int count1 = getAuthzOrganizationService().getCountByParent(id);
+		if(count1 > 0 ) {
+			return fail("authz.org.delete.child-exists");
+		}
+		int count2 = getAuthzOrganizationService().getDeptCount(id);
+		if(count2 > 0 ) {
+			return fail("authz.org.delete.dept-exists");
+		}
+		
 		// 执行机构信息删除操作
 		int result = getAuthzOrganizationService().delete(id);
 		if(result > 0) {
@@ -172,7 +204,7 @@ public class AuthzOrganizationController extends BaseMapperController {
 	
 	@ApiOperation(value = "根据ID查询机构信息", notes = "根据ID查询机构信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam( name = "id", required = true, value = "机构信息ID", dataType = "String")
+		@ApiImplicitParam( paramType = "path", name = "id", required = true, value = "机构信息ID", dataType = "String")
 	})
 	@ApiResponses({ 
 		@ApiResponse(code = HttpStatus.SC_OK, message = "操作成功", response = AuthzOrganizationVo.class)
@@ -184,7 +216,7 @@ public class AuthzOrganizationController extends BaseMapperController {
 	public Object detail(@PathVariable("id") String id) throws Exception { 
 		AuthzOrganizationModel model = getAuthzOrganizationService().getModel(id);
 		if( model == null) {
-			return ApiRestResponse.empty(getMessage("authz.org.get.empty"));
+			return ApiRestResponse.empty(getMessage("authz.org.not-found"));
 		}
 		return getBeanMapper().map(model, AuthzOrganizationVo.class);
 	}

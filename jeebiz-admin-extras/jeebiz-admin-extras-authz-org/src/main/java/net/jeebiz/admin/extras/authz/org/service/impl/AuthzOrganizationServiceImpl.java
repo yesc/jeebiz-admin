@@ -14,4 +14,14 @@ import net.jeebiz.boot.api.service.BaseServiceImpl;
 @Service
 public class AuthzOrganizationServiceImpl extends BaseServiceImpl<AuthzOrganizationModel, IAuthzOrganizationDao> implements IAuthzOrganizationService{
 
+	@Override
+	public int getRootCount() {
+		return getDao().getRootCount();
+	}
+	
+	@Override
+	public int getDeptCount(String id) {
+		return getDao().getDeptCount(id);
+	}
+	
 }

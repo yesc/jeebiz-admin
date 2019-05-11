@@ -8,8 +8,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @SuppressWarnings("serial")
-@ApiModel(value = "AuthzPositionRenewVo", description = "岗位信息更新参数Vo")
-public class AuthzPositionRenewVo implements Serializable {
+@ApiModel(value = "AuthzPostNewVo", description = "新增岗位信息参数Vo")
+public class AuthzPostNewVo implements Serializable {
 
 	/**
 	 * 机构ID编号
@@ -21,11 +21,6 @@ public class AuthzPositionRenewVo implements Serializable {
 	 */
 	@ApiModelProperty(name = "deptId", required = true, dataType = "String", value = "部门ID编号")
 	private String deptId;
-	/**
-	 * 岗位ID编号
-	 */
-	@ApiModelProperty(name = "id", required = true, dataType = "String", value = "岗位ID编号")
-	private String id;
 	/**
 	 * 岗位编码
 	 */
@@ -43,11 +38,7 @@ public class AuthzPositionRenewVo implements Serializable {
 	@ApiModelProperty(name = "intro", dataType = "String", value = "岗位简介")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String intro;
-	/**
-	 * 岗位状态（0:禁用|1:可用）
-	 */
-	@ApiModelProperty(name = "status", required = true, dataType = "String", value = "岗位状态（0:禁用|1:可用）", allowableValues = "1,0")
-	private String status;
+ 
 
 	public String getOrgId() {
 		return orgId;
@@ -57,20 +48,13 @@ public class AuthzPositionRenewVo implements Serializable {
 		this.orgId = orgId;
 	}
 
+
 	public String getDeptId() {
 		return deptId;
 	}
 
 	public void setDeptId(String deptId) {
 		this.deptId = deptId;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getCode() {
@@ -95,14 +79,6 @@ public class AuthzPositionRenewVo implements Serializable {
 
 	public void setIntro(String intro) {
 		this.intro = intro;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 }

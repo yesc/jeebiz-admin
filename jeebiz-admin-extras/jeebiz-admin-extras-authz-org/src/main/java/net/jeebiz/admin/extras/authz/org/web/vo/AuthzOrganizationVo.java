@@ -6,6 +6,8 @@ package net.jeebiz.admin.extras.authz.org.web.vo;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -37,7 +39,7 @@ public class AuthzOrganizationVo implements Serializable {
 	 * 父级机构ID编号
 	 */
 	@ApiModelProperty(name = "parent", dataType = "String", value = "父级机构ID编号")
-	private String parent;
+	private String parent = "0";
 	/**
 	 * 机构创建人ID
 	 */
@@ -87,7 +89,7 @@ public class AuthzOrganizationVo implements Serializable {
 	}
 
 	public String getParent() {
-		return parent;
+		return StringUtils.defaultString(parent, "0");
 	}
 
 	public void setParent(String parent) {

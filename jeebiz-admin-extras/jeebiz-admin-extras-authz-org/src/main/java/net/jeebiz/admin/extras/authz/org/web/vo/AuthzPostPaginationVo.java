@@ -10,8 +10,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import net.jeebiz.boot.api.vo.AbstractPaginationVo;
 
-@ApiModel(value = "AuthzPositionPaginationVo", description = "岗位信息分页查询参数")
-public class AuthzPositionPaginationVo extends AbstractPaginationVo {
+@ApiModel(value = "AuthzPostPaginationVo", description = "岗位信息分页查询参数")
+public class AuthzPostPaginationVo extends AbstractPaginationVo {
 
 	/**
 	 * 机构ID编号
