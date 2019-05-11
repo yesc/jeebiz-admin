@@ -38,10 +38,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import net.jeebiz.admin.shadow.dao.entities.AuthzLoginModel;
 import net.jeebiz.admin.shadow.service.IAuthzLoginService;
+import net.jeebiz.boot.api.ApiRestResponse;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.utils.Constants;
-import net.jeebiz.boot.api.utils.ResultUtils;
 import net.jeebiz.boot.api.webmvc.BaseController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -190,7 +190,7 @@ public class AuthzLoginController extends BaseController {
 		// 直接响应登录成功的提醒
 		if (SubjectUtils.isAuthenticated()) {
 			// 响应成功状态信息
-			return ResultUtils.success("Login Success.");
+			return ApiRestResponse.success("Login Success.");
 		}
 
 		// 响应成功状态信息
