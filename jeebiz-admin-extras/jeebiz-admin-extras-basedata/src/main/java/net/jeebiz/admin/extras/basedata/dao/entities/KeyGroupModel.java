@@ -24,15 +24,15 @@ public class KeyGroupModel extends BaseModel {
 	 */
 	private String key;
 	/**
-	 * 数据基础值
+	 * 数据分组值
 	 */
 	private String value;
 	/**
-	 * 数据基础状态：0:不可用、1：可用
+	 * 数据分组状态：0:不可用、1：可用
 	 */
 	private String status;
 	/**
-	 * 数据分组状态:（0:禁用|1：可用）
+	 * 数据分组排序
 	 */
 	private int order;
 

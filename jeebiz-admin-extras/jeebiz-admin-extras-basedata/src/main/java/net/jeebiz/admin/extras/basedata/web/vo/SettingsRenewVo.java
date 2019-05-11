@@ -5,6 +5,7 @@
 package net.jeebiz.admin.extras.basedata.web.vo;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -26,6 +27,8 @@ public class SettingsRenewVo {
 	 * 参数标签
 	 */
 	@ApiModelProperty(name = "label", required = true, dataType = "String", value = "参数标签")
+	@NotBlank(message = "参数标签必填")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String label;
 	/**
 	 * 参数值
@@ -76,6 +79,7 @@ public class SettingsRenewVo {
 	 * 参数排序:组内排序
 	 */
 	@ApiModelProperty(name = "order", required = true, dataType = "String", value = "参数排序:组内排序")
+	@NotNull(message = "参数排序必填")
 	private int order;
 
 	public String getId() {

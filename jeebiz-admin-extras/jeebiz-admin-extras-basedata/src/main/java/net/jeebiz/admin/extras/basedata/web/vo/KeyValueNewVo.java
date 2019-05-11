@@ -12,17 +12,23 @@ import org.hibernate.validator.constraints.SafeHtml;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "KeyValueRenewVo", description = "基础数据更新传输对象")
-public class KeyValueRenewVo {
+@ApiModel(value = "KeyValueNewVo", description = "新增基础数据参数Vo")
+public class KeyValueNewVo {
 
 	/**
-	 * 基础数据ID编号
+	 * 基础数据分组
 	 */
-	@ApiModelProperty(name = "id", required = true, dataType = "String", value = "基础数据ID编号")
-	@NotBlank(message = "基础数据ID必填")
+	@ApiModelProperty(name = "gkey", required = true, dataType = "String", value = "基础数据分组")
+	@NotBlank(message = "基础数据分组必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
-	private String id;
-
+	private String gkey;
+	/**
+	 * 基础数据键
+	 */
+	@ApiModelProperty(name = "key", dataType = "String", value = "基础数据键")
+	@NotBlank(message = "基础数据键必填")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+	private String key;
 	/**
 	 * 基础数据标签
 	 */
@@ -51,12 +57,20 @@ public class KeyValueRenewVo {
 	@NotNull(message = "基础数据排序必填")
 	private int order;
 
-	public String getId() {
-		return id;
+	public String getGkey() {
+		return gkey;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setGkey(String gkey) {
+		this.gkey = gkey;
+	}
+	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getLabel() {

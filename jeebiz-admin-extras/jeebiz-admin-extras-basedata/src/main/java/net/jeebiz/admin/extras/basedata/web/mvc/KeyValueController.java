@@ -35,6 +35,7 @@ import net.jeebiz.admin.extras.basedata.service.IKeyValueService;
 import net.jeebiz.admin.extras.basedata.setup.Constants;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyGroupVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueGroupRenewVo;
+import net.jeebiz.admin.extras.basedata.web.vo.KeyValueNewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValuePaginationVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueRenewVo;
 import net.jeebiz.admin.extras.basedata.web.vo.KeyValueVo;
@@ -123,13 +124,13 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "创建基础数据", notes = "增加一个新的基础数据")
 	@ApiImplicitParams({
-		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据传输对象", dataType = "KeyValueVo") 
+		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据传输对象", dataType = "KeyValueNewVo") 
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "创建基础数据", opt = BusinessType.INSERT)
 	@PostMapping("new")
 	@RequiresPermissions("keyvalue:new")
 	@ResponseBody
-	public Object keyvalue(@Valid @RequestBody KeyValueVo vo) throws Exception {
+	public Object keyvalue(@Valid @RequestBody KeyValueNewVo vo) throws Exception {
 		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
 		
 		int ct = getKeyValueService().getCount(model);
@@ -167,13 +168,13 @@ public class KeyValueController extends BaseMapperController {
 	
 	@ApiOperation(value = "更新基础数据", notes = "更新基础数据")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据", required = true, dataType = "KeyValueVo"),
+		@ApiImplicitParam(paramType = "body", name = "vo", value = "基础数据", required = true, dataType = "KeyValueRenewVo"),
 	})
 	@BusinessLog(module = Constants.EXTRAS_BASEDATA, business = "更新基础数据", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("keyvalue:renew")
 	@ResponseBody
-	public Object renew(@Valid @RequestBody KeyValueVo vo) throws Exception {
+	public Object renew(@Valid @RequestBody KeyValueRenewVo vo) throws Exception {
 		KeyValueModel model = getBeanMapper().map(vo, KeyValueModel.class);
 		int ct = getKeyValueService().getCount(model);
 		if(ct > 0) {
