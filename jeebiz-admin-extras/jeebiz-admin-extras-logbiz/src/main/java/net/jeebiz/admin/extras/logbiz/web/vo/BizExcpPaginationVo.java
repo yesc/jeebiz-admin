@@ -19,25 +19,25 @@ public class BizExcpPaginationVo extends AbstractPaginationVo {
 	/**
 	 * 系统异常类型
 	 */
-	@ApiModelProperty(value = "type", dataType = "String", notes = "异常类型")
+	@ApiModelProperty(name = "type", dataType = "String", value = "异常类型")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String type;
 	/**
 	 * 日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）
 	 */
-	@ApiModelProperty(value = "level", dataType = "String", notes = "日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）")
+	@ApiModelProperty(name = "level", dataType = "String", value = "日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）" , allowableValues = "debug,info,warn,error,fetal")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String level;
 	/**
 	 * 系统异常发生起始时间
 	 */
-	@ApiModelProperty(value = "begintime", dataType = "String", notes = "系统异常发生起始时间")
+	@ApiModelProperty(name = "begintime", dataType = "String", value = "系统异常发生起始时间")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String begintime;
 	/**
 	 * 系统异常发生结束时间
 	 */
-	@ApiModelProperty(value = "endtime", dataType = "String", notes = "系统异常发生结束时间")
+	@ApiModelProperty(name = "endtime", dataType = "String", value = "系统异常发生结束时间")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String endtime;
 

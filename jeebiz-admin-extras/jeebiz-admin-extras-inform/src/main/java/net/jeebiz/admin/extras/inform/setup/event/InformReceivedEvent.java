@@ -15,13 +15,13 @@ import net.jeebiz.admin.extras.inform.dao.entities.InformModel;
 /**
  */
 @SuppressWarnings("serial")
-public class ServiceInformReceivedEvent extends EnhancedEvent<List<InformModel>> {
+public class InformReceivedEvent extends EnhancedEvent<List<InformModel>> {
 	
-	public ServiceInformReceivedEvent(Object source, InformModel inform) {
+	public InformReceivedEvent(Object source, InformModel inform) {
 		super(source, Lists.newArrayList(inform));
 	}
 	
-	public ServiceInformReceivedEvent(Object source, List<InformModel> informs) {
+	public InformReceivedEvent(Object source, List<InformModel> informs) {
 		super(source, informs);
 	}
 	

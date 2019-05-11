@@ -16,57 +16,57 @@ public class BizExcpVo {
 	/**
 	 * 日志ID
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "日志记录ID")
+	@ApiModelProperty(name = "id", dataType = "String", value = "日志记录ID")
 	private String id;
 	/**
 	 * 系统异常操作人ID
 	 */
-	@ApiModelProperty(value = "userId", dataType = "String", notes = "系统异常操作人ID")
+	@ApiModelProperty(name = "userId", dataType = "String", value = "系统异常操作人ID")
 	private String userId;
 	/**
 	 * 系统异常发生源类型
 	 */
-	@ApiModelProperty(value = "cpmt", dataType = "String", notes = "系统异常发生源类型")
+	@ApiModelProperty(name = "cpmt", dataType = "String", value = "系统异常发生源类型")
 	private String cpmt;
 	/**
 	 * 系统异常对象
 	 */
-	@ApiModelProperty(value = "clazz", dataType = "String", notes = "系统异常对象")
+	@ApiModelProperty(name = "clazz", dataType = "String", value = "系统异常对象")
 	private String clazz;
 	/**
 	 * 系统异常类型
 	 */
-	@ApiModelProperty(value = "type", dataType = "String", notes = "系统异常类型")
+	@ApiModelProperty(name = "type", dataType = "String", value = "系统异常类型")
 	private String type;
 	/**
 	 * 日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）
 	 */
-	@ApiModelProperty(value = "level", dataType = "String", notes = "日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）")
+	@ApiModelProperty(name = "level", dataType = "String", value = "日志级别：（debug:调试、info:信息、warn:警告、error:错误、fetal:严重错误）")
 	private String level;
 	/**
 	 * 导致系统异常的请求来源IP地址
 	 */
-	@ApiModelProperty(value = "addr", dataType = "String", notes = "导致系统异常的请求来源IP地址")
+	@ApiModelProperty(name = "addr", dataType = "String", value = "导致系统异常的请求来源IP地址")
 	private String addr;
 	/**
 	 * 系统异常代码
 	 */
-	@ApiModelProperty(value = "code", dataType = "String", notes = "系统异常代码")
+	@ApiModelProperty(name = "code", dataType = "String", value = "系统异常代码")
 	private String code;
 	/**
 	 * 系统异常描述
 	 */
-	@ApiModelProperty(value = "msg", dataType = "String", notes = "系统异常描述")
+	@ApiModelProperty(name = "msg", dataType = "String", value = "系统异常描述")
 	private String msg;
 	/**
 	 * 系统异常信息
 	 */
-	@ApiModelProperty(value = "exception", dataType = "String", notes = "系统异常信息")
+	@ApiModelProperty(name = "exception", dataType = "String", value = "系统异常信息")
 	private String exception;
 	/**
 	 * 系统异常发生时间
 	 */
-	@ApiModelProperty(value = "timestamp", dataType = "String", notes = "系统异常发生时间")
+	@ApiModelProperty(name = "timestamp", dataType = "String", value = "系统异常发生时间")
 	private String timestamp;
 
 	public String getId() {

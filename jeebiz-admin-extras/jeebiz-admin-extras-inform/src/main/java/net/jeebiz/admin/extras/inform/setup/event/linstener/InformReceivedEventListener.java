@@ -10,16 +10,16 @@ import org.springframework.stereotype.Component;
 
 import net.jeebiz.admin.extras.inform.dao.IInformDao;
 import net.jeebiz.admin.extras.inform.dao.entities.InformModel;
-import net.jeebiz.admin.extras.inform.setup.event.ServiceInformReceivedEvent;
+import net.jeebiz.admin.extras.inform.setup.event.InformReceivedEvent;
 
 @Component
-public class ServiceInformReceivedEventListener implements ApplicationListener<ServiceInformReceivedEvent> {
+public class InformReceivedEventListener implements ApplicationListener<InformReceivedEvent> {
 
 	@Autowired
     private IInformDao serviceInformDao;
 	
 	@Override
-	public void onApplicationEvent(ServiceInformReceivedEvent event) {
+	public void onApplicationEvent(InformReceivedEvent event) {
 		
 		for( InformModel model : event.getBind()) {
 			// 保存消息通知

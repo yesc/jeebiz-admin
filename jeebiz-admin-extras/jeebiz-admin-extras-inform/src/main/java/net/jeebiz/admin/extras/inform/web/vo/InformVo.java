@@ -17,37 +17,37 @@ public class InformVo {
 	/**
 	 * 消息通知ID编号
 	 */
-	@ApiModelProperty(value = "id", dataType = "String", notes = "消息通知ID编号")
+	@ApiModelProperty(name = "id", dataType = "String", value = "消息通知ID编号")
 	private String id;
 	/**
 	 * 消息通知通知对象ID
 	 */
-	@ApiModelProperty(value = "userId", dataType = "String", notes = "消息通知对象ID")
+	@ApiModelProperty(name = "userId", dataType = "String", value = "消息通知对象ID")
 	private String userId;
 	/**
 	 * 消息通知标题
 	 */
-	@ApiModelProperty(value = "title", required = true, dataType = "String", notes = "消息通知标题")
+	@ApiModelProperty(name = "title", required = true, dataType = "String", value = "消息通知标题")
 	@NotBlank(message = "消息通知标题必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String title;
 	/**
 	 * 消息通知类型：（notice：通知、direct：私信）
 	 */
-	@ApiModelProperty(value = "type", dataType = "String", notes = "消息通知类型：（notice：通知、letter：私信）", allowableValues = "notice,letter")
+	@ApiModelProperty(name = "type", dataType = "String", value = "消息通知类型：（notice：通知、letter：私信）", allowableValues = "notice,letter")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String type;
 	/**
 	 * 消息通知内容
 	 */
-	@ApiModelProperty(value = "detail", required = true, dataType = "String", notes = "消息通知内容")
+	@ApiModelProperty(name = "detail", required = true, dataType = "String", value = "消息通知内容")
 	@NotBlank(message = "消息通知内容必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String detail;
 	/**
 	 * 消息通知阅读状态：（0:未阅读、1:已阅读）
 	 */
-	@ApiModelProperty(value = "status", dataType = "String", notes = "消息通知阅读状态：（0:未阅读、1:已阅读）", allowableValues = "0,1")
+	@ApiModelProperty(name = "status", dataType = "String", value = "消息通知阅读状态：（0:未阅读、1:已阅读）", allowableValues = "0,1")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String status;
 	/**

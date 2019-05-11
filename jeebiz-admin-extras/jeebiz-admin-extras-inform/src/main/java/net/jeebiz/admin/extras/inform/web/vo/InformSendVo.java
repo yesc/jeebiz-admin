@@ -17,25 +17,25 @@ public class InformSendVo {
 	/**
 	 * 消息通知通知对象ID（钉钉UserId）
 	 */
-	@ApiModelProperty(value = "userId", dataType = "String", notes = "消息通知通知对象ID（钉钉UserId）")
+	@ApiModelProperty(name = "userId", dataType = "String", value = "消息通知通知对象ID（钉钉UserId）")
 	private String userId;
 	/**
 	 * 消息通知标题
 	 */
-	@ApiModelProperty(value = "title", required = true, dataType = "String", notes = "消息通知标题")
+	@ApiModelProperty(name = "title", required = true, dataType = "String", value = "消息通知标题")
 	@NotBlank(message = "消息通知标题必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String title;
 	/**
 	 * 消息通知类型：（notice：通知、direct：私信）
 	 */
-	@ApiModelProperty(value = "type", dataType = "String", notes = "消息通知类型：（notice：通知、letter：私信）", allowableValues = "notice,letter")
+	@ApiModelProperty(name = "type", dataType = "String", value = "消息通知类型：（notice：通知、letter：私信）", allowableValues = "notice,letter")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String type;
 	/**
 	 * 消息通知内容
 	 */
-	@ApiModelProperty(value = "detail", required = true, dataType = "String", notes = "消息通知内容")
+	@ApiModelProperty(name = "detail", required = true, dataType = "String", value = "消息通知内容")
 	@NotBlank(message = "消息通知内容必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String detail;

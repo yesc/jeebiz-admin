@@ -16,7 +16,7 @@ public class InformPaginationVo extends AbstractPaginationVo {
 	/**
 	 * 消息通知类型
 	 */
-	@ApiModelProperty(value = "type", dataType = "String", notes = "消息通知类型")
+	@ApiModelProperty(name = "type", dataType = "String", value = "消息通知类型")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String type;
 
