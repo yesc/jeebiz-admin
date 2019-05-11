@@ -6,16 +6,14 @@ package net.jeebiz.admin.extras.authz.rbac0.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 
-import net.jeebiz.boot.api.dao.entities.PaginationModel;
-import net.jeebiz.boot.api.service.BaseServiceImpl;
 import net.jeebiz.admin.extras.authz.feature.dao.IAuthzFeatureDao;
 import net.jeebiz.admin.extras.authz.rbac0.dao.IAuthzRoleDao;
 import net.jeebiz.admin.extras.authz.rbac0.dao.IAuthzUserDao;
@@ -24,6 +22,9 @@ import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserAllotRoleModel;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserDetailModel;
 import net.jeebiz.admin.extras.authz.rbac0.dao.entities.AuthzUserModel;
 import net.jeebiz.admin.extras.authz.rbac0.service.IAuthzUserService;
+import net.jeebiz.boot.api.dao.entities.PaginationModel;
+import net.jeebiz.boot.api.service.BaseServiceImpl;
+import net.jeebiz.boot.api.utils.CollectionUtils;
 
 @Service
 public class AuthzUserServiceImpl extends BaseServiceImpl<AuthzUserDetailModel, IAuthzUserDao> implements IAuthzUserService {
@@ -42,6 +43,7 @@ public class AuthzUserServiceImpl extends BaseServiceImpl<AuthzUserDetailModel, 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int insert(AuthzUserDetailModel model) {
+		model.setUsername(StringUtils.defaultString(model.getUsername(), model.getPhone()));
 		int ct = getDao().insert(model);
 		getDao().insertDetail(model);
 		getAuthzRoleDao().setUsers(model.getRoleId(), Lists.newArrayList(model.getId()));

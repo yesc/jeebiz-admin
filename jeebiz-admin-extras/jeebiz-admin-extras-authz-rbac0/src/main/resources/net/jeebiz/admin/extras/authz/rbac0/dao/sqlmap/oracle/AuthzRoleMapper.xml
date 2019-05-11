@@ -82,8 +82,15 @@
 	</insert>
 	
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
-		DELETE FROM SYS_AUTHZ_ROLE_LIST WHERE R_ID = #{id} AND R_ID != '1'
+		DELETE FROM SYS_AUTHZ_ROLE_LIST WHERE R_ID = #{id} AND R_KEY != 'admin'
 	</delete>
+	
+	<update id="setStatus" parameterType="java.lang.String" flushCache="true">
+		UPDATE SYS_AUTHZ_ROLE_LIST 
+		   SET R_STATUS = #{status}
+		 WHERE R_ID = #{roleId}
+		   AND R_KEY != 'admin'
+	</update>
 	
 	<update id="update" parameterType="AuthzRoleModel" flushCache="true">
 		update SYS_AUTHZ_ROLE_LIST t
@@ -91,26 +98,19 @@
 			<if test="name != null and name != ''">t.R_NAME = #{name},</if>
 			<if test="type != null and type != ''">t.R_TYPE = #{type},</if>
 			<if test="intro != null and intro != ''">t.R_INTRO = #{intro},</if>
-			<if test="status != null and status != ''">t.R_STATUS = #{status},</if>
+			<if test="status != null and status != ''">t.R_STATUS = #{status}</if>
 		</set>
 		where t.R_ID = #{id}
-		  AND t.R_ID != '1'
-	</update>
-	
-	<update id="setStatus" parameterType="java.lang.String" flushCache="true">
-		UPDATE SYS_AUTHZ_ROLE_LIST 
-		   SET R_STATUS = #{status}
-		 WHERE R_ID = #{roleId}
-		   AND R_ID != '1'
+		  AND t.R_KEY != 'admin'
 	</update>
 	
 	<select id="getCountByName" resultType="int" parameterType="java.lang.String" useCache="true">
-		SELECT count(t.R_ID) FROM SYS_AUTHZ_ROLE_LIST t WHERE t.R_NAME LIKE '%' || #{name} ||'%'
+		SELECT count(t.R_ID) FROM SYS_AUTHZ_ROLE_LIST t WHERE t.R_NAME = #{name}
 	</select>
 	
 	<select id="getCount" resultType="int"  parameterType="AuthzRoleModel" useCache="true">
 		SELECT count(t.R_ID) FROM SYS_AUTHZ_ROLE_LIST t 
-		 WHERE t.R_NAME LIKE '%' || #{name} ||'%' 
+		 WHERE t.R_NAME = #{name}
 		   AND t.R_ID != #{id}
 	</select>
 	
@@ -124,7 +124,7 @@
 			t.R_STATUS,
 			t.R_TIME24
 		FROM SYS_AUTHZ_ROLE_LIST t
-	   WHERE t.R_ID != '1'
+	   WHERE t.R_KEY != 'admin'
 	</select>
 	
 	<select id="getPermsByRoleId" resultType="string" useCache="true">  
@@ -143,7 +143,7 @@
 			t.R_TIME24
 		FROM SYS_AUTHZ_ROLE_LIST t
 	   WHERE t.R_ID = #{id}
-	     AND t.R_ID != '1'
+	     AND t.R_KEY != 'admin'
 	</select>
 	
 	<select id="getPagedList" resultMap="RoleMap" parameterType="AuthzRoleModel" useCache="true">
@@ -157,7 +157,7 @@
 			(SELECT COUNT(x.R_ID) FROM SYS_AUTHZ_USER_ROLE_RELATION x WHERE x.R_ID = t.R_ID) as R_USERS,
 			t.R_TIME24
 		FROM SYS_AUTHZ_ROLE_LIST t
-	   WHERE t.R_ID != '1'
+	   WHERE t.R_KEY != 'admin'
 		<if test="model.status != null and model.status != ''">
 			and t.R_STATUS = #{model.status}
 		</if>

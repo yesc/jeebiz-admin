@@ -75,9 +75,7 @@ comment on column SYS_AUTHZ_USER_LIST.U_TIME24  is '初始化时间';
 create table SYS_AUTHZ_USER_DETAIL (
   U_ID   			VARCHAR2(32) not null,
   D_ID   			VARCHAR2(32) default sys_guid() not null,
-  D_AGE       		VARCHAR2(20),
   D_BIRTHDAY		VARCHAR2(20),
-  D_CODE      		VARCHAR2(20),
   D_GENDER			VARCHAR2(10),
   D_IDCARD			VARCHAR2(20),
   D_REMARK      	VARCHAR2(2000),
@@ -88,9 +86,7 @@ comment on table SYS_AUTHZ_USER_DETAIL  is '用户详情表';
 -- Add comments to the columns 
 comment on column SYS_AUTHZ_USER_DETAIL.U_ID  is '用户ID';
 comment on column SYS_AUTHZ_USER_DETAIL.D_ID  is '用户详情表ID';
-comment on column SYS_AUTHZ_USER_DETAIL.D_AGE  is '年龄';
 comment on column SYS_AUTHZ_USER_DETAIL.D_BIRTHDAY  is '出生日期';
-comment on column SYS_AUTHZ_USER_DETAIL.D_CODE  is '用户编码';
 comment on column SYS_AUTHZ_USER_DETAIL.D_GENDER  is '性别：（male：男，female：女）';
 comment on column SYS_AUTHZ_USER_DETAIL.D_IDCARD  is '身份证号码';
 comment on column SYS_AUTHZ_USER_DETAIL.D_REMARK  is '详细说明';

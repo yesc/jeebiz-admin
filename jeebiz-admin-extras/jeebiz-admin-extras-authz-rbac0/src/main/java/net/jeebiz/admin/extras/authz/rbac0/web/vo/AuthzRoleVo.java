@@ -22,7 +22,7 @@ public class AuthzRoleVo {
 	/**
 	 * 角色编码
 	 */
-	@ApiModelProperty(value = "key", required = true, dataType = "String", notes = "角色编码")
+	@ApiModelProperty(name = "key", required = true, dataType = "String", value = "角色编码")
 	private String key;
 	/**
 	 * 角色名称

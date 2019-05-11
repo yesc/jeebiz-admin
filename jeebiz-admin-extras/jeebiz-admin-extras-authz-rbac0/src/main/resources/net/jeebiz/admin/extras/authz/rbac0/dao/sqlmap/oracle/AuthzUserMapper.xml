@@ -56,7 +56,7 @@
 	        SELECT sys_guid() FROM dual
 	    </selectKey>
 	    insert into SYS_AUTHZ_USER_LIST(U_ID,U_USERNAME,U_PASSWORD,U_AVATAR,U_PHONE,U_EMAIL,U_REMARK,U_STATUS)
-		values(#{id},#{username},#{password},#{avatar},#{phone},#{email,jdbcType=CLOB},#{remark,jdbcType=CLOB},'1')
+		values(#{id},#{username},#{password},#{avatar},#{phone},#{email,jdbcType=VARCHAR},#{remark,jdbcType=CLOB},'1')
 	</insert>
 	
 	<insert id="insertDetail" parameterType="AuthzUserDetailModel" flushCache="true">
@@ -68,13 +68,6 @@
 		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_ID = #{id}
 	</delete>
 	
-	<delete id="batchDelete" flushCache="true">
-		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_USERNAME != 'admin' AND U_ID IN 
-		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
-           #{item} 
-        </foreach>
-	</delete>
-	
 	<delete id="deleteDetail" parameterType="java.lang.String" flushCache="true">
 		DELETE FROM SYS_AUTHZ_USER_DETAIL WHERE U_ID = #{id}
 	</delete>
@@ -82,6 +75,27 @@
 	<delete id="deleteRole" flushCache="true">
     	DELETE FROM SYS_AUTHZ_USER_ROLE_RELATION WHERE U_ID = #{id}
     </delete>
+    
+	<delete id="batchDelete" flushCache="true">
+		DELETE FROM SYS_AUTHZ_USER_LIST WHERE U_USERNAME != 'admin' AND U_ID IN 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+           #{item} 
+        </foreach>
+	</delete>
+    
+	<delete id="batchDeleteDetail" flushCache="true">
+		DELETE FROM SYS_AUTHZ_USER_DETAIL WHERE U_USERNAME != 'admin' AND U_ID IN 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+           #{item} 
+        </foreach>
+	</delete>
+	
+	<delete id="batchDeleteRole" flushCache="true">
+		DELETE FROM SYS_AUTHZ_USER_ROLE_RELATION WHERE U_USERNAME != 'admin' AND U_ID IN 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+           #{item} 
+        </foreach>
+	</delete>
 	
 	<update id="update" parameterType="AuthzUserDetailModel" flushCache="true">
 		update SYS_AUTHZ_USER_LIST t

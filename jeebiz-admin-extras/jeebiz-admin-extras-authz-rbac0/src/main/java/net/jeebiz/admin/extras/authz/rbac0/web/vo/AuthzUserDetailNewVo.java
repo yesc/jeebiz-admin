@@ -13,6 +13,21 @@ import io.swagger.annotations.ApiModelProperty;
 public class AuthzUserDetailNewVo {
 
 	/**
+	 * 机构ID编号
+	 */
+	@ApiModelProperty(name = "orgId", required = true, dataType = "String", value = "机构ID编号")
+	private String orgId;
+	/**
+	 * 部门ID编号
+	 */
+	@ApiModelProperty(name = "deptId", required = true, dataType = "String", value = "部门ID编号")
+	private String deptId;
+	/**
+	 * 岗位ID编号
+	 */
+	@ApiModelProperty(name = "postId", required = true, dataType = "String", value = "岗位ID编号")
+	private String postId;
+	/**
 	 * 用户别名（昵称）
 	 */
 	@ApiModelProperty(name = "alias", required = true, dataType = "String", value = "用户昵称")
@@ -80,6 +95,30 @@ public class AuthzUserDetailNewVo {
 	 */
 	@ApiModelProperty(name = "roleId", required = true, dataType = "String", value = "角色ID（可能多个组合，如：1,2）")
 	private String roleId;
+
+	public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getPostId() {
+		return postId;
+	}
+
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
 
 	public String getAlias() {
 		return alias;

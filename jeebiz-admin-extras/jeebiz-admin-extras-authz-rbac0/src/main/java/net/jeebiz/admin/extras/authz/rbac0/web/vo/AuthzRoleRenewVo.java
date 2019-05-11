@@ -20,11 +20,6 @@ public class AuthzRoleRenewVo {
 	@ApiModelProperty(name = "id", dataType = "Integer", value = "角色ID")
 	private String id;
 	/**
-	 * 角色编码
-	 */
-	@ApiModelProperty(value = "key", required = true, dataType = "String", notes = "角色编码")
-	private String key;
-	/**
 	 * 角色名称
 	 */
 	@ApiModelProperty(name = "name", required = true, dataType = "String", value = "角色名称")
@@ -34,11 +29,6 @@ public class AuthzRoleRenewVo {
 	 */
 	@ApiModelProperty(name = "intro", required = true, dataType = "String", value = "角色简介")
 	private String intro;
-	/**
-	 * 角色类型（1:原生|2:继承|3:复制|4:自定义）
-	 */
-	@ApiModelProperty(name = "type", required = true, dataType = "String", value = "角色类型(1:原生|2:继承|3:复制)", allowableValues = "1,2,3")
-	private String type;
 	/**
 	 * 角色状态（0:禁用|1:可用）
 	 */
@@ -58,14 +48,6 @@ public class AuthzRoleRenewVo {
 		this.id = id;
 	}
 
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -80,14 +62,6 @@ public class AuthzRoleRenewVo {
 
 	public void setIntro(String intro) {
 		this.intro = intro;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public String getStatus() {
