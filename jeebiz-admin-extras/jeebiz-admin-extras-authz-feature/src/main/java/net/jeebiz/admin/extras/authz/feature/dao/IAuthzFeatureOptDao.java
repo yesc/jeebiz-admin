@@ -19,4 +19,8 @@ public interface IAuthzFeatureOptDao extends BaseDao<AuthzFeatureOptModel> {
 	
 	public List<AuthzFeatureOptModel> getFeatureOptList(@Param(value = "featureId") String featureId, @Param(value = "visible") String visible);
 	
+	public int getOptCountByName(@Param(value = "name") String name, @Param(value = "featureId") String featureId, @Param(value = "optId") String optId);
+	
+	public int deleteByParent(@Param(value = "id") String id);
+	
 }

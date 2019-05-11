@@ -15,4 +15,6 @@ public interface IAuthzFeatureOptService extends BaseService<AuthzFeatureOptMode
 	
 	public List<AuthzFeatureOptModel> getFeatureOptList(String featureId, boolean visible);
 	
+	public int getOptCountByName(String name, String featureId, String optId);
+	
 }

@@ -11,8 +11,8 @@ import org.hibernate.validator.constraints.SafeHtml;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "AuthzFeatureOptNewVo", description = "新增功能操作参数Vo")
-public class AuthzFeatureOptNewVo implements Comparable<AuthzFeatureOptNewVo> {
+@ApiModel(value = "AuthzFeatureOptRenewVo", description = "功能操作更新参数Vo")
+public class AuthzFeatureOptRenewVo implements Comparable<AuthzFeatureOptRenewVo> {
 	
 	/**
 	 * 功能菜单ID
@@ -21,6 +21,13 @@ public class AuthzFeatureOptNewVo implements Comparable<AuthzFeatureOptNewVo> {
 	@NotBlank(message = "功能菜单ID必填")
 	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
 	private String featureId;
+	/**
+	 * 功能操作ID
+	 */
+	@ApiModelProperty(name = "id", dataType = "String", value = "功能操作ID")
+	@NotBlank(message = "功能操作ID必填")
+	@SafeHtml(whitelistType = SafeHtml.WhiteListType.NONE)
+	private String id;
 	/**
 	 * 功能操作名称
 	 */
@@ -65,6 +72,14 @@ public class AuthzFeatureOptNewVo implements Comparable<AuthzFeatureOptNewVo> {
 		this.featureId = featureId;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -106,7 +121,7 @@ public class AuthzFeatureOptNewVo implements Comparable<AuthzFeatureOptNewVo> {
 	}
 
 	@Override
-	public int compareTo(AuthzFeatureOptNewVo o) {
+	public int compareTo(AuthzFeatureOptRenewVo o) {
 		return Integer.parseInt(order) - Integer.parseInt(o.getOrder());
 	}
 	

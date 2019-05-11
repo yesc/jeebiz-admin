@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import net.jeebiz.boot.api.exception.ApiRestResponse;
+import net.jeebiz.boot.api.ApiRestResponse;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import springfox.documentation.annotations.ApiIgnore;
 

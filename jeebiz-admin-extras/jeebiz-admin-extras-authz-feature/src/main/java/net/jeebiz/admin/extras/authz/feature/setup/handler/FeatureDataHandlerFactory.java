@@ -29,11 +29,19 @@ public class FeatureDataHandlerFactory {
 		return COMPLETED_HANDLER.putIfAbsent(key, handler);
 	}
 	
+	public static FeatureDataHandler getTreeHandler() {
+		return featureTreeDataHandler;
+	}
+	
 	public static FeatureDataHandler getTreeHandler(String key) {
 		if(StringUtils.hasText(key)) {
 			return COMPLETED_HANDLER.getOrDefault(key, featureTreeDataHandler);
 		}
 		return featureTreeDataHandler;
+	}
+	
+	public static FeatureDataHandler getFlatHandler() {
+		return featureFlatDataHandler;
 	}
 	
 	public static FeatureDataHandler getFlatHandler(String key) {

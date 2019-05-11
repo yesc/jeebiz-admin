@@ -25,10 +25,11 @@ import io.swagger.annotations.ApiResponses;
 import net.jeebiz.admin.extras.authz.feature.dao.entities.AuthzFeatureOptModel;
 import net.jeebiz.admin.extras.authz.feature.service.IAuthzFeatureOptService;
 import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureOptNewVo;
+import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureOptRenewVo;
 import net.jeebiz.admin.extras.authz.feature.web.vo.AuthzFeatureOptVo;
+import net.jeebiz.boot.api.ApiRestResponse;
 import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
-import net.jeebiz.boot.api.exception.ApiRestResponse;
 import net.jeebiz.boot.api.utils.Constants;
 import net.jeebiz.boot.api.utils.HttpStatus;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
@@ -57,7 +58,13 @@ public class AuthzFeatureOptController extends BaseMapperController{
 	@PostMapping("new")
 	@RequiresPermissions("opt:new")
 	@ResponseBody
-	public Object newOpt(@Valid @RequestBody AuthzFeatureOptNewVo optVo) throws Exception { 
+	public Object newOpt(@Valid @RequestBody AuthzFeatureOptNewVo optVo) throws Exception {
+		
+		int count = getAuthzFeatureOptService().getOptCountByName(optVo.getName(), optVo.getFeatureId(), null);
+		if(count > 0) {
+			return fail("opt.new.name-exists");
+		}
+		
 		AuthzFeatureOptModel model = getBeanMapper().map(optVo, AuthzFeatureOptModel.class);
 		int total = getAuthzFeatureOptService().insert(model);
 		if(total > 0) {
@@ -68,13 +75,19 @@ public class AuthzFeatureOptController extends BaseMapperController{
 	
 	@ApiOperation(value = "修改功能操作代码", notes = "修改功能操作代码信息")
 	@ApiImplicitParams({ 
-		@ApiImplicitParam(paramType = "body", name = "optVo", value = "功能操作代码信息", required = true, dataType = "AuthzFeatureOptVo")
+		@ApiImplicitParam(paramType = "body", name = "optVo", value = "功能操作代码信息", required = true, dataType = "AuthzFeatureOptRenewVo")
 	})
 	@BusinessLog(module = Constants.AUTHZ_FEATURE_OPT, business = "修改功能操作代码-名称：${name}", opt = BusinessType.UPDATE)
 	@PostMapping("renew")
 	@RequiresPermissions("opt:renew")
 	@ResponseBody
-	public Object renewOpt(@Valid @RequestBody AuthzFeatureOptVo optVo) throws Exception { 
+	public Object renewOpt(@Valid @RequestBody AuthzFeatureOptRenewVo optVo) throws Exception {
+		
+		int count = getAuthzFeatureOptService().getOptCountByName(optVo.getName(), optVo.getFeatureId(), optVo.getId());
+		if(count > 0) {
+			return fail("opt.new.name-exists");
+		}
+		
 		AuthzFeatureOptModel model = getBeanMapper().map(optVo, AuthzFeatureOptModel.class);
 		int total = getAuthzFeatureOptService().update(model);
 		if(total > 0) {

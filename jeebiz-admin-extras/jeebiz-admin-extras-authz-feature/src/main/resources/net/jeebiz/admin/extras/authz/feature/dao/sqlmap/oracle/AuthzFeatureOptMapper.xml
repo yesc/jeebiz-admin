@@ -17,12 +17,16 @@
 	</resultMap>
 	
 	<insert id="insert" parameterType="AuthzFeatureOptModel" flushCache="true">
-		insert into SYS_FEATURE_OPTS(OPT_CODE,OPT_NAME,OPT_ICON)
-		values(#{code},#{name},#{icon})
+		insert into SYS_FEATURE_OPTS(F_ID,OPT_NAME,OPT_ICON,OPT_ORDER,OPT_VISIBLE,OPT_PERMS)
+		values(#{featureId},#{name},#{icon},#{order},#{visible},#{perms})
 	</insert>
 	
 	<delete id="delete" parameterType="java.lang.String" flushCache="true">
 		DELETE FROM SYS_FEATURE_OPTS WHERE OPT_ID = #{id}
+	</delete>
+	
+	<delete id="deleteByParent" parameterType="java.lang.String" flushCache="true">
+		DELETE FROM SYS_FEATURE_OPTS WHERE F_ID = #{id}
 	</delete>
 	
 	<update id="update" parameterType="AuthzFeatureOptModel" flushCache="true">
@@ -30,9 +34,22 @@
 		<set>
 			<if test="name != null and name != ''">t.OPT_NAME = #{name},</if>
 			<if test="icon != null and icon != ''">t.OPT_ICON = #{icon},</if>
+			<if test="order != null and order != ''">t.OPT_ORDER = #{order},</if>
+			<if test="visible != null and visible != ''">t.OPT_VISIBLE = #{visible},</if>
+			<if test="perms != null and perms != ''">t.OPT_PERMS = #{perms}</if>
 		</set>
 		where t.OPT_ID = #{id}
 	</update>
+	
+	<select id="getOptCountByName" resultType="int" parameterType="java.lang.String" useCache="false">
+		SELECT count(t.OPT_ID) 
+		  FROM SYS_FEATURE_OPTS t 
+		 WHERE t.OPT_NAME = #{name}
+		   AND t.F_ID = #{featureId}
+		 <if test="optId != null and optId != ''">
+			AND t.OPT_ID != #{optId}
+		 </if>
+	</select>
 	
 	<select id="getFeatureOpts" resultMap="AuthzFeatureOptMap" parameterType="java.lang.String" useCache="true">
 		SELECT
