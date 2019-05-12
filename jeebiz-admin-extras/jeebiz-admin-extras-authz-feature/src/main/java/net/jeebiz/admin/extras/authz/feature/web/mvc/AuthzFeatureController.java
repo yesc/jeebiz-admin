@@ -36,7 +36,6 @@ import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.utils.Constants;
 import net.jeebiz.boot.api.utils.HttpStatus;
-import net.jeebiz.boot.api.utils.ResultUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 
 @Api(tags = "功能菜单：数据维护（Ok）")
@@ -68,7 +67,8 @@ public class AuthzFeatureController extends BaseMapperController{
 		// 所有的功能操作按钮
 		List<AuthzFeatureOptModel> featureOptList = getAuthzFeatureOptService().getFeatureOpts();
 		// 返回各级菜单 + 对应的功能权限数据
-		return ResultUtils.dataMap(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
+		return ApiRestResponse.success(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
+		//return ResultUtils.dataMap(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
 	}
 	
 	@ApiOperation(value = "查询功能菜单树扁平构数据", notes = "查询功能菜单树扁平构数据")
@@ -82,8 +82,9 @@ public class AuthzFeatureController extends BaseMapperController{
 		// 所有的功能操作按钮
 		List<AuthzFeatureOptModel> featureOptList = getAuthzFeatureOptService().getFeatureOpts();
 		
-		// 返回叶子节点菜单 + 对应的功能权限数据
-		return ResultUtils.dataMap(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
+		// 返回各级菜单 + 对应的功能权限数据
+		return ApiRestResponse.success(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
+		//return ResultUtils.dataMap(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
 	}
 	
 	@ApiOperation(value = "增加功能菜单信息", notes = "增加功能菜单信息")

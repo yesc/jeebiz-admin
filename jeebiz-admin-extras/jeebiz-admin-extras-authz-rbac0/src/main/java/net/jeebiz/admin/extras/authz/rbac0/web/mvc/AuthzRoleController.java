@@ -49,7 +49,6 @@ import net.jeebiz.boot.api.annotation.BusinessLog;
 import net.jeebiz.boot.api.annotation.BusinessType;
 import net.jeebiz.boot.api.utils.Constants;
 import net.jeebiz.boot.api.utils.HttpStatus;
-import net.jeebiz.boot.api.utils.ResultUtils;
 import net.jeebiz.boot.api.webmvc.BaseMapperController;
 import net.jeebiz.boot.api.webmvc.Result;
 
@@ -314,7 +313,8 @@ public class AuthzRoleController extends BaseMapperController {
 		// 所有的功能操作按钮：标记按钮选中状态
 		List<AuthzFeatureOptModel> featureOptList = getAuthzRoleService().getFeatureOpts(roleId);
 		// 返回各级菜单 + 对应的功能权限数据
-		return ResultUtils.dataMap(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
+		return ApiRestResponse.success(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
+		//return ResultUtils.dataMap(FeatureDataHandlerFactory.getTreeHandler().handle(featureList, featureOptList));
 	}
 	
 	@ApiOperation(value = "角色功能菜单-扁平结构数据", notes = "根据角色ID查询角色拥有的功能菜单-扁平结构数据")
@@ -331,7 +331,8 @@ public class AuthzRoleController extends BaseMapperController {
 		// 所有的功能操作按钮：标记按钮选中状态
 		List<AuthzFeatureOptModel> featureOptList = getAuthzRoleService().getFeatureOpts(roleId);
 		// 返回叶子节点菜单 + 对应的功能权限数据
-		return ResultUtils.dataMap(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
+		return ApiRestResponse.success(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
+		//return ResultUtils.dataMap(FeatureDataHandlerFactory.getFlatHandler().handle(featureList, featureOptList));
 	}
 	
 	public IAuthzRoleService getAuthzRoleService() {
