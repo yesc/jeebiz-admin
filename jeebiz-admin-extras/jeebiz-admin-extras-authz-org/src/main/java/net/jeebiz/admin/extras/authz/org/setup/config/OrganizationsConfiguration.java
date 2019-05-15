@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class OrganizationsConfiguration {
 	
 	@Bean
-	public FlywayFluentConfiguration flywayFeatureConfiguration() {
+	public FlywayFluentConfiguration flywayOrgConfiguration() {
 		
 		FlywayFluentConfiguration configuration = new FlywayFluentConfiguration("org",
 				"组织架构-模块初始化", "1.0.0");
